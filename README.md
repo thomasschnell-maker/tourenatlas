@@ -18,6 +18,8 @@ Ergänzende offene Daten:
 | Terrain Tiles (AWS Open Data; im Allgäu EU-DEM/Copernicus) | 3D-Gelände, Schummerung, Höhenprofile, Gipfel-Check | offen, Namensnennung |
 | OpenStreetMap live über Overpass | alle Wege mit SAC-Skala, Sichtbarkeit, Seilbahnen/Lifte, Hütten, Gipfel | ODbL |
 | Open-Meteo (DWD ICON) | Wetter-Paket: Punktvorhersage | CC BY 4.0, nicht-kommerziell frei |
+| Nominatim | Ortssuche | ODbL, Nutzungsregeln: max. 1 Anfrage/s |
+| BRouter (brouter.de) | Touren-Routing auf Wegen | Software MIT, Daten ODbL |
 | Luftbild Bayern DOP40 (Bayerische Vermessungsverwaltung) | Luftbild Bayern, 40 cm | CC BY 4.0 |
 | basemap.at Orthofoto | Luftbild Österreich, 30 cm | CC BY 4.0 |
 | Sentinel-2 cloudless **2016** (EOX) | Luftbild-Fallback, z. B. Baden-Württemberg | CC BY 4.0 (nur Jahrgang 2016; neuere sind nicht-kommerziell) |
@@ -57,9 +59,12 @@ Unten liegt eine Tab-Leiste. Jeder Tab öffnet ein Blatt mit genau einem Thema, 
 |---|---|
 | **Karte** | Grundkarte wählen (OpenFreeMap, Luftbild, Offline) und Offline-Datei laden |
 | **Ebenen** | 3D an/aus, Überhöhung, Schummerung, Bergwege, Lifte, Gipfel; Legende |
+| **Touren** | Touren-Paket: Touren mit Stationen, Routing, Fotos mit 3D-Blick |
 | **Wetter** | Wetter-Paket: Punktvorhersage, Warnsignale, Regenradar |
 | **Info** | Datenqualität des Ausschnitts, alle Quellen mit Status und Lizenz |
 
+- **Ortssuche** oben: Ort, Gipfel oder Hütte eingeben und mit Enter suchen. Koordinaten wie `47.42, 10.34` werden direkt angeflogen.
+  Die Suche läuft über Nominatim (OSM), bevorzugt die Region und fragt nur beim Absenden ab, höchstens einmal pro Sekunde, wie es die Nominatim-Regeln verlangen.
 - Die Knöpfe **⌂** (zurück ins Allgäu) und **3D** sitzen direkt an der Karte.
 - **Weg antippen:** Öffnet das Weg-Blatt mit Höhenprofil, Kennzahlen, Befunden und GPX-Export.
 - **Gipfel oder Hütte antippen:** Öffnet ein Popup, bei Gipfeln mit OSM- und DEM-Höhe samt Bewertung.
@@ -70,6 +75,13 @@ Unten liegt eine Tab-Leiste. Jeder Tab öffnet ein Blatt mit genau einem Thema, 
 ### Pakete
 
 Erweiterungen hängen sich als Paket ein: eine Datei in `js/packages/` anlegen und sie in `js/packages/index.js` eintragen. Jedes Paket bekommt automatisch einen eigenen Tab und ein eigenes Blatt. Die Schnittstelle besteht aus `mount`, `onStyle` (eigene Ebenen nach einem Wechsel der Grundkarte neu anlegen), `onActivate`/`onDeactivate` und `onMapClick`.
+
+**Touren-Paket** (`js/packages/tours*.js`):
+- **Stationen:** „Neue Tour“ anlegen und Stationen durch Tippen auf die Karte setzen. Jede Station hat Name und Höhe aus dem DEM.
+- **Verbindung:** „Wegen folgen“ routet zwischen den Stationen über [BRouter](https://brouter.de) mit dem Profil `hiking-mountain`. Die Route muss höchstens 300 m von beiden Stationen beginnen und enden, sonst gilt der Abschnitt als nicht geprüft. Schlägt das Routing fehl, bleibt der Abschnitt Luftlinie, gestrichelt dargestellt und mit Hinweis.
+- **Kennzahlen:** Länge, Auf- und Abstieg aus dem DEM. Die Gehzeit folgt DIN 33466 wie beim DAV: 4 km/h, 300 Hm/h aufwärts, 500 Hm/h abwärts; der grössere Wert plus die Hälfte des kleineren.
+- **Fotos je Station:** Beim Hochladen wird der aktuelle 3D-Blick (Mitte, Zoom, Neigung, Richtung) mit dem Foto gespeichert. „3D-Blick“ in der Fotoansicht fliegt genau dorthin zurück. Fotos werden auf höchstens 1600 px verkleinert, die EXIF-Drehung wird übernommen.
+- **Speicher:** IndexedDB, nur auf dem Gerät. Safari löscht Website-Daten nach 7 Tagen ohne Besuch, ausser die App liegt auf dem Home-Bildschirm. Darum gibt es „Sicherung“, eine JSON-Datei mit Fotos, die sich wieder laden lässt, und den Export als GPX.
 
 **Wetter-Paket** (`js/packages/weather*.js`):
 - **Quelle:** Open-Meteo mit dem Modell DWD ICON (ICON-D2 mit 2 km im Alpenraum). Daten unter CC BY 4.0, für nicht-kommerzielle Nutzung frei.
@@ -102,7 +114,8 @@ js/config.js        alle Quellen, Lizenzen, Schwellwerte (einziger Ort für Änd
 js/styles.js        baut den MapLibre-Stil je Grundkarte + Overlays + 3D
 js/app.js           Karte, Menü, Laden, Interaktion
 js/cells.js         Zellenraster für das Nachladen der Wege
-js/packages/        Pakete (Wetter)
+js/search.js        Ortssuche (Nominatim)
+js/packages/        Pakete (Touren, Wetter)
 js/overpass.js      OSM-Abfrage und Antwortprüfung
 js/dem.js           Höhenabfrage direkt aus den Terrarium-Kacheln
 js/validate.js      Kreuzvalidierung und Qualitätskennzahlen
