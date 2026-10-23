@@ -18,7 +18,9 @@ out meta geom qt;
   node["natural"~"^(peak|saddle)$"];
   node["tourism"~"^(alpine_hut|wilderness_hut)$"];
 );
-out meta qt;`;
+out meta qt;
+relation["route"~"^(bicycle|mtb)$"];
+out tags geom(${bbox}) qt;`;
 }
 
 const WAY_TAGS = ['highway', 'aerialway', 'sac_scale', 'mtb:scale', 'trail_visibility', 'name', 'surface', 'tracktype', 'incline', 'ref', 'access', 'foot', 'bicycle'];
@@ -31,6 +33,7 @@ export function parseOverpass(json) {
   }
   const ways = [];
   const peaks = [];
+  const routes = [];
   let dropped = 0;
   const seen = new Set();
 
@@ -39,7 +42,26 @@ export function parseOverpass(json) {
     if (seen.has(key)) continue; // die zwei Way-Teilabfragen überlappen
     seen.add(key);
     const tags = el.tags || {};
-    if (el.type === 'way') {
+    if (el.type === 'relation') {
+      // Ausgeschilderte Rad-/MTB-Route; Geometrie serverseitig auf die Abfragefläche beschnitten.
+      const lines = (el.members || [])
+        .filter((m) => m.type === 'way' && Array.isArray(m.geometry))
+        .map((m) => m.geometry.filter((p) => p && Number.isFinite(p.lon) && Number.isFinite(p.lat)).map((p) => [p.lon, p.lat]))
+        .filter((l) => l.length >= 2);
+      if (!lines.length) continue;
+      routes.push({
+        type: 'Feature',
+        geometry: { type: 'MultiLineString', coordinates: lines },
+        properties: {
+          osm_id: el.id,
+          route: tags.route,
+          network: tags.network ?? null,
+          name: tags.name ?? null,
+          ref: tags.ref ?? null,
+          label: tags.ref || tags.name || null
+        }
+      });
+    } else if (el.type === 'way') {
       const coords = (el.geometry || [])
         .filter((p) => p && Number.isFinite(p.lon) && Number.isFinite(p.lat))
         .map((p) => [p.lon, p.lat]);
@@ -71,6 +93,7 @@ export function parseOverpass(json) {
   return {
     ways: { type: 'FeatureCollection', features: ways },
     peaks: { type: 'FeatureCollection', features: peaks },
+    routes: { type: 'FeatureCollection', features: routes },
     meta: { osmBase: json.osm3s?.timestamp_osm_base ?? null, dropped }
   };
 }
@@ -86,7 +109,8 @@ export function parseEle(raw) {
 
 /** Fragt die Endpunkte der Reihe nach ab (Failover), mit Abbruch-Signal. */
 export async function fetchOverpass(bbox, endpoints, signal, timeoutMs = 30000) {
-  const body = new URLSearchParams({ data: buildQuery(bbox) });
+  // GET statt POST: nur GET-Antworten kann der Service Worker für den Offline-Betrieb speichern.
+  const query = `?data=${encodeURIComponent(buildQuery(bbox))}`;
   let lastErr;
   for (const url of endpoints) {
     // Eigenes Zeitlimit je Server, ohne das äussere Abbruchsignal zu verlieren.
@@ -95,7 +119,7 @@ export async function fetchOverpass(bbox, endpoints, signal, timeoutMs = 30000) 
     const relay = () => ctl.abort(signal.reason);
     signal?.addEventListener('abort', relay, { once: true });
     try {
-      const res = await fetch(url, { method: 'POST', body, signal: ctl.signal });
+      const res = await fetch(url + query, { signal: ctl.signal });
       if (res.status === 429 || res.status === 504) throw new Error(`${new URL(url).host}: überlastet (${res.status})`);
       if (!res.ok) throw new Error(`${new URL(url).host}: HTTP ${res.status}`);
       return { ...parseOverpass(await res.json()), endpoint: new URL(url).host };

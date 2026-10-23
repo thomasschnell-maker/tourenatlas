@@ -45,3 +45,25 @@ test('parseEle akzeptiert nur Meterangaben', () => {
   assert.equal(parseEle('99999'), null);
   assert.equal(parseEle(undefined), null);
 });
+
+test('Radrouten-Relationen: Geometrie beschnitten abgefragt, MultiLineString, Netzstufe', () => {
+  const q = buildQuery([10.1, 47.3, 10.4, 47.5]);
+  assert.match(q, /relation\["route"~"\^\(bicycle\|mtb\)\$"\];\nout tags geom\(47\.30000,10\.10000,47\.50000,10\.40000\)/);
+  const r = parseOverpass({
+    elements: [
+      { type: 'relation', id: 7, tags: { route: 'bicycle', network: 'rcn', name: 'Radrunde Allgäu', ref: 'RA' },
+        members: [
+          { type: 'way', geometry: [{ lat: 47.5, lon: 10.2 }, { lat: 47.51, lon: 10.21 }] },
+          { type: 'node', lat: 47.5, lon: 10.2 },
+          { type: 'way', geometry: [{ lat: 47.6, lon: 10.3 }] }
+        ] },
+      { type: 'relation', id: 8, tags: { route: 'mtb' }, members: [] }
+    ]
+  });
+  assert.equal(r.routes.features.length, 1);
+  const f = r.routes.features[0];
+  assert.equal(f.geometry.type, 'MultiLineString');
+  assert.equal(f.geometry.coordinates.length, 1);
+  assert.equal(f.properties.network, 'rcn');
+  assert.equal(f.properties.label, 'RA');
+});

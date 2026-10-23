@@ -2,7 +2,8 @@
 // Touren-Paket: Touren mit mehreren Stationen, Routing entlang echter Wege,
 // Fotos je Station mit gespeichertem 3D-Blick. Daten bleiben lokal auf dem Gerät.
 
-import { ACTIVITIES, ROUTER, brouterUrl, captureView, formatDuration, newStation, newTour, parseBrouter, parseGpx, stationsFromTrack, tourGpx, tourLine, tourStats } from './tours-core.js';
+import { ACTIVITIES, ROUTER, assignPhotos, batteryCurve, brouterUrl, captureView, formatDuration, newStation, newTour, parseBrouter, parseGpx, stationDistances, stationsFromTrack, tourGpx, tourLine, tourStats, viewFromPhoto } from './tours-core.js';
+import { readExif } from './exif.js';
 import { blobToDataUrl, compressImage, dataUrlToBlob, requestPersistence, store } from './tours-store.js';
 import { geocode, splitPlaces } from '../search.js';
 
@@ -41,6 +42,13 @@ function overviewGeo() {
     t.stations.forEach((s) => stations.push({ type: 'Feature', properties: { id: s.id, tour: t.id, n: '', name: s.name, photos: s.photos.length }, geometry: { type: 'Point', coordinates: s.lngLat } }));
   }
   return { line: { type: 'FeatureCollection', features: line }, stations: { type: 'FeatureCollection', features: stations } };
+}
+
+function photoGeo() {
+  return {
+    type: 'FeatureCollection',
+    features: (current?.photoPins || []).map((p) => ({ type: 'Feature', properties: { id: p.id, station: p.stationId }, geometry: { type: 'Point', coordinates: p.lngLat } }))
+  };
 }
 
 function geo() {
@@ -96,6 +104,13 @@ function addLayers(map) {
       'circle-pitch-alignment': 'map'
     }
   });
+  map.addSource('tour-photos', { type: 'geojson', data: photoGeo() });
+  map.addLayer({
+    id: 'tour-photos',
+    type: 'circle',
+    source: 'tour-photos',
+    paint: { 'circle-radius': 6, 'circle-color': '#ffb300', 'circle-stroke-color': '#3d2a00', 'circle-stroke-width': 1.5, 'circle-pitch-alignment': 'map' }
+  });
   map.addLayer({
     id: 'tour-station-labels',
     type: 'symbol',
@@ -106,6 +121,7 @@ function addLayers(map) {
 }
 
 function refreshMap() {
+  ctx.map.getSource('tour-photos')?.setData(photoGeo());
   const g = geo();
   ctx.map.getSource('tour-line')?.setData(g.line);
   ctx.map.getSource('tour-stations')?.setData(g.stations);
@@ -166,10 +182,17 @@ async function addPlaces(text) {
   const names = splitPlaces(text);
   if (!names.length) return;
   const missing = [];
-  for (const [i, q] of names.entries()) {
+  for (const [i, entry] of names.entries()) {
+    // "Altmummen|Alt Mummen|Mummen": Schreibweisen der Reihe nach probieren.
+    const alts = entry.split('|').map((x) => x.trim()).filter(Boolean);
+    const q = alts[0];
     ctx.toast(`Suche „${q}“ (${i + 1}/${names.length}) …`, { busy: true, ttl: 0 });
     try {
-      const hit = (await geocode(q))[0];
+      let hit = null;
+      for (const alt of alts) {
+        hit = (await geocode(alt))[0];
+        if (hit) break;
+      }
       if (!hit) {
         missing.push(q);
         continue;
@@ -228,23 +251,67 @@ function flyToStation(s) {
 }
 
 // ---------- Fotos ----------
+/** Foto verkleinern und speichern; EXIF vorher lesen (das Verkleinern entfernt es). */
+async function storePhoto(station, file, view, exif) {
+  const big = await compressImage(file, 1600, 0.85);
+  const small = await compressImage(file, 320, 0.75);
+  const photo = {
+    id: `${station.id}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
+    tourId: current.id,
+    stationId: station.id,
+    blob: big.blob,
+    thumb: small.blob,
+    w: big.w,
+    h: big.h,
+    name: file.name,
+    created: new Date().toISOString(),
+    takenAt: exif.takenAt,
+    lngLat: exif.lngLat,
+    direction: exif.direction,
+    view
+  };
+  await store.putPhoto(photo);
+  station.photos.push(photo.id);
+  if (exif.lngLat) (current.photoPins ||= []).push({ id: photo.id, stationId: station.id, lngLat: exif.lngLat });
+  return photo;
+}
+
 async function addPhotos(station, files) {
   ctx.toast(`Speichere ${files.length} Foto(s) …`, { busy: true });
   const view = captureView(ctx.map);
   try {
-    for (const file of files) {
-      const big = await compressImage(file, 1600, 0.85);
-      const small = await compressImage(file, 320, 0.75);
-      const photo = { id: `${station.id}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`, tourId: current.id, stationId: station.id, blob: big.blob, thumb: small.blob, w: big.w, h: big.h, name: file.name, created: new Date().toISOString(), view };
-      await store.putPhoto(photo);
-      station.photos.push(photo.id);
-    }
+    for (const file of files) await storePhoto(station, file, view, readExif(await file.arrayBuffer()));
     // Blick der Station: beim ersten Foto übernehmen, später nur auf Wunsch ("Blick speichern").
     if (!station.view) station.view = view;
     await persist();
     ctx.toast(`${files.length} Foto(s) mit 3D-Blick gespeichert`);
   } catch (err) {
     ctx.toast(`Foto nicht gespeichert: ${err.message}`, { error: true, ttl: 7000 });
+  }
+}
+
+/** Viele Fotos auf einmal: Station per Aufnahmeort/-zeit, 3D-Blick aus Standort + Blickrichtung. */
+async function autoAssignPhotos(files, fallbackIndex) {
+  if (!current.stations.length) return ctx.toast('Erst Stationen setzen', { error: true });
+  ctx.toast(`Lese ${files.length} Foto(s) …`, { busy: true, ttl: 0 });
+  try {
+    const exifs = await Promise.all(files.map(async (f) => readExif(await f.arrayBuffer())));
+    const plan = assignPhotos(exifs, current.stations, { fallbackIndex });
+    const count = { ort: 0, zeit: 0, rest: 0 };
+    for (const [i, file] of files.entries()) {
+      ctx.toast(`Speichere Foto ${i + 1}/${files.length} …`, { busy: true, ttl: 0 });
+      const st = current.stations[plan[i].station];
+      const view = viewFromPhoto(exifs[i]) || captureView(ctx.map);
+      await storePhoto(st, file, view, exifs[i]);
+      if (!st.view) st.view = view;
+      if (/Aufnahmeort,/.test(plan[i].reason)) count.ort++;
+      else if (/Aufnahmezeit/.test(plan[i].reason)) count.zeit++;
+      else count.rest++;
+    }
+    await persist();
+    ctx.toast(`${files.length} Foto(s): ${count.ort} per Aufnahmeort, ${count.zeit} per Aufnahmezeit, ${count.rest} an gewählte Station`, { ttl: 8000, error: count.rest > 0 });
+  } catch (err) {
+    ctx.toast(`Fotos nicht zugeordnet: ${err.message}`, { error: true, ttl: 7000 });
   }
 }
 
@@ -284,11 +351,64 @@ async function openLightbox(station, photoId) {
     if (a === 'del' && confirm('Foto löschen?')) {
       await store.deletePhoto(p.id);
       station.photos = station.photos.filter((x) => x !== p.id);
+      current.photoPins = (current.photoPins || []).filter((x) => x.id !== p.id);
       close();
       await persist();
     }
   });
   document.body.appendChild(box);
+}
+
+// ---------- Höhenprofil + Akkuverlauf ----------
+const PW = 300;
+const PH = 120;
+let cursor = null;
+
+function profileSvg(t) {
+  const pts = stats.profile.filter((p) => p.ele != null);
+  if (pts.length < 2) return '';
+  const dMax = stats.profile[stats.profile.length - 1].dist || 1;
+  const span = Math.max(80, stats.max - stats.min);
+  const lo = (stats.max + stats.min) / 2 - span / 2;
+  const x = (d) => ((d / dMax) * PW).toFixed(1);
+  const y = (e) => (PH - 14 - ((e - lo) / span) * (PH - 28)).toFixed(1);
+  const line = pts.map((p, i) => `${i ? 'L' : 'M'}${x(p.dist)},${y(p.ele)}`).join('');
+  let svg = `<path class="area" d="${line}L${PW},${PH}L0,${PH}Z"/><path class="line" d="${line}"/>`;
+  // Stationen
+  stationDistances(t.stations, stats.profile).forEach((d, i) => {
+    svg += `<line class="st" x1="${x(d)}" x2="${x(d)}" y1="0" y2="${PH}"/><text class="stn" x="${x(d)}" y="${PH - 2}" text-anchor="middle">${i + 1}</text>`;
+  });
+  let legend = `<span><i class="sw-ele"></i>Höhe ${Math.round(stats.min)}–${Math.round(stats.max)} m</span>`;
+  if ((t.activity || 'hike') === 'ebike') {
+    const cap = t.batteryCapacityWh || 625;
+    const c = batteryCurve(stats.profile, cap);
+    const by = (pct) => (8 + (1 - pct / 100) * (PH - 22)).toFixed(1);
+    const step = Math.max(1, Math.floor(c.points.length / 300));
+    const bl = c.points.filter((_, i) => i % step === 0 || i === c.points.length - 1).map((p, i) => `${i ? 'L' : 'M'}${x(p.dist)},${by(p.pct)}`).join('');
+    svg += `<path class="batt" d="${bl}"/>`;
+    c.swaps.forEach((d) => {
+      svg += `<line class="swap" x1="${x(d)}" x2="${x(d)}" y1="0" y2="${PH}"/><text class="swapt" x="${x(d)}" y="9" text-anchor="middle">⚡</text>`;
+    });
+    legend += `<span><i class="sw-batt"></i>Akku ${cap} Wh</span>`;
+    legend += c.swaps.length ? `<span>⚡ Wechsel bei km ${c.swaps.map((d) => (d / 1000).toFixed(0)).join(', ')}</span>` : '<span>ohne Akkuwechsel</span>';
+  }
+  return `<svg class="tprofile" viewBox="0 0 ${PW} ${PH}" preserveAspectRatio="none" aria-label="Höhenprofil der Tour">${svg}
+    <line class="cursor" x1="-10" x2="-10" y1="0" y2="${PH}"/></svg><div class="plegend">${legend}</div>`;
+}
+
+function profileCursor(ev) {
+  const svg = ev.target.closest('svg.tprofile');
+  if (!svg || !stats) return;
+  const r = svg.getBoundingClientRect();
+  const f = Math.max(0, Math.min(1, (ev.clientX - r.left) / r.width));
+  const target = f * stats.profile[stats.profile.length - 1].dist;
+  const p = stats.profile.reduce((b, q) => (Math.abs(q.dist - target) < Math.abs(b.dist - target) ? q : b), stats.profile[0]);
+  cursor = cursor || new maplibregl.Marker({ color: '#00b8d4', scale: 0.7 });
+  cursor.setLngLat(p.coord).addTo(ctx.map);
+  const l = svg.querySelector('line.cursor');
+  l.setAttribute('x1', f * PW);
+  l.setAttribute('x2', f * PW);
+  ctx.toast(`km ${(p.dist / 1000).toFixed(1)} · ${p.ele != null ? Math.round(p.ele) + ' m' : '–'}`, { ttl: 1500 });
 }
 
 // ---------- Meine Touren (Vorlagen aus data/touren.json) ----------
@@ -301,11 +421,17 @@ async function importMyTours() {
   } catch (err) {
     return ctx.toast(`Tourenliste nicht ladbar: ${err.message}`, { error: true, ttl: 6000 });
   }
-  const todo = list.filter((v) => !tours.some((t) => t.templateId === v.id));
-  if (!todo.length) return ctx.toast('Alle Touren aus der Liste sind schon übernommen');
+  // Neu oder in der Liste korrigiert (höhere version) → übernehmen bzw. die vorhandene Tour neu aufbauen.
+  const todo = list.filter((v) => {
+    const t = tours.find((x) => x.templateId === v.id);
+    return !t || (t.templateVersion || 1) < (v.version || 1);
+  });
+  if (!todo.length) return ctx.toast('Alle Touren aus der Liste sind aktuell übernommen');
   requestPersistence();
   for (const v of todo) {
-    const t = { ...newTour(v.name), templateId: v.id, activity: v.activity || 'hike', note: v.note || '' };
+    const old = tours.find((x) => x.templateId === v.id);
+    if (old) for (const st of old.stations) for (const pid of st.photos) await store.deletePhoto(pid);
+    const t = { ...newTour(v.name), ...(old ? { id: old.id, date: old.date } : {}), templateId: v.id, templateVersion: v.version || 1, activity: v.activity || 'hike', note: v.note || '' };
     if (v.date) t.date = v.date;
     await store.putTour(t);
     tours = await store.allTours();
@@ -445,6 +571,7 @@ function render() {
            <dt>Höhe</dt><dd>${Math.round(stats.min ?? 0)}–${Math.round(stats.max ?? 0)} m</dd></dl>`
         : ''
     }
+    ${stats ? profileSvg(t) : ''}
     ${failed ? `<ul class="findings"><li class="warn">${failed} Abschnitt(e) nur Luftlinie – Wegführung nicht geprüft</li></ul>` : ''}
     ${t.segments.some((x) => x?.recorded) ? '<ul class="findings"><li class="ok">Aufgezeichnete GPX-Spur – Strecke gemessen, nicht berechnet</li></ul>' : ''}
     ${(t.activity || 'hike') !== 'hike' ? '<p class="muted">Rad/E-Bike-Werte sind Faustregeln (±30 %): Wind, Gewicht, Unterstützungsstufe und Temperatur verändern Zeit und Akku deutlich.</p>' : ''}
@@ -463,7 +590,12 @@ function render() {
           </div></li>`
       )
       .join('')}</ol>
-    <p class="muted">Tipp: erst den 3D-Blick einstellen, dann Foto hinzufügen – der Blick wird mit dem Foto gespeichert.</p>
+    <div class="autophoto">
+      <label class="btn primary">📷 Fotos automatisch zuordnen<input type="file" accept="image/*" multiple data-t="autophotos" hidden></label>
+      <label class="muted">ohne Ort/Zeit an <select data-t="fallback">${t.stations.map((s, i) => `<option value="${i}" ${i === t.stations.length - 1 ? 'selected' : ''}>${i + 1}. ${esc(s.name)}</option>`).join('')}</select></label>
+    </div>
+    <p class="muted">Automatisch: Station nach Aufnahmeort (GPS) oder Aufnahmezeit; der 3D-Blick schaut vom Aufnahmeort in Fotorichtung. Am iPhone beim Auswählen unter „Optionen“ den Ort mitsenden. Einzelnes Foto über „📷 Foto“ an der Station: speichert den aktuell eingestellten Blick.</p>
+    <button type="button" class="btn wide" data-t="offline" ${t.stations.length < 1 ? 'disabled' : ''}>Tour offline speichern</button>
     <div class="row"><button type="button" class="btn" data-t="gpx" ${t.stations.length < 2 ? 'disabled' : ''}>GPX</button>
       <button type="button" class="btn" data-t="backup">Sicherung</button>
       <button type="button" class="btn danger" data-t="delete">Tour löschen</button></div>`;
@@ -518,6 +650,9 @@ function station(el) {
 
 // ---------- Ereignisse ----------
 function wire(pane) {
+  pane.addEventListener('pointermove', profileCursor);
+  pane.addEventListener('pointerdown', profileCursor);
+  pane.addEventListener('pointerleave', () => cursor?.remove());
   pane.addEventListener('submit', (e) => {
     if (e.target.dataset.t !== 'places-form') return;
     e.preventDefault();
@@ -567,6 +702,13 @@ function wire(pane) {
       download(new Blob([tourGpx(current, line, await ctx.sampler.elevations(line))], { type: 'application/gpx+xml' }), `tour-${slug(current.name)}.gpx`);
     }
     if (t === 'backup') exportBackup(current);
+    if (t === 'offline') {
+      const line = tourLine(current.stations, current.segments);
+      const pts = line.length ? line : current.stations.map((x) => x.lngLat);
+      const lons = pts.map((p) => p[0]);
+      const lats = pts.map((p) => p[1]);
+      ctx.saveOffline([Math.min(...lons), Math.min(...lats), Math.max(...lons), Math.max(...lats)], `„${current.name}“`);
+    }
     if (t === 'mine') importMyTours();
     if (t === 'delete' && confirm(`Tour „${current.name}“ mit allen Fotos löschen?`)) {
       await store.deleteTour(current.id);
@@ -610,6 +752,10 @@ function wire(pane) {
       return persist();
     }
     if (el.dataset.t === 'note') current.note = el.value;
+    if (el.dataset.t === 'autophotos' && el.files?.length) {
+      const fb = Number(pane.querySelector('[data-t="fallback"]')?.value || 0);
+      return autoAssignPhotos([...el.files], fb);
+    }
 
     const st = station(el);
     if (st && el.dataset.s === 'name') st.name = el.value.trim() || st.name;
@@ -628,6 +774,12 @@ export default {
     ctx = c;
     wire(c.pane);
     window.addEventListener('ta:pin', (e) => pinStation(e.detail));
+    // Aufnahmeort antippen → Foto öffnen
+    c.map.on('click', 'tour-photos', (e) => {
+      const f = e.features[0]?.properties;
+      const st = current?.stations.find((x) => x.id === f?.station);
+      if (st) openLightbox(st, f.id);
+    });
     // Übersicht: Tour antippen öffnet sie.
     const openFromMap = (e) => {
       if (adding || current) return;

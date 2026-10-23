@@ -42,6 +42,7 @@ function overlaySources(data) {
     terrain: { ...dem, attribution: SOURCES.terrain.attribution },
     hillshade: dem,
     ways: { type: 'geojson', data: data.ways, attribution: SOURCES.trails.attribution },
+    bikeroutes: { type: 'geojson', data: data.bikeroutes },
     points: { type: 'geojson', data: data.points },
     selected: { type: 'geojson', data: data.selected }
   };
@@ -61,6 +62,37 @@ function overlayLayers({ hillshade, visibility }) {
     });
   }
   const isLift = ['has', 'aerialway'];
+  // Ausgeschilderte Radrouten (OSM-Relationen) unter den Wegen: breit und halbtransparent wie ein Textmarker.
+  const bikeColor = ['match', ['get', 'network'], ['icn', 'ncn'], '#1e5fd0', 'rcn', '#7b3fb5', 'lcn', '#16a39a', '#16a39a'];
+  layers.push(
+    {
+      id: 'bikeroutes',
+      type: 'line',
+      source: 'bikeroutes',
+      layout: { 'line-join': 'round', 'line-cap': 'round', ...vis('bikeroutes') },
+      paint: {
+        'line-color': ['case', ['==', ['get', 'route'], 'mtb'], '#c0661b', bikeColor],
+        'line-width': ['interpolate', ['linear'], ['zoom'], 10, 3, 16, 9],
+        'line-opacity': 0.45
+      }
+    },
+    {
+      id: 'bikeroute-labels',
+      type: 'symbol',
+      source: 'bikeroutes',
+      minzoom: 12,
+      filter: ['to-boolean', ['get', 'label']],
+      layout: {
+        'symbol-placement': 'line',
+        'symbol-spacing': 400,
+        'text-field': ['get', 'label'],
+        'text-font': ['Noto Sans Regular'],
+        'text-size': 12,
+        ...vis('bikeroutes')
+      },
+      paint: { 'text-color': ['case', ['==', ['get', 'route'], 'mtb'], '#8a4510', '#173f8a'], 'text-halo-color': '#ffffff', 'text-halo-width': 1.6 }
+    }
+  );
   layers.push(
     {
       id: 'ways-casing',

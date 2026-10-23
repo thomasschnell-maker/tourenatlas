@@ -1,16 +1,18 @@
 [
   {
     "id": "2026-sonthofen-oberjoch-gruentensee",
+    "version": 2,
     "name": "Sonthofen – Oberjoch – Jungholz – Grüntensee",
     "activity": "ebike",
-    "places": ["Sonthofen", "Bad Hindelang", "Oberjoch", "Unterjoch", "Jungholz", "Wertach", "Grüntensee", "Königssträßle", "Burgberg im Allgäu", "Sonthofen"],
-    "note": "E-Bike, 2 Akkus. Gedeutet: „kungholz“ = Jungholz (Tirol). Königssträßle: falls nicht gefunden, Station auf der Karte setzen."
+    "places": ["Sonthofen", "Bad Hindelang", "Oberjoch", "Unterjoch", "Jungholz", "Wertach", "Grüntensee", "Königssträßle|Königssträßle, Wertach|Königsträßle", "Burgberg im Allgäu", "Sonthofen"],
+    "note": "E-Bike, 2 Akkus. „kungholz“ = Jungholz (Tirol). Rückweg ab Wertach über das Königssträßle nach Burgberg/Sonthofen."
   },
   {
     "id": "2026-sonthofen-gunzesried-ofterschwanger-horn",
+    "version": 2,
     "name": "Sonthofen – Gunzesried – Ofterschwanger Horn",
     "activity": "ebike",
-    "places": ["Sonthofen", "Immenstadt im Allgäu", "Gunzesried", "Allgäuer Berghof", "Ofterschwanger Horn", "Ofterschwang", "Sonthofen"],
-    "note": "Gedeutet: „Innenstadt“ = Immenstadt, „Allgäuer Hof“ = Allgäuer Berghof (Ofterschwang), „Ofterschwanger Hütten“ = Ofterschwang. Offen: „atmummen“ (Ort fehlt noch). Aktivität E-Bike angenommen."
+    "places": ["Sonthofen", "Altmummen|Alt Mummen|Mummen", "Immenstadt im Allgäu", "Gunzesried", "Allgäuer Berghof", "Ofterschwanger Horn", "Ofterschwang", "Sonthofen"],
+    "note": "E-Bike. Über Alt Mummen nach Immenstadt, Gunzesried, Allgäuer Berghof, Ofterschwanger Horn, runter nach Ofterschwang, zurück nach Sonthofen."
   }
 ]
