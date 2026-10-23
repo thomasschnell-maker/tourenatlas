@@ -261,7 +261,9 @@ function setAdding(on) {
   adding = on;
   ctx.pane.querySelector('[data-t="add"]')?.classList.toggle('on', on);
   ctx.map.getCanvas().style.cursor = on ? 'crosshair' : '';
-  if (on) ctx.toast('Tippe auf die Karte, um eine Station zu setzen', { ttl: 0 });
+  // Beim Setzen Blatt einklappen, damit die Karte frei ist.
+  ctx.setSheetPeek?.(on);
+  if (on) ctx.toast('Auf die Karte tippen = Station setzen', { ttl: 5000 });
   else ctx.toast('');
 }
 

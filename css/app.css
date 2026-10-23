@@ -31,11 +31,13 @@
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; height: 100%; overflow: hidden; background: #10151a; color: var(--fg); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #10151a; color: var(--fg); font: 16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-tap-highlight-color: transparent; }
 #map { position: absolute; inset: 0; }
-button, select, input { font: inherit; color: inherit; }
+button, select, input, textarea { font: inherit; color: inherit; }
+/* iOS zoomt die Seite beim Antippen von Feldern unter 16 px – darum überall 16 px. */
+input, select, textarea { font-size: 16px !important; }
 a { color: var(--accent); }
-.muted { color: var(--muted); font-size: 12.5px; margin: 8px 0 0; }
+.muted { color: var(--muted); font-size: 14px; margin: 8px 0 0; }
 
 /* ---------- Suche & Statusmeldung ---------- */
 #search {
@@ -57,7 +59,7 @@ a { color: var(--accent); }
 #toast {
   position: absolute; top: calc(60px + var(--safe-t)); left: 50%; transform: translateX(-50%); z-index: 3;
   max-width: min(92vw, 520px); background: var(--bg); color: var(--fg); padding: 7px 14px; border-radius: 12px;
-  font-size: 13px; box-shadow: var(--shadow); display: flex; gap: 8px; align-items: center;
+  font-size: 14px; box-shadow: var(--shadow); display: flex; gap: 8px; align-items: center;
 }
 #toast[hidden] { display: none; }
 #toast.error { color: var(--warn); }
@@ -72,7 +74,7 @@ a { color: var(--accent); }
 }
 #tabbar button {
   flex: 1; border: 0; background: none; color: var(--muted); cursor: pointer;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 11px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 12px;
 }
 #tabbar svg { width: 24px; height: 24px; }
 #tabbar button[aria-pressed="true"] { color: var(--accent); }
@@ -80,12 +82,15 @@ a { color: var(--accent); }
 /* ---------- Blatt ---------- */
 #sheet {
   position: absolute; left: 0; right: 0; bottom: calc(var(--tabbar-h) + var(--safe-b)); z-index: 3;
-  max-height: 58vh; display: flex; flex-direction: column;
+  max-height: 52vh; display: flex; flex-direction: column;
   background: var(--bg); border-radius: 16px 16px 0 0; box-shadow: var(--shadow);
 }
 #sheet[hidden] { display: none; }
-#sheet header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 6px; }
-#sheet h2 { margin: 0; font-size: 17px; }
+#sheet-grip { display: block; width: 100%; height: 18px; border: 0; background: none; cursor: pointer; padding: 0; flex: none; }
+#sheet-grip::before { content: ""; display: block; width: 40px; height: 5px; border-radius: 3px; background: var(--line); margin: 7px auto 0; }
+#sheet header { display: flex; align-items: center; justify-content: space-between; padding: 2px 16px 6px; }
+#sheet h2 { margin: 0; font-size: 18px; cursor: pointer; }
+#sheet.peek #sheet-body { display: none; }
 #sheet-close { border: 0; background: var(--bg-soft); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
 #sheet-body { overflow: auto; padding: 4px 16px 16px; -webkit-overflow-scrolling: touch; }
 .pane { display: none; }
@@ -136,10 +141,10 @@ label.file input { display: block; margin-top: 4px; max-width: 100%; }
 #profile line.cursor { stroke: var(--fg); stroke-width: 1; vector-effect: non-scaling-stroke; }
 #profile text { font-size: 9px; fill: var(--muted); }
 
-.stats { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 8px 0 0; font-size: 14px; }
+.stats { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 8px 0 0; font-size: 15px; }
 .stats dt { color: var(--muted); }
 .stats dd { margin: 0; font-variant-numeric: tabular-nums; }
-.findings { list-style: none; padding: 0; margin: 8px 0 0; font-size: 13.5px; }
+.findings { list-style: none; padding: 0; margin: 8px 0 0; font-size: 15px; }
 .findings li { padding-left: 16px; position: relative; margin: 3px 0; }
 .findings li::before { content: ""; position: absolute; left: 2px; top: 7px; width: 8px; height: 8px; border-radius: 50%; }
 .findings li.ok::before { background: var(--ok); }
@@ -166,7 +171,8 @@ table.wx th { color: var(--muted); font-weight: 600; }
 .ta-ctrl button { font-size: 12px; font-weight: 700; color: #1d2329; }
 .ta-ctrl button[aria-pressed="true"] { color: #0f6e5a; }
 .maplibregl-popup-content { font-size: 13px; color: #1d2329; }
-.maplibregl-ctrl-attrib-inner { font-size: 11px; }
+.maplibregl-ctrl-attrib-inner { font-size: 12px; }
+.maplibregl-popup-content { font-size: 15px !important; padding: 12px 14px; }
 
 /* ---------- Grosse Bildschirme: Blatt als Karte links, Tab-Leiste als Pille ---------- */
 @media (min-width: 900px) {
@@ -180,7 +186,8 @@ table.wx th { color: var(--muted); font-weight: 600; }
 .btn.primary { background: var(--accent); color: #fff; }
 .btn.primary.on { background: #d6007e; border-color: #d6007e; }
 .btn.wide { width: 100%; margin-top: 10px; padding: 10px; }
-.btn.sm { padding: 4px 10px; font-size: 13px; }
+.btn.sm { padding: 6px 12px; font-size: 15px; }
+.st-actions .danger { margin-left: auto; }
 .btn.danger { border-color: var(--warn); color: var(--warn); }
 .btn[disabled] { opacity: 0.4; }
 label.btn { display: inline-flex; align-items: center; }

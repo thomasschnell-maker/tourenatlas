@@ -80,7 +80,7 @@ map.addControl(new maplibregl.GeolocateControl({ trackUserLocation: false }), 't
 map.addControl(new maplibregl.ScaleControl({ unit: 'metric', maxWidth: 120 }), 'bottom-left');
 
 async function applyStyle() {
-  const opts = { terrain: state.terrain, exaggeration: state.exaggeration, visibility: state.visibility };
+  const opts = { terrain: state.terrain, exaggeration: state.exaggeration, visibility: state.visibility, labelScale: isPhone ? 1.3 : 1.1 };
   try {
     let style;
     if (state.base === 'protomaps') style = protomapsStyle(state.pmtilesUrl, state.data, opts);
@@ -154,6 +154,7 @@ const cells = new Map(); // key → { ways, peaks } | 'pending'
 const MAX_CELLS_CACHED = 80;
 let loadTimer = null;
 let loadGen = 0;
+let zoomHintShown = false;
 
 map.on('moveend', scheduleLoad);
 
@@ -180,7 +181,9 @@ function rebuildData() {
 async function loadWays() {
   const t = SOURCES.trails;
   if (map.getZoom() < t.minZoom) {
-    toast(`Für Bergwege näher heranzoomen (Zoom ≥ ${t.minZoom})`);
+    // Hinweis nur einmal – sonst verdeckt er bei jeder Bewegung die Karte.
+    if (!zoomHintShown) toast('Für farbige Bergwege näher heranzoomen', { ttl: 3000 });
+    zoomHintShown = true;
     return;
   }
   const b = map.getBounds();
@@ -262,9 +265,16 @@ function openPane(name, title) {
   document.querySelectorAll('#tabbar button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.tab === name)));
   $('sheet-title').textContent = title || pane.dataset.title;
   $('sheet').hidden = false;
+  setSheetPeek(false);
   $('sheet-body').scrollTop = 0;
   activePane = name;
   if (prev !== name) PACKAGES.find((p) => p.id === name)?.onActivate?.();
+}
+
+/** Blatt auf die Kopfzeile einklappen (Karte frei) oder wieder aufklappen. */
+function setSheetPeek(peek) {
+  $('sheet').classList.toggle('peek', peek);
+  $('sheet-grip').setAttribute('aria-expanded', String(!peek));
 }
 
 function closeSheet() {
@@ -286,7 +296,7 @@ for (const p of PACKAGES) {
   btn.dataset.tab = p.id;
   btn.innerHTML = `${p.icon}<span>${esc(p.title)}</span>`;
   $('tabbar').insertBefore(btn, $('tabbar').querySelector('[data-tab="info"]'));
-  p.mount({ map, pane, sampler, toast, esc, openPane });
+  p.mount({ map, pane, sampler, toast, esc, openPane, setSheetPeek });
 }
 
 initSearch({ map, toast, esc });
@@ -298,6 +308,8 @@ $('tabbar').addEventListener('click', (e) => {
   else openPane(btn.dataset.tab);
 });
 $('sheet-close').addEventListener('click', closeSheet);
+$('sheet-grip').addEventListener('click', () => setSheetPeek(!$('sheet').classList.contains('peek')));
+$('sheet-title').addEventListener('click', () => setSheetPeek(!$('sheet').classList.contains('peek')));
 
 // ---------- Interaktion auf der Karte ----------
 for (const layer of ['ways', 'lifts', 'peaks', 'huts']) {
