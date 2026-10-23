@@ -57,9 +57,9 @@ Unten liegt eine Tab-Leiste. Jeder Tab öffnet ein Blatt mit genau einem Thema, 
 
 | Tab | Inhalt |
 |---|---|
-| **Karte** | Grundkarte wählen (OpenFreeMap, Luftbild, Offline) und Offline-Datei laden |
-| **Ebenen** | 3D an/aus, Überhöhung, Schummerung, Bergwege, Lifte, Gipfel; Legende |
+| **Karte** | Grundkarte (OpenFreeMap, Luftbild, Offline), Ebenen (3D, Überhöhung, Schummerung, Bergwege, Lifte, Gipfel), Legende |
 | **Touren** | Touren-Paket: Touren mit Stationen, Routing, Fotos mit 3D-Blick |
+| **Plakat** | Plakat-Paket: Ausschnitt im Papierformat, Export in Druckauflösung |
 | **Wetter** | Wetter-Paket: Punktvorhersage, Warnsignale, Regenradar |
 | **Info** | Datenqualität des Ausschnitts, alle Quellen mit Status und Lizenz |
 
@@ -82,6 +82,13 @@ Erweiterungen hängen sich als Paket ein: eine Datei in `js/packages/` anlegen u
 - **Kennzahlen:** Länge, Auf- und Abstieg aus dem DEM. Die Gehzeit folgt DIN 33466 wie beim DAV: 4 km/h, 300 Hm/h aufwärts, 500 Hm/h abwärts; der grössere Wert plus die Hälfte des kleineren.
 - **Fotos je Station:** Beim Hochladen wird der aktuelle 3D-Blick (Mitte, Zoom, Neigung, Richtung) mit dem Foto gespeichert. „3D-Blick“ in der Fotoansicht fliegt genau dorthin zurück. Fotos werden auf höchstens 1600 px verkleinert, die EXIF-Drehung wird übernommen.
 - **Speicher:** IndexedDB, nur auf dem Gerät. Safari löscht Website-Daten nach 7 Tagen ohne Besuch, ausser die App liegt auf dem Home-Bildschirm. Darum gibt es „Sicherung“, eine JSON-Datei mit Fotos, die sich wieder laden lässt, und den Export als GPX.
+
+**Plakat-Paket** (`js/packages/poster*.js`):
+- **Rahmen:** Ein Rahmen im Seitenverhältnis des Papiers (A4 bis A0, hoch oder quer) liegt über der Karte. Was darin zu sehen ist, kommt aufs Plakat, auch eine 3D-Schrägansicht, inklusive Touren und Stationen.
+- **Rendering:** Die Karte wird unsichtbar in Druckauflösung neu gerendert, Beschriftungen papiergerecht mit 1 Kartenpixel = 0,25 mm (≈ 9 pt). Dazu kommen Titel, Untertitel, Legende, Nordpfeil und alle Pflicht-Quellenangaben.
+- **Massstab** (Zahl und Balken) nur in der Draufsicht. Bei Neigung steht „kein einheitlicher Massstab“ auf dem Plakat.
+- **Auflösung:** höchstens 300 dpi, begrenzt durch Bildpixel (iOS ca. 16 MP, Desktop 48 MP) und die WebGL-Grösse des Geräts (höchstens 8192 px). Die App zeigt die erreichbare dpi vorab. Rendert das Gerät weniger, nennt sie die effektive dpi.
+- **Luftbild-Plakate:** Bayern, basemap.at und Sentinel-2 2016 stehen unter CC BY 4.0 und dürfen mit Namensnennung gedruckt werden. Die Namensnennung druckt die App automatisch mit.
 
 **Wetter-Paket** (`js/packages/weather*.js`):
 - **Quelle:** Open-Meteo mit dem Modell DWD ICON (ICON-D2 mit 2 km im Alpenraum). Daten unter CC BY 4.0, für nicht-kommerzielle Nutzung frei.
@@ -115,7 +122,8 @@ js/styles.js        baut den MapLibre-Stil je Grundkarte + Overlays + 3D
 js/app.js           Karte, Menü, Laden, Interaktion
 js/cells.js         Zellenraster für das Nachladen der Wege
 js/search.js        Ortssuche (Nominatim)
-js/packages/        Pakete (Touren, Wetter)
+js/packages/        Pakete (Touren, Plakat, Wetter)
+js/textscale.js     Lesbarkeit: Beschriftungen skalieren
 js/overpass.js      OSM-Abfrage und Antwortprüfung
 js/dem.js           Höhenabfrage direkt aus den Terrarium-Kacheln
 js/validate.js      Kreuzvalidierung und Qualitätskennzahlen

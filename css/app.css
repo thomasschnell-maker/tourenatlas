@@ -215,3 +215,10 @@ button.link { border: 0; background: none; color: var(--accent); padding: 0; cur
 .lb-bar span { flex: 1; }
 .lb-bar .btn { color: #fff; border-color: rgba(255, 255, 255, 0.6); }
 #search-results .attr { font-size: 11px; }
+
+/* ---------- Plakat ---------- */
+#poster-frame { position: absolute; z-index: 1; pointer-events: none; border: 2px dashed #ffffff; outline: 1px solid rgba(0, 0, 0, 0.6); box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.35); border-radius: 2px; }
+#poster-frame[hidden] { display: none; }
+.cards-5 { grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.card.mini { padding: 6px 2px; }
+.card.mini small { font-size: 10px; }
