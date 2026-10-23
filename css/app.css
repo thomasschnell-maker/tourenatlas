@@ -260,3 +260,7 @@ button.link { border: 0; background: none; color: var(--accent); padding: 0; cur
 .colors i { display: block; width: 26px; height: 26px; border-radius: 50%; border: 3px solid transparent; }
 .colors input:checked + i { border-color: var(--fg); }
 .colors .btn { margin-left: auto; }
+.row.ebike { flex-wrap: wrap; gap: 8px 16px; font-size: 15px; }
+.row.ebike label { display: flex; align-items: center; gap: 6px; }
+.row.ebike input { width: 70px; flex: none; }
+.row.ebike select { flex: none; }

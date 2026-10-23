@@ -48,8 +48,18 @@ function toast(text, { busy = false, error = false, ttl = busy ? 0 : 4000 } = {}
 // ---------- Karte ----------
 if (!window.maplibregl) throw new Error('MapLibre GL konnte nicht geladen werden');
 
+// Handy-Akku: 3D-Rendering kostet pro Pixel. Ab 2× Pixeldichte sieht man kaum Unterschied,
+// 3× (iPhone) bedeutet aber 2,25× so viele Pixel. Energiesparmodus: 1,25×, ohne Schummerung.
+let ecoMode = false;
+try {
+  ecoMode = localStorage.getItem('ta.eco') === '1';
+} catch {}
+const pixelRatio = () => Math.min(window.devicePixelRatio || 1, ecoMode ? 1.25 : 2);
+
 const map = new maplibregl.Map({
   container: 'map',
+  pixelRatio: pixelRatio(),
+  fadeDuration: 150,
   style: { version: 8, sources: {}, layers: [{ id: 'bg', type: 'background', paint: { 'background-color': '#dde3e6' } }] },
   ...START_VIEW,
   maxPitch: 85,
@@ -161,8 +171,11 @@ map.on('moveend', scheduleLoad);
 
 function scheduleLoad() {
   clearTimeout(loadTimer);
+  // Im Hintergrund (App nicht sichtbar) nichts nachladen.
+  if (document.hidden) return;
   loadTimer = setTimeout(loadWays, 500);
 }
+document.addEventListener('visibilitychange', () => !document.hidden && scheduleLoad());
 
 /** Alle geladenen Zellen zu einem Datensatz zusammenführen (Wege an Zellgrenzen nur einmal). */
 function rebuildData() {
@@ -194,7 +207,9 @@ async function loadWays() {
   }
   const b = map.getBounds();
   const c = map.getCenter();
-  const wanted = cellsForView([c.lng, c.lat], [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()], t.cellDeg, t.radiusKm, t.maxCells);
+  // Handy: weniger Zellen je Bewegung (Akku, Datenvolumen); Energiesparmodus noch weniger.
+  const maxCells = ecoMode ? 6 : isPhone ? 9 : t.maxCells;
+  const wanted = cellsForView([c.lng, c.lat], [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()], t.cellDeg, t.radiusKm, maxCells);
   const todo = wanted.filter((k) => !cells.has(k));
   if (!todo.length) return;
 
@@ -486,6 +501,23 @@ document.querySelectorAll('input[name="base"]').forEach((r) => {
 });
 
 $('terrain').addEventListener('change', (e) => setTerrain(e.target.checked));
+
+function applyEco(on) {
+  ecoMode = on;
+  try {
+    localStorage.setItem('ta.eco', on ? '1' : '0');
+  } catch {}
+  map.setPixelRatio(pixelRatio());
+  state.visibility.hillshade = !on;
+  $('eco').checked = on;
+  document.querySelector('input[data-layer="hillshade"]').checked = !on;
+  if (map.getLayer('hillshade')) map.setLayoutProperty('hillshade', 'visibility', on ? 'none' : 'visible');
+}
+$('eco').addEventListener('change', (e) => {
+  applyEco(e.target.checked);
+  toast(e.target.checked ? 'Energiesparmodus: geringere Pixeldichte, ohne Schummerung, weniger Nachladen' : 'Energiesparmodus aus');
+});
+if (ecoMode) applyEco(true);
 
 $('exaggeration').addEventListener('input', (e) => {
   state.exaggeration = Number(e.target.value);

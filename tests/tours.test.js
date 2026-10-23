@@ -111,3 +111,25 @@ test('stationDistances: vorwärts entlang des Profils, Rundtour', async () => {
   const st = [{ lngLat: [10, 47] }, { lngLat: [10.02, 47] }, { lngLat: [10, 47] }];
   assert.deepEqual(stationDistances(st, profile), [0, 2000, 4000]);
 });
+
+test('Akku: Unterstützungsstufe, persönliche Kalibrierung, Plausibilität', async () => {
+  const { batteryWh, calibrateEbike, implausibleClimb, batteryCurve } = await import('../js/packages/tours-core.js');
+  assert.equal(batteryWh(80000, 1300), 805);
+  assert.ok(Math.abs(batteryWh(80000, 1300, { assist: 'eco' }) - 805 * 0.62) < 1e-9);
+  // Tour 1: geschätzt 805 Wh (Tour-Modus), tatsächlich 2 Akkus à 625 = 1250 Wh → Faktor 1,55
+  const tours = [
+    { activity: 'ebike', actualBatteries: 2, batteryCapacityWh: 625, summary: { length: 80000, up: 1300 } },
+    { activity: 'ebike', actualBatteries: 1, batteryCapacityWh: 625, summary: { length: 40000, up: 650 } }, // 402,5 → 1,55
+    { activity: 'ebike', actualBatteries: 0.2, batteryCapacityWh: 625, summary: { length: 80000, up: 1300 } }, // Ausreisser 0,155
+    { activity: 'hike', actualBatteries: 5, summary: { length: 1, up: 1 } }
+  ];
+  const c = calibrateEbike(tours);
+  assert.equal(c.n, 3);
+  assert.ok(Math.abs(c.factor - 1250 / 805) < 1e-9, `factor ${c.factor}`);
+  assert.deepEqual(calibrateEbike([]), { factor: 1, n: 0 });
+  assert.equal(implausibleClimb(128500, 23851, 'ebike'), true);
+  assert.equal(implausibleClimb(80000, 1300, 'ebike'), false);
+  assert.equal(implausibleClimb(10000, 1500, 'hike'), false);
+  const prof = [{ dist: 0, ele: 0 }, { dist: 100000, ele: 0 }];
+  assert.equal(Math.round(batteryCurve(prof, 625, 5, 2).total), 1200);
+});

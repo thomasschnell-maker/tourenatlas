@@ -4,11 +4,27 @@
 
 import { checkPmtilesHeader } from './validate.js';
 
-const protocol = new pmtiles.Protocol();
-maplibregl.addProtocol('pmtiles', protocol.tile);
+// Ladezeit: PMTiles + Protomaps-Stil (~75 kB) erst laden, wenn eine Offline-Datei geöffnet wird.
+let protocol = null;
+const loadScript = (src) =>
+  new Promise((resolve, reject) => {
+    const el = document.createElement('script');
+    el.src = src;
+    el.onload = resolve;
+    el.onerror = () => reject(new Error(`${src} nicht ladbar`));
+    document.head.appendChild(el);
+  });
+
+async function ensureLibs() {
+  if (protocol) return;
+  await Promise.all([loadScript('vendor/pmtiles/pmtiles.js'), loadScript('vendor/protomaps-basemaps/basemaps.js')]);
+  protocol = new pmtiles.Protocol();
+  maplibregl.addProtocol('pmtiles', protocol.tile);
+}
 
 /** Registriert eine lokale Datei oder URL und liefert { url, findings, usable, info }. */
 export async function openPmtiles(input) {
+  await ensureLibs();
   const archive = typeof input === 'string' ? new pmtiles.PMTiles(input) : new pmtiles.PMTiles(new pmtiles.FileSource(input));
   const header = await archive.getHeader();
   const meta = await archive.getMetadata().catch(() => ({}));

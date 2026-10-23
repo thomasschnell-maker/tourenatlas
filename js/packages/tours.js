@@ -2,7 +2,7 @@
 // Touren-Paket: Touren mit mehreren Stationen, Routing entlang echter Wege,
 // Fotos je Station mit gespeichertem 3D-Blick. Daten bleiben lokal auf dem Gerät.
 
-import { ACTIVITIES, ROUTER, TOUR_COLORS, assignPhotos, batteryCurve, brouterUrl, captureView, formatDuration, newStation, newTour, nextColor, parseBrouter, parseGpx, stationDistances, stationsFromTrack, tourGpx, tourLine, tourStats, viewFromPhoto } from './tours-core.js';
+import { ACTIVITIES, ASSIST, ROUTER, TOUR_COLORS, assignPhotos, calibrateEbike, implausibleClimb, batteryCurve, brouterUrl, captureView, formatDuration, newStation, newTour, nextColor, parseBrouter, parseGpx, stationDistances, stationsFromTrack, tourGpx, tourLine, tourStats, viewFromPhoto } from './tours-core.js';
 import { readExif } from './exif.js';
 import { blobToDataUrl, compressImage, dataUrlToBlob, requestPersistence, store } from './tours-store.js';
 import { geocode, splitPlaces } from '../search.js';
@@ -394,6 +394,12 @@ async function openLightbox(station, photoId) {
   document.body.appendChild(box);
 }
 
+// ---------- Akku-Schätzung: Stufe × persönlicher Faktor ----------
+function batteryScale(t) {
+  const cal = calibrateEbike(tours);
+  return { scale: (ASSIST[t.assist || 'tour']?.f ?? 1) * cal.factor, cal };
+}
+
 // ---------- Höhenprofil + Akkuverlauf ----------
 const PW = 300;
 const PH = 120;
@@ -416,7 +422,7 @@ function profileSvg(t) {
   let legend = `<span><i class="sw-ele"></i>Höhe ${Math.round(stats.min)}–${Math.round(stats.max)} m</span>`;
   if ((t.activity || 'hike') === 'ebike') {
     const cap = t.batteryCapacityWh || 625;
-    const c = batteryCurve(stats.profile, cap);
+    const c = batteryCurve(stats.profile, cap, 5, batteryScale(t).scale);
     const by = (pct) => (8 + (1 - pct / 100) * (PH - 22)).toFixed(1);
     const step = Math.max(1, Math.floor(c.points.length / 300));
     const bl = c.points.filter((_, i) => i % step === 0 || i === c.points.length - 1).map((p, i) => `${i ? 'L' : 'M'}${x(p.dist)},${by(p.pct)}`).join('');
@@ -461,6 +467,15 @@ async function importMyTours() {
     const t = tours.find((x) => x.templateId === v.id);
     return !t || (t.templateVersion || 1) < (v.version || 1);
   });
+  // Reine Zusatzangaben (z. B. tatsächlich verbrauchte Akkus) ohne Neuaufbau ergänzen – Fotos bleiben erhalten.
+  for (const v of list) {
+    const t = tours.find((x) => x.templateId === v.id);
+    if (t && v.actualBatteries && !t.actualBatteries) {
+      t.actualBatteries = v.actualBatteries;
+      if (v.batteryCapacityWh) t.batteryCapacityWh = v.batteryCapacityWh;
+      await store.putTour(t);
+    }
+  }
   if (!todo.length) return ctx.toast('Alle Touren aus der Liste sind aktuell übernommen');
   requestPersistence();
   for (const v of todo) {
@@ -474,7 +489,9 @@ async function importMyTours() {
       group: v.group || '',
       variant: v.variant || '',
       activity: v.activity || 'hike',
-      note: v.note || ''
+      note: v.note || '',
+      ...(v.actualBatteries ? { actualBatteries: v.actualBatteries } : {}),
+      ...(v.batteryCapacityWh ? { batteryCapacityWh: v.batteryCapacityWh } : {})
     };
     if (v.date) t.date = v.date;
     await store.putTour(t);
@@ -599,7 +616,7 @@ function render() {
            <dt>${(t.activity || 'hike') === 'hike' ? 'Gehzeit (DIN 33466)' : 'Fahrzeit (Faustregel)'}</dt><dd>${formatDuration(stats.timeH)}</dd>
            ${
              stats.batteryWh != null
-               ? `<dt>Akku (Faustregel)</dt><dd>~${Math.round(stats.batteryWh / 10) * 10} Wh ≈ ${(stats.batteryWh / (t.batteryCapacityWh || 625)).toLocaleString('de-DE', { maximumFractionDigits: 1 })} Akkus à
+               ? `<dt>Akku (${batteryScale(t).cal.n ? `kalibriert aus ${batteryScale(t).cal.n} Fahrt${batteryScale(t).cal.n > 1 ? 'en' : ''}` : 'Faustregel'})</dt><dd>~${Math.round((stats.batteryWh * batteryScale(t).scale) / 10) * 10} Wh ≈ ${((stats.batteryWh * batteryScale(t).scale) / (t.batteryCapacityWh || 625)).toLocaleString('de-DE', { maximumFractionDigits: 1 })} Akkus à
                   <select data-t="battery" aria-label="Akkugrösse">${[400, 500, 625, 750, 800]
                     .map((w) => `<option value="${w}" ${w === (t.batteryCapacityWh || 625) ? 'selected' : ''}>${w} Wh</option>`)
                     .join('')}</select></dd>`
@@ -608,6 +625,16 @@ function render() {
            <dt>Höhe</dt><dd>${Math.round(stats.min ?? 0)}–${Math.round(stats.max ?? 0)} m</dd></dl>`
         : ''
     }
+    ${
+      (t.activity || 'hike') === 'ebike'
+        ? `<div class="row ebike">
+            <label>Stufe <select data-t="assist">${Object.entries(ASSIST).map(([k, a]) => `<option value="${k}" ${(t.assist || 'tour') === k ? 'selected' : ''}>${a.label}</option>`).join('')}</select></label>
+            <label>Tatsächlich <input type="number" min="0" max="9" step="0.1" inputmode="decimal" data-t="actual" value="${t.actualBatteries ?? ''}" placeholder="–"> Akkus</label>
+          </div>
+          <p class="muted">Trag nach der Fahrt ein, wie viele Akkus du wirklich gebraucht hast – die Schätzung lernt daraus (Median über alle Fahrten${batteryScale(t).cal.n ? `, dein Faktor: ${batteryScale(t).cal.factor.toFixed(2)}` : ''}).</p>`
+        : ''
+    }
+    ${stats && implausibleClimb(stats.length, stats.up, t.activity || 'hike') ? `<ul class="findings"><li class="warn">${Math.round(stats.up / (stats.length / 1000))} Hm/km sind unrealistisch – vermutlich Luftlinie über Gelände; Route prüfen (Wegen folgen) oder Zwischenstationen setzen</li></ul>` : ''}
     ${stats ? profileSvg(t) : ''}
     ${failed ? `<ul class="findings"><li class="warn">${failed} Abschnitt(e) nur Luftlinie – Wegführung nicht geprüft</li></ul>` : ''}
     ${t.segments.some((x) => x?.recorded) ? '<ul class="findings"><li class="ok">Aufgezeichnete GPX-Spur – Strecke gemessen, nicht berechnet</li></ul>' : ''}
@@ -810,6 +837,17 @@ function wire(pane) {
       } catch {}
       // Anderes Routing-Profil (Wanderwege ↔ Radwege): Strecke neu berechnen.
       return current.mode === 'route' ? rebuildSegments() : persist();
+    }
+    if (el.dataset.t === 'assist') {
+      current.assist = el.value;
+      await store.putTour(current);
+      return render();
+    }
+    if (el.dataset.t === 'actual') {
+      const v = Number(String(el.value).replace(',', '.'));
+      current.actualBatteries = Number.isFinite(v) && v > 0 ? v : null;
+      await store.putTour(current);
+      return render();
     }
     if (el.dataset.t === 'battery') {
       current.batteryCapacityWh = Number(el.value);
