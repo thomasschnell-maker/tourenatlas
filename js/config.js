@@ -60,8 +60,12 @@ export const SOURCES = {
     licenseUrl: 'https://www.openstreetmap.org/copyright',
     attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap-Mitwirkende</a>',
     minZoom: 12,
-    // Grösste Abfragefläche (km²) – schützt die öffentlichen Overpass-Server.
-    maxAreaKm2: 300
+    // Nachladen in festen Zellen (~3 × 3,3 km im Allgäu): kleine Abfragen bleiben unter den Zeitlimits.
+    cellDeg: [0.04, 0.03],
+    radiusKm: 7,          // nur Zellen bis zu diesem Abstand von der Bildmitte
+    maxCells: 16,         // pro Kartenbewegung
+    concurrency: 2,       // gleichzeitige Abfragen (Fairness gegenüber öffentlichen Servern)
+    timeoutMs: 30000
   },
   imagery: {
     id: 'imagery',

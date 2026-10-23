@@ -2,16 +2,18 @@
 import { REGION, SOURCES, SAC_SCALE, START_VIEW, VALIDATION } from './config.js';
 import { DemSampler } from './dem.js';
 import { fetchOverpass } from './overpass.js';
-import { bboxAreaKm2 } from './geo.js';
+import { cellBbox, cellsForView } from './cells.js';
 import { profileWay, qualitySummary, validatePeaks } from './validate.js';
 import { aerialStyle, openFreeMapStyle, protomapsStyle } from './styles.js';
 import { openPmtiles } from './offline.js';
+import { PACKAGES } from './packages/index.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const fmtM = (v) => (v == null ? '–' : `${Math.round(v).toLocaleString('de-DE')} m`);
 const fmtKm = (v) => `${(v / 1000).toLocaleString('de-DE', { maximumFractionDigits: 2 })} km`;
 const EMPTY = { type: 'FeatureCollection', features: [] };
+const isPhone = window.matchMedia('(max-width: 899px)').matches;
 
 const sampler = new DemSampler({ template: SOURCES.terrain.tiles[0], zoom: VALIDATION.demZoom });
 
@@ -26,6 +28,21 @@ const state = {
 };
 const sourceState = { openfreemap: 'idle', protomaps: 'idle', terrain: 'idle', trails: 'idle', imagery: 'idle' };
 
+// ---------- Statusmeldung ----------
+let toastTimer = null;
+function toast(text, { busy = false, error = false, ttl = busy ? 0 : 4000 } = {}) {
+  const el = $('toast');
+  clearTimeout(toastTimer);
+  if (!text) {
+    el.hidden = true;
+    return;
+  }
+  el.textContent = text;
+  el.className = `${busy ? 'busy' : ''} ${error ? 'error' : ''}`;
+  el.hidden = false;
+  if (ttl) toastTimer = setTimeout(() => (el.hidden = true), ttl);
+}
+
 // ---------- Karte ----------
 if (!window.maplibregl) throw new Error('MapLibre GL konnte nicht geladen werden');
 
@@ -38,10 +55,28 @@ const map = new maplibregl.Map({
   attributionControl: false
 });
 
-map.addControl(new maplibregl.AttributionControl({ compact: false }), 'bottom-right');
+/** Eigene Knöpfe an der Karte: zurück ins Allgäu, 3D an/aus. */
+class AtlasControl {
+  onAdd() {
+    const el = document.createElement('div');
+    el.className = 'maplibregl-ctrl maplibregl-ctrl-group ta-ctrl';
+    el.innerHTML = '<button type="button" data-c="home" title="Zurück ins Allgäu">⌂</button><button type="button" data-c="3d" title="3D an/aus" aria-pressed="true">3D</button>';
+    el.querySelector('[data-c="home"]').addEventListener('click', () => map.flyTo({ ...START_VIEW, duration: 2500, essential: true }));
+    el.querySelector('[data-c="3d"]').addEventListener('click', () => setTerrain(!state.terrain));
+    this.el = el;
+    return el;
+  }
+  onRemove() {
+    this.el.remove();
+  }
+}
+
+// Smartphone: Quellenangabe kompakt (ⓘ), vollständig unter Info.
+map.addControl(new maplibregl.AttributionControl({ compact: isPhone }), 'bottom-right');
 map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
+map.addControl(new AtlasControl(), 'top-right');
 map.addControl(new maplibregl.GeolocateControl({ trackUserLocation: false }), 'top-right');
-map.addControl(new maplibregl.ScaleControl({ unit: 'metric', maxWidth: 140 }), 'bottom-left');
+map.addControl(new maplibregl.ScaleControl({ unit: 'metric', maxWidth: 120 }), 'bottom-left');
 
 async function applyStyle() {
   const opts = { terrain: state.terrain, exaggeration: state.exaggeration, visibility: state.visibility };
@@ -51,16 +86,26 @@ async function applyStyle() {
     else if (state.base === 'aerial') style = await aerialStyle(state.data, opts);
     else style = await openFreeMapStyle(state.data, opts);
     map.setStyle(style, { diff: false });
-    if (state.base !== 'aerial') setSourceState(state.base, 'idle');
   } catch (err) {
     const id = state.base === 'protomaps' ? 'protomaps' : 'openfreemap';
     setSourceState(id, 'err', err.message);
-    setStatus(`Grundkarte konnte nicht geladen werden: ${err.message}`, true);
+    toast(`Grundkarte konnte nicht geladen werden: ${err.message}`, { error: true, ttl: 0 });
   }
 }
 
+map.on('style.load', () => {
+  for (const p of PACKAGES) p.onStyle?.(map);
+});
 applyStyle();
 map.once('style.load', scheduleLoad);
+
+function setTerrain(on) {
+  state.terrain = on;
+  $('terrain').checked = on;
+  document.querySelector('.ta-ctrl [data-c="3d"]')?.setAttribute('aria-pressed', String(on));
+  map.setTerrain(on ? { source: 'terrain', exaggeration: state.exaggeration } : null);
+  map.easeTo({ pitch: on ? Math.max(map.getPitch(), 55) : 0, duration: 800 });
+}
 
 // ---------- Quellenstatus ----------
 const SOURCE_OF = (id) => {
@@ -103,78 +148,91 @@ function renderSources(changed, detail) {
     .join('');
 }
 
-// ---------- OSM-Wege live (Overpass) ----------
-let loadedBbox = null;
+// ---------- OSM-Wege live (Overpass, in Zellen) ----------
+const cells = new Map(); // key → { ways, peaks } | 'pending'
+const MAX_CELLS_CACHED = 80;
 let loadTimer = null;
-let inflight = null;
+let loadGen = 0;
 
 map.on('moveend', scheduleLoad);
 
 function scheduleLoad() {
   clearTimeout(loadTimer);
-  loadTimer = setTimeout(loadWays, 600);
+  loadTimer = setTimeout(loadWays, 500);
 }
 
-/** Abfragefläche: sichtbarer Bereich, bei steiler Neigung auf maxAreaKm2 um die Kartenmitte begrenzt. */
-function queryBbox() {
-  const b = map.getBounds();
-  let bbox = [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()];
-  const max = SOURCES.trails.maxAreaKm2;
-  if (bboxAreaKm2(bbox) > max) {
-    const c = map.getCenter();
-    const halfKm = Math.sqrt(max) / 2;
-    const dLat = halfKm / 111.32;
-    const dLon = halfKm / (111.32 * Math.cos((c.lat * Math.PI) / 180));
-    bbox = [c.lng - dLon, c.lat - dLat, c.lng + dLon, c.lat + dLat];
+/** Alle geladenen Zellen zu einem Datensatz zusammenführen (Wege an Zellgrenzen nur einmal). */
+function rebuildData() {
+  const ways = new Map();
+  const points = new Map();
+  for (const c of cells.values()) {
+    if (c === 'pending') continue;
+    for (const f of c.ways.features) ways.set(f.properties.osm_id, f);
+    for (const f of c.peaks.features) points.set(f.properties.osm_id, f);
   }
-  return bbox;
+  state.data.ways = { type: 'FeatureCollection', features: [...ways.values()] };
+  state.data.points = { type: 'FeatureCollection', features: [...points.values()] };
+  map.getSource('ways')?.setData(state.data.ways);
+  map.getSource('points')?.setData(state.data.points);
 }
-
-const contains = (outer, inner) => outer && inner[0] >= outer[0] && inner[1] >= outer[1] && inner[2] <= outer[2] && inner[3] <= outer[3];
 
 async function loadWays() {
-  if (map.getZoom() < SOURCES.trails.minZoom) {
-    setStatus(`Für Wege-Details (SAC-Skala, Lifte, Hütten) näher heranzoomen (Zoom ≥ ${SOURCES.trails.minZoom}).`);
+  const t = SOURCES.trails;
+  if (map.getZoom() < t.minZoom) {
+    toast(`Für Bergwege näher heranzoomen (Zoom ≥ ${t.minZoom})`);
     return;
   }
-  const view = queryBbox();
-  if (contains(loadedBbox, view)) return;
-  // 20 % Puffer, damit kleine Verschiebungen keine neue Abfrage auslösen.
-  const padX = (view[2] - view[0]) * 0.2;
-  const padY = (view[3] - view[1]) * 0.2;
-  const bbox = [view[0] - padX, view[1] - padY, view[2] + padX, view[3] + padY];
+  const b = map.getBounds();
+  const c = map.getCenter();
+  const wanted = cellsForView([c.lng, c.lat], [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()], t.cellDeg, t.radiusKm, t.maxCells);
+  const todo = wanted.filter((k) => !cells.has(k));
+  if (!todo.length) return;
 
-  inflight?.abort();
-  inflight = new AbortController();
-  setStatus('Lade OSM-Wege …');
-  setSourceState('trails', 'idle');
-  try {
-    const res = await fetchOverpass(bbox, SOURCES.trails.endpoints, inflight.signal);
-    loadedBbox = bbox;
-    state.data.ways = res.ways;
-    state.data.points = res.peaks;
-    map.getSource('ways')?.setData(res.ways);
-    map.getSource('points')?.setData(res.peaks);
-    setSourceState('trails', 'ok', `Server: ${res.endpoint}`);
-    const base = res.meta.osmBase ? new Date(res.meta.osmBase).toLocaleString('de-DE') : 'unbekannt';
-    setStatus(`OSM-Stand ${base}` + (res.meta.dropped ? ` · ${res.meta.dropped} defekte Geometrien verworfen` : ''));
-    renderQuality();
-    await validatePeaks(res.peaks, sampler);
-    if (state.data.points === res.peaks) {
-      map.getSource('points')?.setData(res.peaks);
-      renderQuality();
+  const gen = ++loadGen;
+  let done = 0;
+  let failed = 0;
+  let lastErr = null;
+  let osmBase = null;
+  toast(`Lade Bergwege … 0/${todo.length}`, { busy: true });
+
+  const worker = async () => {
+    while (todo.length && gen === loadGen) {
+      const key = todo.shift();
+      cells.set(key, 'pending');
+      try {
+        const res = await fetchOverpass(cellBbox(key, t.cellDeg), t.endpoints, undefined, t.timeoutMs);
+        cells.set(key, { ways: res.ways, peaks: res.peaks });
+        osmBase = res.meta.osmBase || osmBase;
+        setSourceState('trails', 'ok', `Server: ${res.endpoint}`);
+        rebuildData();
+        validatePeaks(res.peaks, sampler).then(() => {
+          map.getSource('points')?.setData(state.data.points);
+          renderQuality();
+        });
+      } catch (err) {
+        cells.delete(key); // beim nächsten Verschieben erneut versuchen
+        failed++;
+        lastErr = err;
+      }
+      done++;
+      if (gen === loadGen) toast(`Lade Bergwege … ${done}/${done + todo.length}`, { busy: true });
     }
-  } catch (err) {
-    if (err.name === 'AbortError') return;
-    setSourceState('trails', 'err', err.message);
-    setStatus(`Wege konnten nicht geladen werden: ${err.message}`, true);
-  }
-}
+  };
+  await Promise.all(Array.from({ length: t.concurrency }, worker));
+  if (gen !== loadGen) return;
 
-function setStatus(text, isError = false) {
-  const el = $('status');
-  el.textContent = text;
-  el.classList.toggle('error', isError);
+  // Speicher begrenzen: älteste Zellen verwerfen.
+  while (cells.size > MAX_CELLS_CACHED) cells.delete(cells.keys().next().value);
+  renderQuality();
+  if (failed && failed === done) {
+    setSourceState('trails', 'err', lastErr?.message);
+    toast(`Bergwege nicht geladen: ${lastErr?.message}. Karte verschieben zum erneuten Versuch.`, { error: true, ttl: 8000 });
+  } else if (failed) {
+    toast(`${done - failed}/${done} Bereiche geladen, ${failed} fehlgeschlagen (${lastErr?.message})`, { error: true, ttl: 6000 });
+  } else {
+    const base = osmBase ? new Date(osmBase).toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' }) : '';
+    toast(`Bergwege geladen${base ? ` · OSM-Stand ${base}` : ''}`);
+  }
 }
 
 function renderQuality() {
@@ -191,7 +249,54 @@ function renderQuality() {
   $('quality').innerHTML = rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('');
 }
 
-// ---------- Interaktion ----------
+// ---------- Menü: Tab-Leiste + Blatt ----------
+let activePane = null;
+
+function openPane(name, title) {
+  const pane = document.querySelector(`.pane[data-pane="${name}"]`);
+  if (!pane) return;
+  const prev = activePane;
+  if (prev && prev !== name) PACKAGES.find((p) => p.id === prev)?.onDeactivate?.();
+  document.querySelectorAll('.pane').forEach((p) => p.classList.toggle('active', p === pane));
+  document.querySelectorAll('#tabbar button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.tab === name)));
+  $('sheet-title').textContent = title || pane.dataset.title;
+  $('sheet').hidden = false;
+  $('sheet-body').scrollTop = 0;
+  activePane = name;
+  if (prev !== name) PACKAGES.find((p) => p.id === name)?.onActivate?.();
+}
+
+function closeSheet() {
+  PACKAGES.find((p) => p.id === activePane)?.onDeactivate?.();
+  $('sheet').hidden = true;
+  document.querySelectorAll('#tabbar button').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+  activePane = null;
+}
+
+// Pakete einhängen: eigener Tab (vor "Info") + eigenes Blatt.
+for (const p of PACKAGES) {
+  const pane = document.createElement('div');
+  pane.className = 'pane';
+  pane.dataset.pane = p.id;
+  pane.dataset.title = p.title;
+  $('sheet-body').appendChild(pane);
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.dataset.tab = p.id;
+  btn.innerHTML = `${p.icon}<span>${esc(p.title)}</span>`;
+  $('tabbar').insertBefore(btn, $('tabbar').querySelector('[data-tab="info"]'));
+  p.mount({ map, pane, sampler, toast, esc });
+}
+
+$('tabbar').addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-tab]');
+  if (!btn) return;
+  if (activePane === btn.dataset.tab) closeSheet();
+  else openPane(btn.dataset.tab);
+});
+$('sheet-close').addEventListener('click', closeSheet);
+
+// ---------- Interaktion auf der Karte ----------
 for (const layer of ['ways', 'lifts', 'peaks', 'huts']) {
   map.on('mouseenter', layer, () => (map.getCanvas().style.cursor = 'pointer'));
   map.on('mouseleave', layer, () => (map.getCanvas().style.cursor = ''));
@@ -199,41 +304,43 @@ for (const layer of ['ways', 'lifts', 'peaks', 'huts']) {
 
 const prop = (v) => (v == null || v === 'null' ? null : v);
 
-map.on('click', 'peaks', (e) => {
-  const p = e.features[0].properties;
-  new maplibregl.Popup({ maxWidth: '260px' })
-    .setLngLat(e.lngLat)
-    .setHTML(`<b>${esc(prop(p.name) ?? 'Gipfel ohne Namen')}</b><br>
+function pointPopup(f, lngLat) {
+  const p = f.properties;
+  let html;
+  if (p.kind === 'peak') {
+    html = `<b>${esc(prop(p.name) ?? 'Gipfel ohne Namen')}</b><br>
       OSM: ${prop(p.ele_raw) ? esc(p.ele_raw) + ' m' : '–'} · DEM: ${prop(p.ele_dem) != null ? esc(p.ele_dem) + ' m' : '–'}<br>
-      <small>${esc(prop(p.check_text) ?? 'Prüfung läuft …')}</small><br>
-      <a href="https://www.openstreetmap.org/node/${esc(p.osm_id)}" target="_blank" rel="noopener">OSM-Objekt</a>`)
-    .addTo(map);
-});
-
-map.on('click', 'huts', (e) => {
-  const p = e.features[0].properties;
-  const kind = p.kind === 'alpine_hut' ? 'Berghütte (bewirtschaftet)' : 'Unbewirtschaftete Hütte';
+      <small>${esc(prop(p.check_text) ?? 'Prüfung läuft …')}</small>`;
+  } else {
+    const kind = p.kind === 'alpine_hut' ? 'Berghütte (bewirtschaftet)' : 'Unbewirtschaftete Hütte';
+    html = `<b>${esc(prop(p.name) ?? kind)}</b><br>${esc(kind)}${prop(p.ele_raw) ? ` · ${esc(p.ele_raw)} m` : ''}`;
+  }
   new maplibregl.Popup({ maxWidth: '260px' })
-    .setLngLat(e.lngLat)
-    .setHTML(`<b>${esc(prop(p.name) ?? kind)}</b><br>${esc(kind)}${prop(p.ele_raw) ? ` · ${esc(p.ele_raw)} m` : ''}<br>
-      <a href="https://www.openstreetmap.org/node/${esc(p.osm_id)}" target="_blank" rel="noopener">OSM-Objekt</a>`)
+    .setLngLat(lngLat)
+    .setHTML(`${html}<br><a href="https://www.openstreetmap.org/node/${esc(p.osm_id)}" target="_blank" rel="noopener">OSM-Objekt</a>`)
     .addTo(map);
+}
+
+map.on('click', (e) => {
+  // Aktives Paket (z. B. Wetter) bekommt den Klick zuerst.
+  const pkg = PACKAGES.find((p) => p.id === activePane);
+  if (pkg?.onMapClick?.(e.lngLat)) return;
+  // ±10 px Toleranz: dünne Linien sind sonst mit dem Finger kaum zu treffen.
+  const { x, y } = e.point;
+  const box = [[x - 10, y - 10], [x + 10, y + 10]];
+  const layers = (ids) => ids.filter((l) => map.getLayer(l));
+  const pt = map.queryRenderedFeatures(box, { layers: layers(['peaks', 'huts']) })[0];
+  if (pt) return pointPopup(pt, e.lngLat);
+  const hit = map.queryRenderedFeatures(box, { layers: layers(['ways', 'lifts']) })[0];
+  if (!hit) return;
+  // Klick-Features sind gekachelt/vereinfacht – Originalgeometrie aus dem geladenen Datensatz holen.
+  const feature = state.data.ways.features.find((f) => f.properties.osm_id === hit.properties.osm_id);
+  if (feature) selectWay(feature);
 });
 
 let selectionToken = 0;
 let current = null;
 const cursorMarker = new maplibregl.Marker({ color: '#00e5ff', scale: 0.6 });
-
-map.on('click', (e) => {
-  // Klick-Features sind gekachelt/vereinfacht – Originalgeometrie aus dem geladenen Datensatz holen.
-  // ±8 px Toleranz: dünne Linien sind sonst mit dem Finger kaum zu treffen.
-  const { x, y } = e.point;
-  const box = [[x - 8, y - 8], [x + 8, y + 8]];
-  const hit = map.queryRenderedFeatures(box, { layers: ['ways', 'lifts'].filter((l) => map.getLayer(l)) })[0];
-  if (!hit) return;
-  const feature = state.data.ways.features.find((f) => f.properties.osm_id === hit.properties.osm_id);
-  if (feature) selectWay(feature);
-});
 
 async function selectWay(feature) {
   const token = ++selectionToken;
@@ -248,9 +355,8 @@ async function selectWay(feature) {
 
 function showSelection(f) {
   const p = f.properties;
-  $('selection').hidden = false;
   const fallback = p.aerialway ? `Lift ${p.osm_id}` : p.ref ? `Weg ${p.ref}` : `Weg ${p.osm_id}`;
-  $('sel-title').textContent = p.name || fallback;
+  openPane('way', p.name || fallback);
   const tagKeys = ['highway', 'aerialway', 'sac_scale', 'mtb:scale', 'trail_visibility', 'surface', 'tracktype', 'incline', 'access', 'foot', 'bicycle'];
   const sac = p.sac_scale && SAC_SCALE[p.sac_scale] ? ` – ${SAC_SCALE[p.sac_scale].label}` : '';
   $('sel-tags').innerHTML =
@@ -292,21 +398,23 @@ function renderProfile({ profile, stats, findings }) {
   $('sel-findings').innerHTML = findings.map((f) => `<li class="${f.level}">${esc(f.text)}</li>`).join('');
 }
 
-$('profile').addEventListener('mousemove', (ev) => {
+function profileCursor(ev) {
   if (!current) return;
-  const rect = ev.currentTarget.getBoundingClientRect();
+  const rect = $('profile').getBoundingClientRect();
   const t = Math.max(0, Math.min(1, (ev.clientX - rect.left) / rect.width));
   const prof = current.profile;
   const target = t * prof[prof.length - 1].dist;
   const p = prof.reduce((best, q) => (Math.abs(q.dist - target) < Math.abs(best.dist - target) ? q : best), prof[0]);
   cursorMarker.setLngLat(p.coord).addTo(map);
-  const line = ev.currentTarget.querySelector('line.cursor');
+  const line = $('profile').querySelector('line.cursor');
   if (line) {
     line.setAttribute('x1', t * 300);
     line.setAttribute('x2', t * 300);
   }
-});
-$('profile').addEventListener('mouseleave', () => cursorMarker.remove());
+}
+$('profile').addEventListener('pointermove', profileCursor);
+$('profile').addEventListener('pointerdown', profileCursor);
+$('profile').addEventListener('pointerleave', () => cursorMarker.remove());
 
 $('sel-gpx').addEventListener('click', async () => {
   if (!current) return;
@@ -337,7 +445,7 @@ $('sel-gpx').addEventListener('click', async () => {
 });
 
 // ---------- Steuerung ----------
-const LAYER_GROUPS = { hillshade: ['hillshade'], ways: ['ways-casing', 'ways', 'selected'], lifts: ['lifts'], peaks: ['peaks', 'huts'] };
+const LAYER_GROUPS = { hillshade: ['hillshade'], ways: ['ways-casing', 'ways', 'selected'], lifts: ['lifts'], peaks: ['peaks', 'huts', 'peak-labels', 'peak-labels-overview'] };
 
 document.querySelectorAll('input[data-layer]').forEach((cb) => {
   cb.addEventListener('change', () => {
@@ -356,11 +464,7 @@ document.querySelectorAll('input[name="base"]').forEach((r) => {
   });
 });
 
-$('terrain').addEventListener('change', (e) => {
-  state.terrain = e.target.checked;
-  map.setTerrain(state.terrain ? { source: 'terrain', exaggeration: state.exaggeration } : null);
-  if (state.terrain && map.getPitch() < 30) map.easeTo({ pitch: 60, duration: 800 });
-});
+$('terrain').addEventListener('change', (e) => setTerrain(e.target.checked));
 
 $('exaggeration').addEventListener('input', (e) => {
   state.exaggeration = Number(e.target.value);
@@ -369,6 +473,7 @@ $('exaggeration').addEventListener('input', (e) => {
 });
 
 $('region').addEventListener('click', () => {
+  closeSheet();
   map.fitBounds(REGION.bbox, { pitch: 0, bearing: 0, padding: 20 });
 });
 
@@ -416,17 +521,6 @@ $('pm-copy').addEventListener('click', async () => {
     $('pm-copy').textContent = 'Bitte manuell kopieren';
   }
 });
-
-function setPanelCollapsed(collapsed) {
-  $('panel').classList.toggle('collapsed', collapsed);
-  $('panel-toggle').textContent = collapsed ? '+' : '–';
-  $('panel-toggle').setAttribute('aria-expanded', String(!collapsed));
-}
-$('panel-toggle').addEventListener('click', () => setPanelCollapsed(!$('panel').classList.contains('collapsed')));
-// Auf dem Smartphone startet das Panel eingeklappt, damit die Karte sichtbar ist.
-if (window.matchMedia('(max-width: 640px)').matches) setPanelCollapsed(true);
-
-$('home').addEventListener('click', () => map.flyTo({ ...START_VIEW, duration: 2500, essential: true }));
 
 $('legend').innerHTML =
   Object.values(SAC_SCALE).map((s) => `<li><i style="background:${s.color}"></i>${esc(s.label)}</li>`).join('') +
