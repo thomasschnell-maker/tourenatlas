@@ -2,7 +2,7 @@
 // Touren-Paket: Touren mit mehreren Stationen, Routing entlang echter Wege,
 // Fotos je Station mit gespeichertem 3D-Blick. Daten bleiben lokal auf dem Gerät.
 
-import { ROUTER, brouterUrl, captureView, formatDuration, newStation, newTour, parseBrouter, tourGpx, tourLine, tourStats } from './tours-core.js';
+import { ACTIVITIES, ROUTER, brouterUrl, captureView, formatDuration, newStation, newTour, parseBrouter, parseGpx, stationsFromTrack, tourGpx, tourLine, tourStats } from './tours-core.js';
 import { blobToDataUrl, compressImage, dataUrlToBlob, requestPersistence, store } from './tours-store.js';
 import { geocode, splitPlaces } from '../search.js';
 
@@ -19,6 +19,15 @@ let year = 'all'; // Zeitverlauf: Jahresfilter der Tourenliste und der Übersich
 const thumbUrls = new Map();
 
 // ---------- Kartenebenen ----------
+function lastActivity() {
+  try {
+    const a = localStorage.getItem('ta.activity');
+    return a && ACTIVITIES[a] ? a : 'hike';
+  } catch {
+    return 'hike';
+  }
+}
+
 const tourYear = (t) => (t.date || t.created || '').slice(0, 4);
 const visibleTours = () => tours.filter((t) => year === 'all' || tourYear(t) === year);
 
@@ -106,7 +115,8 @@ function refreshMap() {
 async function routeSegment(a, b) {
   if (current.mode !== 'route') return { coords: null };
   try {
-    const res = await fetch(brouterUrl(a.lngLat, b.lngLat));
+    const profile = ACTIVITIES[current.activity || 'hike'].profile;
+    const res = await fetch(brouterUrl(a.lngLat, b.lngLat, profile));
     if (!res.ok) throw new Error(`BRouter: HTTP ${res.status}`);
     return { coords: parseBrouter(await res.json(), a.lngLat, b.lngLat) };
   } catch (err) {
@@ -121,6 +131,7 @@ async function rebuildSegments(indices) {
   ctx.toast(`Berechne Route …`, { busy: true });
   for (const i of todo) {
     if (i < 0 || i >= st.length - 1) continue;
+    if (current.segments[i]?.recorded) continue; // aufgezeichnete GPX-Spur nie überschreiben
     current.segments[i] = await routeSegment(st[i], st[i + 1]);
   }
   const failed = current.segments.filter((s) => s?.error);
@@ -131,7 +142,7 @@ async function rebuildSegments(indices) {
 
 async function persist() {
   await store.putTour(current);
-  stats = await tourStats(tourLine(current.stations, current.segments), ctx.sampler);
+  stats = await tourStats(tourLine(current.stations, current.segments), ctx.sampler, 25, current.activity || 'hike');
   current.summary = stats ? { length: stats.length, up: stats.up, timeH: stats.timeH } : null;
   await store.putTour(current);
   refreshMap();
@@ -184,7 +195,7 @@ function fitTour() {
 /** Aus der Ortssuche gepinnt: in die offene Tour, sonst neue Tour anlegen. */
 async function pinStation({ name, lngLat }) {
   if (!current) {
-    current = newTour(`Tour ${new Date().toLocaleDateString('de-DE')}`);
+    current = { ...newTour(`Tour ${new Date().toLocaleDateString('de-DE')}`), activity: lastActivity() };
     await store.putTour(current);
     tours = await store.allTours();
     current = tours.find((x) => x.id === current.id);
@@ -280,6 +291,52 @@ async function openLightbox(station, photoId) {
   document.body.appendChild(box);
 }
 
+// ---------- Meine Touren (Vorlagen aus data/touren.json) ----------
+async function importMyTours() {
+  let list;
+  try {
+    const res = await fetch('data/touren.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    list = await res.json();
+  } catch (err) {
+    return ctx.toast(`Tourenliste nicht ladbar: ${err.message}`, { error: true, ttl: 6000 });
+  }
+  const todo = list.filter((v) => !tours.some((t) => t.templateId === v.id));
+  if (!todo.length) return ctx.toast('Alle Touren aus der Liste sind schon übernommen');
+  requestPersistence();
+  for (const v of todo) {
+    const t = { ...newTour(v.name), templateId: v.id, activity: v.activity || 'hike', note: v.note || '' };
+    if (v.date) t.date = v.date;
+    await store.putTour(t);
+    tours = await store.allTours();
+    await openTour(t.id);
+    await addPlaces(v.places.join('; '));
+  }
+  ctx.toast(`${todo.length} Tour(en) übernommen – Stationen bitte prüfen`, { ttl: 6000 });
+}
+
+// ---------- GPX-Import: aufgezeichnete Spur als Tour ----------
+async function importGpx(file) {
+  try {
+    const { name, coords, time } = parseGpx(await file.text());
+    const t = newTour(name);
+    if (time) t.date = time.slice(0, 10);
+    const idx = stationsFromTrack(coords, 10);
+    t.stations = idx.map((i, k) => newStation(coords[i], k + 1));
+    t.stations.forEach((s, k) => (s.name = k === 0 ? 'Start' : k === idx.length - 1 ? 'Ziel' : `ca. km ${k * 10}`));
+    t.segments = idx.slice(1).map((end, k) => ({ coords: coords.slice(idx[k], end + 1), recorded: true }));
+    const eles = await ctx.sampler.elevations(t.stations.map((s) => s.lngLat));
+    t.stations.forEach((s, k) => (s.ele = eles[k]));
+    await store.putTour(t);
+    tours = await store.allTours();
+    await openTour(t.id);
+    await persist();
+    ctx.toast(`„${name}“ übernommen (${coords.length} Punkte) – Aktivität wählen`);
+  } catch (err) {
+    ctx.toast(`GPX nicht lesbar: ${err.message}`, { error: true, ttl: 7000 });
+  }
+}
+
 // ---------- Backup ----------
 async function exportBackup(tour) {
   const photos = await store.photosOfTour(tour.id);
@@ -341,6 +398,8 @@ function render() {
       ${chips}
       <div class="row"><button type="button" class="btn primary" data-t="new">+ Neue Tour</button>
         <label class="btn">Sicherung laden<input type="file" accept=".json,application/json" data-t="import" hidden></label></div>
+      <div class="row"><button type="button" class="btn" data-t="mine">Meine Touren übernehmen</button>
+        <label class="btn">GPX laden<input type="file" accept=".gpx,application/gpx+xml,application/xml,text/xml" data-t="gpxfile" hidden></label></div>
       <ul class="tour-list">${
         visibleTours()
           .sort((a, b) => (b.date || '').localeCompare(a.date || ''))
@@ -361,6 +420,9 @@ function render() {
   pane.innerHTML = `
     <button type="button" class="link" data-t="back">‹ Alle Touren</button>
     <div class="row"><input data-t="name" value="${esc(t.name)}" aria-label="Name der Tour"><input type="date" data-t="date" value="${esc(t.date || '')}" aria-label="Datum"></div>
+    <div class="seg" role="radiogroup" aria-label="Aktivität">${Object.entries(ACTIVITIES)
+      .map(([k, a]) => `<label><input type="radio" name="tact" value="${k}" ${(t.activity || 'hike') === k ? 'checked' : ''}><span>${a.label}</span></label>`)
+      .join('')}</div>
     <div class="seg" role="radiogroup" aria-label="Verbindung">
       <label><input type="radio" name="tmode" value="route" ${t.mode === 'route' ? 'checked' : ''}><span>Wegen folgen</span></label>
       <label><input type="radio" name="tmode" value="line" ${t.mode === 'line' ? 'checked' : ''}><span>Luftlinie</span></label>
@@ -371,11 +433,22 @@ function render() {
       stats
         ? `<dl class="stats"><dt>Länge</dt><dd>${(stats.length / 1000).toLocaleString('de-DE', { maximumFractionDigits: 2 })} km</dd>
            <dt>Auf / Ab</dt><dd>${Math.round(stats.up)} / ${Math.round(stats.down)} Hm</dd>
-           <dt>Gehzeit (DIN 33466)</dt><dd>${formatDuration(stats.timeH)}</dd>
+           <dt>${(t.activity || 'hike') === 'hike' ? 'Gehzeit (DIN 33466)' : 'Fahrzeit (Faustregel)'}</dt><dd>${formatDuration(stats.timeH)}</dd>
+           ${
+             stats.batteryWh != null
+               ? `<dt>Akku (Faustregel)</dt><dd>~${Math.round(stats.batteryWh / 10) * 10} Wh ≈ ${(stats.batteryWh / (t.batteryCapacityWh || 625)).toLocaleString('de-DE', { maximumFractionDigits: 1 })} Akkus à
+                  <select data-t="battery" aria-label="Akkugrösse">${[400, 500, 625, 750, 800]
+                    .map((w) => `<option value="${w}" ${w === (t.batteryCapacityWh || 625) ? 'selected' : ''}>${w} Wh</option>`)
+                    .join('')}</select></dd>`
+               : ''
+           }
            <dt>Höhe</dt><dd>${Math.round(stats.min ?? 0)}–${Math.round(stats.max ?? 0)} m</dd></dl>`
         : ''
     }
     ${failed ? `<ul class="findings"><li class="warn">${failed} Abschnitt(e) nur Luftlinie – Wegführung nicht geprüft</li></ul>` : ''}
+    ${t.segments.some((x) => x?.recorded) ? '<ul class="findings"><li class="ok">Aufgezeichnete GPX-Spur – Strecke gemessen, nicht berechnet</li></ul>' : ''}
+    ${(t.activity || 'hike') !== 'hike' ? '<p class="muted">Rad/E-Bike-Werte sind Faustregeln (±30 %): Wind, Gewicht, Unterstützungsstufe und Temperatur verändern Zeit und Akku deutlich.</p>' : ''}
+    <textarea data-t="note" rows="2" placeholder="Notiz zur Tour" aria-label="Notiz">${esc(t.note || '')}</textarea>
     <ol class="stations">${t.stations
       .map(
         (s, i) => `<li data-sid="${esc(s.id)}">
@@ -419,7 +492,7 @@ async function openTour(id) {
     const b = new maplibregl.LngLatBounds();
     current.stations.forEach((s) => b.extend(s.lngLat));
     ctx.map.fitBounds(b, { padding: visiblePadding(), maxZoom: 15, duration: 1200 });
-    stats = await tourStats(tourLine(current.stations, current.segments), ctx.sampler);
+    stats = await tourStats(tourLine(current.stations, current.segments), ctx.sampler, 25, current.activity || 'hike');
     render();
   }
 }
@@ -468,7 +541,7 @@ function wire(pane) {
     if (open) return openTour(open);
     if (img) return openLightbox(station(img), img.dataset.pid);
     if (t === 'new') {
-      current = newTour(`Tour ${new Date().toLocaleDateString('de-DE')}`);
+      current = { ...newTour(`Tour ${new Date().toLocaleDateString('de-DE')}`), activity: lastActivity() };
       await store.putTour(current);
       tours = await store.allTours();
       current = tours.find((x) => x.id === current.id);
@@ -494,6 +567,7 @@ function wire(pane) {
       download(new Blob([tourGpx(current, line, await ctx.sampler.elevations(line))], { type: 'application/gpx+xml' }), `tour-${slug(current.name)}.gpx`);
     }
     if (t === 'backup') exportBackup(current);
+    if (t === 'mine') importMyTours();
     if (t === 'delete' && confirm(`Tour „${current.name}“ mit allen Fotos löschen?`)) {
       await store.deleteTour(current.id);
       current = null;
@@ -515,6 +589,7 @@ function wire(pane) {
   pane.addEventListener('change', async (e) => {
     const el = e.target;
     if (el.dataset.t === 'import' && el.files?.[0]) return importBackup(el.files[0]);
+    if (el.dataset.t === 'gpxfile' && el.files?.[0]) return importGpx(el.files[0]);
     if (!current) return;
     if (el.dataset.t === 'name') current.name = el.value.trim() || current.name;
     if (el.dataset.t === 'date') current.date = el.value;
@@ -522,6 +597,20 @@ function wire(pane) {
       current.mode = el.value;
       return rebuildSegments();
     }
+    if (el.name === 'tact') {
+      current.activity = el.value;
+      try {
+        localStorage.setItem('ta.activity', el.value); // nächste neue Tour startet mit derselben Aktivität
+      } catch {}
+      // Anderes Routing-Profil (Wanderwege ↔ Radwege): Strecke neu berechnen.
+      return current.mode === 'route' ? rebuildSegments() : persist();
+    }
+    if (el.dataset.t === 'battery') {
+      current.batteryCapacityWh = Number(el.value);
+      return persist();
+    }
+    if (el.dataset.t === 'note') current.note = el.value;
+
     const st = station(el);
     if (st && el.dataset.s === 'name') st.name = el.value.trim() || st.name;
     if (st && el.dataset.s === 'photo' && el.files?.length) return addPhotos(st, [...el.files]);

@@ -5,17 +5,17 @@ import { ascentDescent, densify, haversine, lineLength } from '../geo.js';
 export const ROUTER = {
   // BRouter: Open-Source-Routing mit Bergweg-Profil (SAC-Skala, Steigung). Öffentlicher Server.
   url: 'https://brouter.de/brouter',
-  profiles: { hike: 'hiking-mountain', bike: 'trekking' },
   attribution: 'Routing: <a href="https://brouter.de" target="_blank" rel="noopener">BRouter</a> auf © OpenStreetMap-Daten'
 };
 
-export function brouterUrl(a, b, profile = ROUTER.profiles.hike) {
+export function brouterUrl(a, b, profile = 'hiking-mountain') {
   const ll = (p) => `${p[0].toFixed(6)},${p[1].toFixed(6)}`;
   return `${ROUTER.url}?lonlats=${ll(a)}|${ll(b)}&profile=${profile}&alternativeidx=0&format=geojson`;
 }
 
 /** BRouter-GeoJSON → [[lon, lat], …]. Prüft, dass die Route an den Stationen beginnt/endet. */
-export function parseBrouter(json, a, b, toleranceM = 300) {
+// 500 m: Orte, Seen und Gipfel werden als Mittelpunkt gefunden, der nächste Weg liegt oft einige hundert Meter daneben.
+export function parseBrouter(json, a, b, toleranceM = 500) {
   const f = json?.features?.[0];
   const coords = f?.geometry?.type === 'LineString' ? f.geometry.coordinates : null;
   if (!coords || coords.length < 2) throw new Error('BRouter: keine Route');
@@ -41,6 +41,71 @@ export function tourLine(stations, segments) {
 }
 
 /**
+ * Aktivitäten: Routing-Profil (BRouter) und Zeit-/Akku-Modell.
+ * Rad/E-Bike-Werte sind Faustregeln für Touren im Voralpenland, keine Messwerte (±30 %).
+ */
+export const ACTIVITIES = {
+  hike: { label: 'Wandern', profile: 'hiking-mountain' },
+  bike: { label: 'Rad', profile: 'trekking', kmh: 16, hmPerH: 450 },
+  ebike: { label: 'E-Bike', profile: 'trekking', kmh: 20, hmPerH: 900, whPerKm: 6, whPerHm: 0.25 }
+};
+
+/** Fahrzeit Rad/E-Bike: Strecke mit Reisetempo + Aufstieg mit Steigleistung (Abfahrt ohne Zeitgewinn gerechnet). */
+export function rideTimeH(lengthM, up, activity) {
+  const a = ACTIVITIES[activity];
+  return lengthM / 1000 / a.kmh + up / a.hmPerH;
+}
+
+export function tourTimeH(lengthM, up, down, activity = 'hike') {
+  return activity === 'hike' ? walkingTimeH(lengthM, up, down) : rideTimeH(lengthM, up, activity);
+}
+
+/**
+ * Akku-Bedarf E-Bike (Tour-Modus): ~6 Wh/km Grundlast + ~0,25 Wh je Höhenmeter
+ * (100 kg System: 0,27 Wh/Hm potenzielle Energie, Motoranteil ~65 %, Wirkungsgrad ~75 %).
+ */
+export function batteryWh(lengthM, up) {
+  const a = ACTIVITIES.ebike;
+  return (lengthM / 1000) * a.whPerKm + up * a.whPerHm;
+}
+
+/** GPX-Datei → { name, coords: [[lon, lat]], time } (Tracks, sonst Route). Ohne DOM, damit testbar. */
+export function parseGpx(text) {
+  const src = String(text);
+  if (!/<gpx[\s>]/i.test(src)) throw new Error('Keine GPX-Datei');
+  const pick = (tag) => [...src.matchAll(new RegExp(`<${tag}\\b([^>]*?)(?:/>|>([\\s\\S]*?)</${tag}>)`, 'gi'))];
+  const pts = (tag) =>
+    pick(tag)
+      .map((m) => {
+        const lat = Number(/lat="([^"]+)"/.exec(m[1])?.[1]);
+        const lon = Number(/lon="([^"]+)"/.exec(m[1])?.[1]);
+        return Number.isFinite(lat) && Number.isFinite(lon) ? [lon, lat] : null;
+      })
+      .filter(Boolean);
+  let coords = pts('trkpt');
+  if (coords.length < 2) coords = pts('rtept');
+  if (coords.length < 2) throw new Error('GPX enthält keinen Track');
+  const name = /<name>\s*(?:<!\[CDATA\[)?([^<\]]+)/i.exec(src)?.[1]?.trim() || 'GPX-Tour';
+  const time = /<time>([^<]+)<\/time>/i.exec(src)?.[1] || null;
+  return { name, coords, time };
+}
+
+/** Spur auf wenige Stationen ausdünnen: Start, Ziel und etwa alle stepKm einen Zwischenpunkt. */
+export function stationsFromTrack(coords, stepKm = 10) {
+  const idx = [0];
+  let acc = 0;
+  for (let i = 1; i < coords.length; i++) {
+    acc += haversine(coords[i - 1], coords[i]);
+    if (acc >= stepKm * 1000 && i < coords.length - 1) {
+      idx.push(i);
+      acc = 0;
+    }
+  }
+  idx.push(coords.length - 1);
+  return idx;
+}
+
+/**
  * Gehzeit nach DIN 33466 (Alpenvereins-Formel): 4 km/h horizontal, 300 Hm/h Aufstieg, 500 Hm/h Abstieg;
  * Gesamtzeit = grösserer Wert + halber kleinerer Wert. Ergebnis in Stunden.
  */
@@ -58,7 +123,7 @@ export function formatDuration(h) {
 }
 
 /** Kennzahlen einer Tour aus Linie + Höhenabfrage (sampler.elevations). */
-export async function tourStats(line, sampler, spacing = 25) {
+export async function tourStats(line, sampler, spacing = 25, activity = 'hike') {
   if (line.length < 2) return null;
   const pts = densify(line, spacing);
   const eles = await sampler.elevations(pts.map((p) => p.coord));
@@ -71,7 +136,8 @@ export async function tourStats(line, sampler, spacing = 25) {
     down,
     min: valid.length ? Math.min(...valid) : null,
     max: valid.length ? Math.max(...valid) : null,
-    timeH: walkingTimeH(length, up, down),
+    timeH: tourTimeH(length, up, down, activity),
+    batteryWh: activity === 'ebike' ? batteryWh(length, up) : null,
     profile: pts.map((p, i) => ({ dist: p.dist, ele: eles[i], coord: p.coord }))
   };
 }
@@ -105,7 +171,7 @@ ${wpts}
 
 export function newTour(name = 'Neue Tour') {
   const now = new Date().toISOString();
-  return { id: uid(), name, date: now.slice(0, 10), mode: 'route', created: now, updated: now, stations: [], segments: [] };
+  return { id: uid(), name, date: now.slice(0, 10), mode: 'route', activity: 'hike', batteryCapacityWh: 625, note: '', created: now, updated: now, stations: [], segments: [] };
 }
 
 export function newStation(lngLat, n) {

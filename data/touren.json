@@ -1,0 +1,16 @@
+[
+  {
+    "id": "2026-sonthofen-oberjoch-gruentensee",
+    "name": "Sonthofen – Oberjoch – Jungholz – Grüntensee",
+    "activity": "ebike",
+    "places": ["Sonthofen", "Bad Hindelang", "Oberjoch", "Unterjoch", "Jungholz", "Wertach", "Grüntensee", "Königssträßle", "Burgberg im Allgäu", "Sonthofen"],
+    "note": "E-Bike, 2 Akkus. Gedeutet: „kungholz“ = Jungholz (Tirol). Königssträßle: falls nicht gefunden, Station auf der Karte setzen."
+  },
+  {
+    "id": "2026-sonthofen-gunzesried-ofterschwanger-horn",
+    "name": "Sonthofen – Gunzesried – Ofterschwanger Horn",
+    "activity": "ebike",
+    "places": ["Sonthofen", "Immenstadt im Allgäu", "Gunzesried", "Allgäuer Berghof", "Ofterschwanger Horn", "Ofterschwang", "Sonthofen"],
+    "note": "Gedeutet: „Innenstadt“ = Immenstadt, „Allgäuer Hof“ = Allgäuer Berghof (Ofterschwang), „Ofterschwanger Hütten“ = Ofterschwang. Offen: „atmummen“ (Ort fehlt noch). Aktivität E-Bike angenommen."
+  }
+]
