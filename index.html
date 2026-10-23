@@ -14,7 +14,11 @@
 <body>
   <div id="map" role="application" aria-label="3D-Karte Allgäu"></div>
 
-  <div id="brand">Allgäu Tourenatlas <b>3D</b></div>
+  <form id="search" role="search" autocomplete="off">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <input type="search" enterkeyhint="search" placeholder="Ort, Gipfel, Hütte suchen" aria-label="Ort suchen">
+  </form>
+  <ul id="search-results" hidden></ul>
   <div id="toast" role="status" aria-live="polite" hidden></div>
 
   <!-- Blatt: zeigt immer genau einen Bereich -->
@@ -71,6 +75,7 @@
         <h3>Wege im Ausschnitt</h3>
         <dl id="quality" class="stats"><dt>–</dt><dd>Auf Zoom ≥ 12 gehen</dd></dl>
         <h3>Quellen &amp; Lizenzen</h3>
+        <p class="muted" style="margin-top:0">Allgäu Tourenatlas 3D</p>
         <ul id="sources" class="sources"></ul>
         <p class="muted">Engine: MapLibre GL JS 5 (BSD-3) · PMTiles &amp; Protomaps-Stil (BSD-3).
           Planungshilfe, kein Ersatz für Lagebeurteilung vor Ort.</p>

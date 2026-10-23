@@ -7,6 +7,7 @@ import { profileWay, qualitySummary, validatePeaks } from './validate.js';
 import { aerialStyle, openFreeMapStyle, protomapsStyle } from './styles.js';
 import { openPmtiles } from './offline.js';
 import { PACKAGES } from './packages/index.js';
+import { initSearch } from './search.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -285,8 +286,10 @@ for (const p of PACKAGES) {
   btn.dataset.tab = p.id;
   btn.innerHTML = `${p.icon}<span>${esc(p.title)}</span>`;
   $('tabbar').insertBefore(btn, $('tabbar').querySelector('[data-tab="info"]'));
-  p.mount({ map, pane, sampler, toast, esc });
+  p.mount({ map, pane, sampler, toast, esc, openPane });
 }
+
+initSearch({ map, toast, esc });
 
 $('tabbar').addEventListener('click', (e) => {
   const btn = e.target.closest('button[data-tab]');
