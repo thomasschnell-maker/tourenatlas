@@ -85,18 +85,26 @@ export function parseEle(raw) {
 }
 
 /** Fragt die Endpunkte der Reihe nach ab (Failover), mit Abbruch-Signal. */
-export async function fetchOverpass(bbox, endpoints, signal) {
+export async function fetchOverpass(bbox, endpoints, signal, timeoutMs = 30000) {
   const body = new URLSearchParams({ data: buildQuery(bbox) });
   let lastErr;
   for (const url of endpoints) {
+    // Eigenes Zeitlimit je Server, ohne das äussere Abbruchsignal zu verlieren.
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(new Error('Zeitlimit')), timeoutMs);
+    const relay = () => ctl.abort(signal.reason);
+    signal?.addEventListener('abort', relay, { once: true });
     try {
-      const res = await fetch(url, { method: 'POST', body, signal });
+      const res = await fetch(url, { method: 'POST', body, signal: ctl.signal });
       if (res.status === 429 || res.status === 504) throw new Error(`${new URL(url).host}: überlastet (${res.status})`);
       if (!res.ok) throw new Error(`${new URL(url).host}: HTTP ${res.status}`);
       return { ...parseOverpass(await res.json()), endpoint: new URL(url).host };
     } catch (err) {
-      if (err.name === 'AbortError') throw err;
-      lastErr = err;
+      if (signal?.aborted) throw err;
+      lastErr = ctl.signal.aborted ? new Error(`${new URL(url).host}: Zeitlimit`) : err;
+    } finally {
+      clearTimeout(timer);
+      signal?.removeEventListener('abort', relay);
     }
   }
   throw lastErr ?? new Error('Kein Overpass-Endpunkt erreichbar');

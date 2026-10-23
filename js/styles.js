@@ -142,6 +142,57 @@ function overlayLayers({ hillshade, visibility }) {
   return layers;
 }
 
+/**
+ * Bergnamen mit Höhe. Bis Zoom 12 aus der Grundkarte (Vektorkacheln), ab Zoom 12 aus den
+ * Live-OSM-Gipfeln – dort neben dem farbigen Prüfpunkt, damit Name und Validierung zusammenstehen.
+ */
+function peakLabels(base, { visibility, dark = false }) {
+  const vis = { visibility: visibility.peaks === false ? 'none' : 'visible' };
+  const name = ['coalesce', ['get', 'name:de'], ['get', 'name']];
+  const withEle = (ele) => [
+    'case',
+    ['to-boolean', ele],
+    ['format', name, {}, '\n', {}, ['concat', ['to-string', ele], ' m'], { 'font-scale': 0.82 }],
+    ['format', name, {}]
+  ];
+  const paint = dark
+    ? { 'text-color': '#ffffff', 'text-halo-color': 'rgba(0,0,0,0.8)', 'text-halo-width': 1.5 }
+    : { 'text-color': '#4a2f17', 'text-halo-color': 'rgba(255,255,255,0.92)', 'text-halo-width': 1.5 };
+  const layout = { 'text-font': ['Noto Sans Regular'], 'text-size': ['interpolate', ['linear'], ['zoom'], 9, 11, 14, 13.5], 'text-max-width': 8, ...vis };
+  const overview =
+    base === 'protomaps'
+      ? { source: 'protomaps', 'source-layer': 'pois', filter: ['==', ['get', 'kind'], 'peak'], ele: ['get', 'elevation'] }
+      : { source: 'openmaptiles', 'source-layer': 'mountain_peak', filter: ['in', ['get', 'class'], ['literal', ['peak', 'volcano']]], ele: ['get', 'ele'] };
+  return [
+    {
+      id: 'peak-labels-overview',
+      type: 'symbol',
+      source: overview.source,
+      'source-layer': overview['source-layer'],
+      minzoom: 9,
+      maxzoom: 12,
+      filter: ['all', overview.filter, ['has', 'name']],
+      layout: { ...layout, 'text-field': withEle(overview.ele), 'symbol-sort-key': ['-', 0, ['coalesce', overview.ele, 0]] },
+      paint
+    },
+    {
+      id: 'peak-labels',
+      type: 'symbol',
+      source: 'points',
+      minzoom: 12,
+      filter: ['all', ['==', ['get', 'kind'], 'peak'], ['to-boolean', ['get', 'name']]],
+      layout: {
+        ...layout,
+        'text-field': withEle(['get', 'ele_raw']),
+        'text-anchor': 'left',
+        'text-offset': [0.9, 0],
+        'symbol-sort-key': ['-', 0, ['coalesce', ['get', 'ele_osm'], 0]]
+      },
+      paint
+    }
+  ];
+}
+
 /** Fügt Overlays vor der ersten Beschriftungsebene ein. */
 function insertBeforeLabels(layers, extra) {
   const i = layers.findIndex((l) => l.type === 'symbol');
@@ -158,7 +209,10 @@ function finish(style, data, opts) {
 
 export async function openFreeMapStyle(data, opts) {
   const style = await loadOfmStyle();
-  style.layers = insertBeforeLabels(style.layers, overlayLayers({ hillshade: true, visibility: opts.visibility }));
+  style.layers = [
+    ...insertBeforeLabels(style.layers, overlayLayers({ hillshade: true, visibility: opts.visibility })),
+    ...peakLabels('openfreemap', opts)
+  ];
   return finish(style, data, opts);
 }
 
@@ -188,7 +242,8 @@ export async function aerialStyle(data, opts) {
       { id: 'background', type: 'background', paint: { 'background-color': '#2b3238' } },
       ...rasterLayers,
       ...overlayLayers({ hillshade: false, visibility: opts.visibility }),
-      ...labels
+      ...labels,
+      ...peakLabels('aerial', { ...opts, dark: true })
     ]
   };
   return finish(style, data, opts);
@@ -208,7 +263,7 @@ export function protomapsStyle(pmtilesUrl, data, opts) {
         attribution: `${SOURCES.protomaps.attribution} · ${SOURCES.trails.attribution}`
       }
     },
-    layers: insertBeforeLabels(base, overlayLayers({ hillshade: true, visibility: opts.visibility }))
+    layers: [...insertBeforeLabels(base, overlayLayers({ hillshade: true, visibility: opts.visibility })), ...peakLabels('protomaps', opts)]
   };
   return finish(style, data, opts);
 }
