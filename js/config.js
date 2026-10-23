@@ -38,7 +38,9 @@ export const SOURCES = {
     tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],
     encoding: 'terrarium',
     tileSize: 256,
-    maxzoom: 15,
+    // Quelldaten ~25–30 m: ab Zoom 13 (~13 m/px) bringt mehr nur Interpolation, aber mehr Datenvolumen
+    // und Lücken im Offline-Betrieb. Darüber vergrössert MapLibre die Zoom-13-Kacheln.
+    maxzoom: 13,
     license: 'Offene Daten, Attribution erforderlich',
     licenseUrl: 'https://github.com/tilezen/joerd/blob/master/docs/attribution.md',
     attribution:

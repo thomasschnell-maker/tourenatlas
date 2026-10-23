@@ -71,6 +71,11 @@ Unten liegt eine Tab-Leiste. Jeder Tab öffnet ein Blatt mit genau einem Thema, 
 - **Bergnamen mit Höhe:** In der Übersicht kommen sie aus der Grundkarte. Ab Zoom 12 stammen sie aus den Live-OSM-Daten und stehen neben dem farbigen Prüfpunkt.
 - **Bergwege laden:** Die Wege werden in Zellen von etwa 3 × 3,3 km nachgeladen, von der Bildmitte nach aussen. Jede Zelle wird nur einmal geladen. Fortschritt und Fehler erscheinen oben als Meldung.
 - Die URL merkt sich Position und Blickwinkel, Links lassen sich also teilen.
+- **Radrouten:** Ausgeschilderte Rad- und MTB-Routen (OSM-Relationen `route=bicycle|mtb`) erscheinen als breite, halbtransparente Bänder unter den Wegen. Farbe nach Netz: national blau, regional violett, lokal türkis, MTB orange. Ab Zoom 12 steht die Nummer oder der Name an der Linie. Die Geometrie wird pro Zelle serverseitig beschnitten, `out geom(bbox)`.
+- **Offline unterwegs:**
+  - **Service Worker** (`sw.js`): App-Dateien kommen bevorzugt aus dem Netz, bei Funkloch aus dem Cache. Kacheln, Höhenmodell und Schriften kommen aus dem Cache, das Limit liegt bei 6000 Kacheln. Bergwege und Radrouten kommen aus dem Netz, offline gilt die zuletzt geladene Antwort. Overpass wird deshalb per GET abgefragt.
+  - **„Ausschnitt offline speichern“ (Tab Karte) und „Tour offline speichern“:** laden Vektorkarte (Zoom 8–14), Höhenmodell (8–13), Schriften sowie Bergwege und Radrouten des Gebiets vorab, höchstens 4000 Kacheln.
+  - **Grenzen:** Ortssuche, Routing und Wetter brauchen Netz.
 
 ### Pakete
 
@@ -86,6 +91,13 @@ Erweiterungen hängen sich als Paket ein: eine Datei in `js/packages/` anlegen u
 - **Aktivität je Tour:** Wandern, Rad oder E-Bike. Das Routing nutzt dafür das passende BRouter-Profil: `hiking-mountain` für Wanderwege, `trekking` für Rad- und Wirtschaftswege. Die zuletzt gewählte Aktivität gilt für die nächste neue Tour.
   - **Zeit:** Wandern nach DIN 33466. Rad rechnet mit 16 km/h und 450 Hm/h, E-Bike mit 20 km/h und 900 Hm/h. Beides sind Faustregeln, ±30 %.
   - **E-Bike-Akku:** etwa 6 Wh/km plus 0,25 Wh je Höhenmeter. Grundlage ist ein System von 100 kg mit 0,27 Wh/Hm potenzieller Energie, davon trägt der Motor etwa 65 % bei einem Wirkungsgrad von etwa 75 %. Die Akkugrösse ist wählbar. Wind, Unterstützungsstufe und Temperatur verschieben den Wert deutlich.
+- **Höhenprofil der Tour** mit nummerierten Stationen. Fürs E-Bike zusätzlich die Akku-Restladung in Prozent und der **Wechselpunkt** (⚡ km). Ein Tipp oder Wisch über das Profil zeigt die Stelle auf der Karte.
+- **Fotos automatisch zuordnen:** mehrere Fotos auf einmal auswählen. Die App liest das EXIF der Fotos mit einem eigenen Leser ohne Fremdbibliothek.
+  - **Aufnahmeort (GPS):** Das Foto kommt an die nächste Station innerhalb von 5 km.
+  - **Kein GPS:** Das Foto kommt an die Station des zeitlich nächsten Fotos mit GPS, sonst an die gewählte Rückfallstation.
+  - **3D-Blick:** Mit `GPSImgDirection` steht die Kamera am Aufnahmeort und schaut in Fotorichtung (Neigung 72°). Aufnahmeorte erscheinen als gelbe Punkte auf der Karte.
+  - **iPhone:** Beim Auswählen unter „Optionen“ den Ort mitsenden, sonst entfernt iOS die GPS-Daten.
+- **Ortsalternativen:** `Altmummen|Alt Mummen|Mummen` probiert die Schreibweisen der Reihe nach. Eine Vorlage mit höherer `version` baut eine bereits übernommene Tour neu auf, statt sie zu verdoppeln.
 - **GPX-Import:** Aufgezeichnete Touren (Komoot, Strava, Garmin …) werden als Tour übernommen. Start, Ziel und etwa alle 10 km eine Station. Die gemessene Spur wird nie durch Routing überschrieben.
 - **Meine Touren übernehmen:** `data/touren.json` enthält Touren als Ortslisten. Ein Tipp setzt sie auf dem Gerät mit Ortssuche und Routing. Jede Tour wird nur einmal übernommen, Notizen markieren unsichere Deutungen. Achtung: Das Repository ist öffentlich, also auch diese Liste.
 - **Zeitverlauf:** Die Tourenliste lässt sich nach Jahr filtern. Alle Touren der Auswahl erscheinen gemeinsam auf der Karte, ein Tipp auf eine Linie öffnet die Tour. Zusammen mit dem Tab „Plakat“ ergibt das ein Jahresplakat.
@@ -133,6 +145,8 @@ js/styles.js        baut den MapLibre-Stil je Grundkarte + Overlays + 3D
 js/app.js           Karte, Menü, Laden, Interaktion
 js/cells.js         Zellenraster für das Nachladen der Wege
 js/search.js        Ortssuche (Nominatim)
+js/offline-area.js  Gebiet offline speichern (Kachelmathematik, Vorabladen)
+sw.js               Service Worker (Offline-Betrieb)
 js/packages/        Pakete (Touren, Plakat, Wetter)
 js/textscale.js     Lesbarkeit: Beschriftungen skalieren
 js/overpass.js      OSM-Abfrage und Antwortprüfung

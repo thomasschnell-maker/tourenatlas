@@ -8,6 +8,7 @@ import { aerialStyle, openFreeMapStyle, protomapsStyle } from './styles.js';
 import { openPmtiles } from './offline.js';
 import { PACKAGES } from './packages/index.js';
 import { initSearch } from './search.js';
+import { padBbox, prefetch, tileUrl, tilesForBbox } from './offline-area.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -24,8 +25,8 @@ const state = {
   pmtilesUrl: null,
   terrain: true,
   exaggeration: 1.3,
-  visibility: { hillshade: true, ways: true, lifts: true, peaks: true },
-  data: { ways: EMPTY, points: EMPTY, selected: EMPTY }
+  visibility: { hillshade: true, ways: true, bikeroutes: true, lifts: true, peaks: true },
+  data: { ways: EMPTY, points: EMPTY, bikeroutes: EMPTY, selected: EMPTY }
 };
 const sourceState = { openfreemap: 'idle', protomaps: 'idle', terrain: 'idle', trails: 'idle', imagery: 'idle' };
 
@@ -167,11 +168,16 @@ function scheduleLoad() {
 function rebuildData() {
   const ways = new Map();
   const points = new Map();
+  const routes = [];
   for (const c of cells.values()) {
     if (c === 'pending') continue;
     for (const f of c.ways.features) ways.set(f.properties.osm_id, f);
     for (const f of c.peaks.features) points.set(f.properties.osm_id, f);
+    // Radrouten sind je Zelle beschnitten: Teilstücke aneinanderreihen, nicht ersetzen.
+    routes.push(...(c.routes?.features || []));
   }
+  state.data.bikeroutes = { type: 'FeatureCollection', features: routes };
+  map.getSource('bikeroutes')?.setData(state.data.bikeroutes);
   state.data.ways = { type: 'FeatureCollection', features: [...ways.values()] };
   state.data.points = { type: 'FeatureCollection', features: [...points.values()] };
   map.getSource('ways')?.setData(state.data.ways);
@@ -205,7 +211,7 @@ async function loadWays() {
       cells.set(key, 'pending');
       try {
         const res = await fetchOverpass(cellBbox(key, t.cellDeg), t.endpoints, undefined, t.timeoutMs);
-        cells.set(key, { ways: res.ways, peaks: res.peaks });
+        cells.set(key, { ways: res.ways, peaks: res.peaks, routes: res.routes });
         osmBase = res.meta.osmBase || osmBase;
         setSourceState('trails', 'ok', `Server: ${res.endpoint}`);
         rebuildData();
@@ -296,7 +302,7 @@ for (const p of PACKAGES) {
   btn.dataset.tab = p.id;
   btn.innerHTML = `${p.icon}<span>${esc(p.title)}</span>`;
   $('tabbar').insertBefore(btn, $('tabbar').querySelector('[data-tab="info"]'));
-  p.mount({ map, pane, sampler, toast, esc, openPane, setSheetPeek });
+  p.mount({ map, pane, sampler, toast, esc, openPane, setSheetPeek, saveOffline });
 }
 
 initSearch({ map, toast, esc });
@@ -460,7 +466,7 @@ $('sel-gpx').addEventListener('click', async () => {
 });
 
 // ---------- Steuerung ----------
-const LAYER_GROUPS = { hillshade: ['hillshade'], ways: ['ways-casing', 'ways', 'selected'], lifts: ['lifts'], peaks: ['peaks', 'huts', 'peak-labels', 'peak-labels-overview'] };
+const LAYER_GROUPS = { hillshade: ['hillshade'], bikeroutes: ['bikeroutes', 'bikeroute-labels'], ways: ['ways-casing', 'ways', 'selected'], lifts: ['lifts'], peaks: ['peaks', 'huts', 'peak-labels', 'peak-labels-overview'] };
 
 document.querySelectorAll('input[data-layer]').forEach((cb) => {
   cb.addEventListener('change', () => {
@@ -542,11 +548,84 @@ $('legend').innerHTML =
   '<li><i style="background:#ffffff;outline:1px solid #999"></i>Pfad ohne SAC</li>' +
   '<li><i style="background:#c8a27a"></i>Fahrweg (track)</li>' +
   '<li><i style="background:#7cb342"></i>Radweg</li>' +
+  '<li><i style="background:#1e5fd0;opacity:.5;height:7px"></i>Radroute national</li>' +
+  '<li><i style="background:#7b3fb5;opacity:.5;height:7px"></i>Radroute regional</li>' +
+  '<li><i style="background:#16a39a;opacity:.5;height:7px"></i>Radroute lokal</li>' +
+  '<li><i style="background:#c0661b;opacity:.5;height:7px"></i>MTB-Route</li>' +
   '<li><i style="background:#8e24aa"></i>Klettersteig</li>' +
   '<li><i style="background:repeating-linear-gradient(90deg,#111 0 8px,transparent 8px 10px)"></i>Seilbahn/Lift</li>' +
   '<li><i class="dot" style="background:#8d4e1f"></i>Hütte</li>' +
   '<li><i class="dot" style="background:#1e8e3e"></i>Gipfel OSM≈DEM</li>' +
   '<li><i class="dot" style="background:#e3b341"></i>Gipfel Δ erklärbar</li>' +
   '<li><i class="dot" style="background:#e53935"></i>Gipfel Δ auffällig</li>';
+
+// ---------- Offline ----------
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || ['localhost', '127.0.0.1'].includes(location.hostname))) {
+  navigator.serviceWorker.register('sw.js').catch((err) => console.warn('Offline-Modus nicht verfügbar:', err));
+}
+window.addEventListener('offline', () => toast('Offline – gespeicherte Karten und Touren bleiben nutzbar; Suche, Routing und Wetter brauchen Netz', { ttl: 7000 }));
+window.addEventListener('online', () => toast('Wieder online'));
+
+const MAX_OFFLINE_TILES = 4000;
+
+/**
+ * Gebiet offline speichern: Vektorkarte (Zoom 8–14), Höhenmodell (8–13), Schriften, Bergwege/Radrouten (Overpass-Zellen).
+ * Die Antworten speichert der Service Worker; hier wird nur gezielt vorab geladen.
+ */
+async function saveOffline(bbox, label) {
+  if (!navigator.serviceWorker?.controller) {
+    return toast('Offline-Speicher noch nicht bereit – Seite einmal neu laden und erneut versuchen', { error: true, ttl: 7000 });
+  }
+  const area = padBbox(bbox, 1);
+  const urls = [];
+  try {
+    const style = map.getStyle();
+    const omt = style.sources?.openmaptiles;
+    if (omt?.url) {
+      const tj = await (await fetch(omt.url)).json();
+      if (tj.tiles?.[0]) urls.push(...tilesForBbox(area, 8, Math.min(14, tj.maxzoom ?? 14)).map((t) => tileUrl(tj.tiles[0], t)));
+    }
+    urls.push(...tilesForBbox(area, 8, SOURCES.terrain.maxzoom).map((t) => tileUrl(SOURCES.terrain.tiles[0], t)));
+    if (style.glyphs) {
+      for (const font of ['Noto Sans Regular', 'Noto Sans Bold', 'Noto Sans Italic']) {
+        for (const range of ['0-255', '256-511', '8192-8447']) urls.push(style.glyphs.replace('{fontstack}', encodeURIComponent(font)).replace('{range}', range));
+      }
+    }
+  } catch (err) {
+    return toast(`Offline-Speichern nicht möglich: ${err.message}`, { error: true, ttl: 7000 });
+  }
+  if (urls.length > MAX_OFFLINE_TILES) {
+    return toast(`Gebiet zu gross (${urls.length} Kacheln, max. ${MAX_OFFLINE_TILES}) – näher heranzoomen oder Tour kürzer wählen`, { error: true, ttl: 8000 });
+  }
+  try {
+    await navigator.storage?.persist?.();
+  } catch {}
+  toast(`Speichere ${label} offline … 0/${urls.length}`, { busy: true, ttl: 0 });
+  const r = await prefetch(urls, { onProgress: (d, n) => d % 25 === 0 && toast(`Speichere ${label} offline … ${d}/${n}`, { busy: true, ttl: 0 }) });
+  // Bergwege und Radrouten der Zellen im Gebiet
+  const t = SOURCES.trails;
+  const keys = [];
+  for (let x = Math.floor(area[0] / t.cellDeg[0]); x <= Math.floor(area[2] / t.cellDeg[0]); x++) {
+    for (let y = Math.floor(area[1] / t.cellDeg[1]); y <= Math.floor(area[3] / t.cellDeg[1]); y++) keys.push(`${x}:${y}`);
+  }
+  let cellsOk = 0;
+  for (const [i, key] of keys.slice(0, 80).entries()) {
+    toast(`Speichere Bergwege offline … ${i + 1}/${Math.min(keys.length, 80)}`, { busy: true, ttl: 0 });
+    try {
+      const res = await fetchOverpass(cellBbox(key, t.cellDeg), t.endpoints, undefined, t.timeoutMs);
+      if (!cells.has(key) || cells.get(key) === 'pending') cells.set(key, { ways: res.ways, peaks: res.peaks, routes: res.routes });
+      cellsOk++;
+    } catch {}
+  }
+  rebuildData();
+  const est = navigator.storage?.estimate ? await navigator.storage.estimate() : null;
+  const mb = est?.usage ? ` · belegt ${(est.usage / 1e6).toFixed(0)} MB` : '';
+  toast(`${label} offline: ${r.ok} Kacheln, ${cellsOk}/${Math.min(keys.length, 80)} Wege-Bereiche${r.failed ? `, ${r.failed} fehlgeschlagen` : ''}${mb}`, { error: r.failed > 0, ttl: 9000 });
+}
+
+$('offline-view').addEventListener('click', () => {
+  const b = map.getBounds();
+  saveOffline([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()], 'Ausschnitt');
+});
 
 renderSources();

@@ -69,6 +69,106 @@ export function batteryWh(lengthM, up) {
   return (lengthM / 1000) * a.whPerKm + up * a.whPerHm;
 }
 
+/**
+ * Akkuverlauf entlang des Profils: Verbrauch nach Strecke + Aufstieg (mit 5-m-Hysterese wie die Hm-Summe),
+ * Restladung des jeweils eingesetzten Akkus in %, Wechselpunkte (km) wenn ein Akku leer ist.
+ */
+export function batteryCurve(profile, capacityWh, threshold = 5) {
+  const a = ACTIVITIES.ebike;
+  let up = 0;
+  let ref = null;
+  const swaps = [];
+  const points = profile.map((p) => {
+    if (p.ele != null) {
+      if (ref == null) ref = p.ele;
+      else if (p.ele - ref >= threshold) {
+        up += p.ele - ref;
+        ref = p.ele;
+      } else if (ref - p.ele >= threshold) ref = p.ele;
+    }
+    const wh = (p.dist / 1000) * a.whPerKm + up * a.whPerHm;
+    const used = Math.floor(wh / capacityWh);
+    if (used > swaps.length) swaps.push(p.dist);
+    return { dist: p.dist, wh, pct: 100 - ((wh - used * capacityWh) / capacityWh) * 100 };
+  });
+  const total = points.length ? points[points.length - 1].wh : 0;
+  return { points, swaps, total, batteries: total / capacityWh };
+}
+
+/** Kumulierte Distanz jeder Station entlang des Profils (nächster Profilpunkt, in Reihenfolge). */
+export function stationDistances(stations, profile) {
+  let from = 0;
+  return stations.map((s) => {
+    let best = from;
+    let bestD = Infinity;
+    for (let i = from; i < profile.length; i++) {
+      const d = haversine(s.lngLat, profile[i].coord);
+      if (d < bestD) {
+        bestD = d;
+        best = i;
+      }
+    }
+    from = best; // Rundtouren: Ziel = Start, darum nur vorwärts suchen
+    return profile[best]?.dist ?? 0;
+  });
+}
+
+/** Punkt in Entfernung m und Richtung (Grad) von [lon, lat] (Kugel, für Kamerablick ausreichend). */
+export function destination([lon, lat], bearingDeg, m) {
+  const R = 6371008.8;
+  const d = m / R;
+  const b = (bearingDeg * Math.PI) / 180;
+  const p1 = (lat * Math.PI) / 180;
+  const l1 = (lon * Math.PI) / 180;
+  const p2 = Math.asin(Math.sin(p1) * Math.cos(d) + Math.cos(p1) * Math.sin(d) * Math.cos(b));
+  const l2 = l1 + Math.atan2(Math.sin(b) * Math.sin(d) * Math.cos(p1), Math.cos(d) - Math.sin(p1) * Math.sin(p2));
+  return [(l2 * 180) / Math.PI, (p2 * 180) / Math.PI];
+}
+
+/**
+ * 3D-Blick aus Fotodaten: mit Blickrichtung vom Standort in Fotorichtung (Kamera "steht" am Aufnahmeort),
+ * sonst Aufsicht schräg auf den Aufnahmeort.
+ */
+export function viewFromPhoto({ lngLat, direction }) {
+  if (!lngLat) return null;
+  if (direction == null) return { center: lngLat, zoom: 15, pitch: 55, bearing: 0 };
+  return { center: destination(lngLat, direction, 700), zoom: 15, pitch: 72, bearing: direction };
+}
+
+/**
+ * Fotos Stationen zuordnen: mit GPS → nächste Station (max. maxM), ohne GPS → Station des zeitlich
+ * nächsten Fotos mit GPS; sonst fallbackIndex. Liefert je Foto { station, reason }.
+ */
+export function assignPhotos(photos, stations, { maxM = 5000, fallbackIndex = 0 } = {}) {
+  const near = (ll) => {
+    let best = -1;
+    let bestD = Infinity;
+    stations.forEach((s, i) => {
+      const d = haversine(ll, s.lngLat);
+      if (d < bestD) {
+        bestD = d;
+        best = i;
+      }
+    });
+    return bestD <= maxM ? { station: best, dist: bestD } : null;
+  };
+  const first = photos.map((p) => {
+    if (!p.lngLat) return null;
+    const n = near(p.lngLat);
+    return n ? { station: n.station, reason: `Aufnahmeort, ${Math.round(n.dist)} m von der Station` } : { station: null, reason: 'Aufnahmeort weit weg von allen Stationen' };
+  });
+  const timed = photos.map((p, i) => ({ t: Date.parse(p.takenAt || ''), r: first[i] })).filter((x) => Number.isFinite(x.t) && x.r?.station != null);
+  return photos.map((p, i) => {
+    if (first[i]?.station != null) return first[i];
+    const t = Date.parse(p.takenAt || '');
+    if (Number.isFinite(t) && timed.length) {
+      const m = timed.reduce((a, b) => (Math.abs(b.t - t) < Math.abs(a.t - t) ? b : a));
+      return { station: m.r.station, reason: `Aufnahmezeit (${Math.round(Math.abs(m.t - t) / 60000)} min neben Foto mit Ort)` };
+    }
+    return { station: fallbackIndex, reason: first[i]?.reason || 'keine Orts- oder Zeitangabe – gewählte Station' };
+  });
+}
+
 /** GPX-Datei → { name, coords: [[lon, lat]], time } (Tracks, sonst Route). Ohne DOM, damit testbar. */
 export function parseGpx(text) {
   const src = String(text);

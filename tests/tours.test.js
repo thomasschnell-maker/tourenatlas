@@ -88,3 +88,26 @@ test('stationsFromTrack: Start, Ziel, ~alle 10 km', async () => {
   assert.equal(idx.at(-1), 59);
   assert.equal(idx.length, 6);
 });
+
+test('batteryCurve: Verbrauch, Restladung, Wechselpunkt', async () => {
+  const { batteryCurve } = await import('../js/packages/tours-core.js');
+  // 60 km flach in 1-km-Schritten, dann 30 km mit +40 Hm/km: 60·6 = 360 Wh, dann +30·(6+10) = 480 → 840 Wh
+  const profile = [];
+  for (let k = 0; k <= 60; k++) profile.push({ dist: k * 1000, ele: 700 });
+  for (let k = 1; k <= 30; k++) profile.push({ dist: (60 + k) * 1000, ele: 700 + k * 40 });
+  const c = batteryCurve(profile, 500);
+  assert.equal(Math.round(c.total), 840);
+  assert.ok(Math.abs(c.batteries - 1.68) < 1e-9);
+  assert.equal(c.swaps.length, 1);
+  // 500 Wh erreicht: 360 flach + 140 Wh bei 16 Wh/km → 8,75 km nach km 60 → Wechsel bei km 69 (1-km-Raster)
+  assert.equal(c.swaps[0], 69000);
+  assert.equal(c.points[0].pct, 100);
+  assert.ok(c.points.at(-1).pct > 31 && c.points.at(-1).pct < 33);
+});
+
+test('stationDistances: vorwärts entlang des Profils, Rundtour', async () => {
+  const { stationDistances } = await import('../js/packages/tours-core.js');
+  const profile = [[10, 47], [10.01, 47], [10.02, 47], [10.01, 47.001], [10, 47]].map((c, i) => ({ dist: i * 1000, coord: c }));
+  const st = [{ lngLat: [10, 47] }, { lngLat: [10.02, 47] }, { lngLat: [10, 47] }];
+  assert.deepEqual(stationDistances(st, profile), [0, 2000, 4000]);
+});
