@@ -417,12 +417,16 @@ $('pm-copy').addEventListener('click', async () => {
   }
 });
 
-$('panel-toggle').addEventListener('click', () => {
-  const panel = $('panel');
-  const collapsed = panel.classList.toggle('collapsed');
+function setPanelCollapsed(collapsed) {
+  $('panel').classList.toggle('collapsed', collapsed);
   $('panel-toggle').textContent = collapsed ? '+' : '–';
   $('panel-toggle').setAttribute('aria-expanded', String(!collapsed));
-});
+}
+$('panel-toggle').addEventListener('click', () => setPanelCollapsed(!$('panel').classList.contains('collapsed')));
+// Auf dem Smartphone startet das Panel eingeklappt, damit die Karte sichtbar ist.
+if (window.matchMedia('(max-width: 640px)').matches) setPanelCollapsed(true);
+
+$('home').addEventListener('click', () => map.flyTo({ ...START_VIEW, duration: 2500, essential: true }));
 
 $('legend').innerHTML =
   Object.values(SAC_SCALE).map((s) => `<li><i style="background:${s.color}"></i>${esc(s.label)}</li>`).join('') +
