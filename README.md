@@ -77,7 +77,13 @@ Unten liegt eine Tab-Leiste. Jeder Tab öffnet ein Blatt mit genau einem Thema, 
 Erweiterungen hängen sich als Paket ein: eine Datei in `js/packages/` anlegen und sie in `js/packages/index.js` eintragen. Jedes Paket bekommt automatisch einen eigenen Tab und ein eigenes Blatt. Die Schnittstelle besteht aus `mount`, `onStyle` (eigene Ebenen nach einem Wechsel der Grundkarte neu anlegen), `onActivate`/`onDeactivate` und `onMapClick`.
 
 **Touren-Paket** (`js/packages/tours*.js`):
-- **Stationen:** „Neue Tour“ anlegen und Stationen durch Tippen auf die Karte setzen. Jede Station hat Name und Höhe aus dem DEM.
+- **Stationen:** „Neue Tour“ anlegen. Stationen lassen sich auf drei Wegen setzen:
+  - **Orte eintippen**, auch mehrere: `Sonthofen, Burgberg, Immenstadt`. Für jeden Ort wird der beste Treffer gesetzt, Treffer in der Region zuerst. Orte ohne eindeutigen Treffer meldet die App.
+  - **Pinnen aus der Ortssuche** mit „+ Station“. Ist keine Tour offen, wird eine neue angelegt.
+  - **Tippen auf die Karte.**
+  
+  Jede Station hat Name und Höhe aus dem DEM.
+- **Zeitverlauf:** Die Tourenliste lässt sich nach Jahr filtern. Alle Touren der Auswahl erscheinen gemeinsam auf der Karte, ein Tipp auf eine Linie öffnet die Tour. Zusammen mit dem Tab „Plakat“ ergibt das ein Jahresplakat.
 - **Verbindung:** „Wegen folgen“ routet zwischen den Stationen über [BRouter](https://brouter.de) mit dem Profil `hiking-mountain`. Die Route muss höchstens 300 m von beiden Stationen beginnen und enden, sonst gilt der Abschnitt als nicht geprüft. Schlägt das Routing fehl, bleibt der Abschnitt Luftlinie, gestrichelt dargestellt und mit Hinweis.
 - **Kennzahlen:** Länge, Auf- und Abstieg aus dem DEM. Die Gehzeit folgt DIN 33466 wie beim DAV: 4 km/h, 300 Hm/h aufwärts, 500 Hm/h abwärts; der grössere Wert plus die Hälfte des kleineren.
 - **Fotos je Station:** Beim Hochladen wird der aktuelle 3D-Blick (Mitte, Zoom, Neigung, Richtung) mit dem Foto gespeichert. „3D-Blick“ in der Fotoansicht fliegt genau dorthin zurück. Fotos werden auf höchstens 1600 px verkleinert, die EXIF-Drehung wird übernommen.

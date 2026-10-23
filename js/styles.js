@@ -202,6 +202,9 @@ function insertBeforeLabels(layers, extra) {
 
 function finish(style, data, opts) {
   style.sources = { ...style.sources, ...overlaySources(data) };
+  // Robustheit: Ebenen ohne vorhandene Quelle entfernen – sonst verwirft MapLibre den ganzen Stil
+  // (z. B. wenn ein Anbieter eine Quelle umbenennt).
+  style.layers = style.layers.filter((l) => !l.source || style.sources[l.source]);
   // Grössere Beschriftungen am Smartphone, kräftiger Schriftrand überall.
   boostLabels(style.layers, opts.labelScale ?? 1);
   if (opts.terrain) style.terrain = { source: 'terrain', exaggeration: opts.exaggeration };
