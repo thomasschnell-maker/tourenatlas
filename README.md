@@ -89,7 +89,10 @@ vendor/             MapLibre GL, PMTiles, Protomaps-Stil (feste Versionen)
 
 ## Veröffentlichen
 
-- **GitHub Pages:** Settings → Pages → Branch `main`, Ordner `/ (root)` → Save. Danach läuft die App unter `https://thomasschnell-maker.github.io/tourenatlas/`.
-- **Netlify:** Die Site `allgaeu-tourenatlas` mit diesem Repository verknüpfen. `netlify.toml` ist vorbereitet.
+Live unter **https://thomasschnell-maker.github.io/tourenatlas/**
+
+Automatisch: Jede Änderung an `main` durchläuft die Tests (`.github/workflows/deploy-pages.yml`) und wird nur bei Erfolg nach `gh-pages` übertragen. Von dort veröffentlicht GitHub Pages. `gh-pages` nie direkt bearbeiten, es wird bei jedem Lauf überschrieben.
+
+Alternativ Netlify: Die Site `allgaeu-tourenatlas` mit diesem Repository verknüpfen, `netlify.toml` ist vorbereitet.
 
 Kartendaten © OpenStreetMap-Mitwirkende (ODbL). Planungshilfe, kein Ersatz für die Lagebeurteilung vor Ort.
