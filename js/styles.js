@@ -4,6 +4,7 @@
 // Overlays liegen unter den Beschriftungen der Grundkarte, damit Ortsnamen lesbar bleiben.
 
 import { SOURCES, SAC_SCALE } from './config.js';
+import { boostLabels } from './textscale.js';
 
 const SKY = {
   'sky-color': '#7fb2e5',
@@ -201,6 +202,8 @@ function insertBeforeLabels(layers, extra) {
 
 function finish(style, data, opts) {
   style.sources = { ...style.sources, ...overlaySources(data) };
+  // Grössere Beschriftungen am Smartphone, kräftiger Schriftrand überall.
+  boostLabels(style.layers, opts.labelScale ?? 1);
   if (opts.terrain) style.terrain = { source: 'terrain', exaggeration: opts.exaggeration };
   else delete style.terrain;
   style.sky = SKY;
