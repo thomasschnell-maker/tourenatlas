@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Allgäu Tourenatlas 3D" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata>
+    <name>Testweg</name>
+    <desc>Geometrie: OpenStreetMap way 101 (Version 4). Höhen: Terrain Tiles DEM, Zoom 13.</desc>
+    <copyright author="OpenStreetMap contributors"><license>https://opendatacommons.org/licenses/odbl/1-0/</license></copyright>
+    <link href="https://www.openstreetmap.org/way/101"/>
+  </metadata>
+  <trk><name>Testweg</name><trkseg>
+      <trkpt lat="47.4000000" lon="10.3200000"><ele>1771.3</ele></trkpt>
+      <trkpt lat="47.4050000" lon="10.3300000"><ele>1496.0</ele></trkpt>
+      <trkpt lat="47.4100000" lon="10.3400000"><ele>1623.4</ele></trkpt>
+  </trkseg></trk>
+</gpx>
