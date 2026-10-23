@@ -1,0 +1,33 @@
+# Veröffentlicht main automatisch auf GitHub Pages (Branch gh-pages).
+# Nur wenn die Tests grün sind – eine kaputte Version geht nie live.
+name: Deploy Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Tests
+        run: npm test
+
+      - name: main nach gh-pages übertragen
+        run: git push --force origin HEAD:refs/heads/gh-pages
