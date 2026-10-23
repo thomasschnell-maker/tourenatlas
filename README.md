@@ -90,6 +90,9 @@ Erweiterungen hängen sich als Paket ein: eine Datei in `js/packages/` anlegen u
   Jede Station hat Name und Höhe aus dem DEM.
 - **Aktivität je Tour:** Wandern, Rad oder E-Bike. Das Routing nutzt dafür das passende BRouter-Profil: `hiking-mountain` für Wanderwege, `trekking` für Rad- und Wirtschaftswege. Die zuletzt gewählte Aktivität gilt für die nächste neue Tour.
   - **Zeit:** Wandern nach DIN 33466. Rad rechnet mit 16 km/h und 450 Hm/h, E-Bike mit 20 km/h und 900 Hm/h. Beides sind Faustregeln, ±30 %.
+  - **Unterstützungsstufe** Eco, Tour, Sport oder Turbo als Verbrauchsfaktor (0,62 / 1 / 1,3 / 1,65). Faustregel nach Reichweitenangaben der Hersteller.
+  - **Lernt aus echten Fahrten:** Nach der Tour „Tatsächlich … Akkus“ eintragen. Der Median des Verhältnisses echt zu geschätzt über alle Fahrten (begrenzt auf 0,4–2,5) wird dein persönlicher Faktor für alle Schätzungen.
+  - **Plausibilität:** Über 90 Hm/km beim Rad oder 300 Hm/km beim Wandern warnt die App. Meist steckt eine Luftlinie über Gelände dahinter.
   - **E-Bike-Akku:** etwa 6 Wh/km plus 0,25 Wh je Höhenmeter. Grundlage ist ein System von 100 kg mit 0,27 Wh/Hm potenzieller Energie, davon trägt der Motor etwa 65 % bei einem Wirkungsgrad von etwa 75 %. Die Akkugrösse ist wählbar. Wind, Unterstützungsstufe und Temperatur verschieben den Wert deutlich.
 - **Höhenprofil der Tour** mit nummerierten Stationen. Fürs E-Bike zusätzlich die Akku-Restladung in Prozent und der **Wechselpunkt** (⚡ km). Ein Tipp oder Wisch über das Profil zeigt die Stelle auf der Karte.
 - **Fotos automatisch zuordnen:** mehrere Fotos auf einmal auswählen. Die App liest das EXIF der Fotos mit einem eigenen Leser ohne Fremdbibliothek.
@@ -132,6 +135,26 @@ Erweiterungen hängen sich als Paket ein: eine Datei in `js/packages/` anlegen u
    pmtiles extract https://build.protomaps.com/JJJJMMTT.pmtiles allgaeu.pmtiles --bbox=9.55,47.22,11,47.98 --maxzoom=15
    ```
 4. In der App unter „Offline-Karte“ die Datei wählen, oder sie neben `index.html` hochladen und per URL laden.
+
+## Ladezeit und Akku (Handy)
+
+Gemessen in Headless-Chromium mit iPhone-Profil (Pixeldichte 3) und 4G-Drosselung (40 ms):
+
+| | vorher | nachher |
+|---|---|---|
+| Seite geladen | 1,38 s | 1,18 s |
+| Menü bedienbar | 1,79 s | 1,61 s |
+| Pixel je 3D-Kartenbild | 2,69 MP | 1,19 MP (−56 %) |
+| Energiesparmodus | – | 0,47 MP (−82 %) |
+| Overpass-Abfragen beim Start | 13 | 9 |
+
+Massnahmen:
+- **Pixeldichte:** höchstens 2× statt 3×. Bei 3× fallen 2,25× so viele Pixel an, der sichtbare Unterschied ist kaum wahrnehmbar.
+- **Energiesparmodus** (Tab Karte): 1,25× Pixeldichte, keine Schummerung, weniger Nachladen. Die Einstellung bleibt gespeichert.
+- **Module:** Alle Module werden per `modulepreload` parallel geladen statt als Kette. Verbindungen zu Kartenservern werden per `preconnect` früh aufgebaut. Ein Test prüft, dass kein Modul in der Liste fehlt.
+- **Protomaps:** Die Bibliotheken für Offline-Dateien (~75 kB) laden erst, wenn eine Datei geöffnet wird.
+- **Nachladen:** Am Handy höchstens 9 Wege-Zellen je Bewegung. Läuft die App im Hintergrund, lädt sie nichts nach.
+- **Zweiter Start:** Der Service Worker liefert App und Kacheln aus dem Gerätespeicher.
 
 ## Entwicklung
 

@@ -64,16 +64,50 @@ export function tourTimeH(lengthM, up, down, activity = 'hike') {
  * Akku-Bedarf E-Bike (Tour-Modus): ~6 Wh/km Grundlast + ~0,25 Wh je Höhenmeter
  * (100 kg System: 0,27 Wh/Hm potenzielle Energie, Motoranteil ~65 %, Wirkungsgrad ~75 %).
  */
-export function batteryWh(lengthM, up) {
+export function batteryWh(lengthM, up, { assist = 'tour', factor = 1 } = {}) {
   const a = ACTIVITIES.ebike;
-  return (lengthM / 1000) * a.whPerKm + up * a.whPerHm;
+  return ((lengthM / 1000) * a.whPerKm + up * a.whPerHm) * (ASSIST[assist]?.f ?? 1) * factor;
+}
+
+/**
+ * Unterstützungsstufen als Verbrauchsfaktor relativ zu "Tour" (Faustregel aus Reichweitenangaben
+ * der Hersteller: Eco ~1,6× Reichweite, Turbo ~0,6× Reichweite gegenüber Tour).
+ */
+export const ASSIST = {
+  eco: { label: 'Eco', f: 0.62 },
+  tour: { label: 'Tour', f: 1 },
+  sport: { label: 'Sport', f: 1.3 },
+  turbo: { label: 'Turbo', f: 1.65 }
+};
+
+/**
+ * Persönlicher Faktor aus echten Fahrten: Median von (tatsächlich verbraucht / geschätzt) über alle
+ * E-Bike-Touren mit Eintrag. Robust gegen Ausreisser (Median), begrenzt auf 0,4–2,5.
+ */
+export function calibrateEbike(tours) {
+  const ratios = tours
+    .filter((t) => t.activity === 'ebike' && t.actualBatteries > 0 && t.summary?.length > 0)
+    .map((t) => (t.actualBatteries * (t.batteryCapacityWh || 625)) / batteryWh(t.summary.length, t.summary.up, { assist: t.assist || 'tour' }))
+    .filter((r) => Number.isFinite(r) && r > 0)
+    .sort((a, b) => a - b);
+  if (!ratios.length) return { factor: 1, n: 0 };
+  const m = Math.floor(ratios.length / 2);
+  const med = ratios.length % 2 ? ratios[m] : (ratios[m - 1] + ratios[m]) / 2;
+  return { factor: Math.min(2.5, Math.max(0.4, med)), n: ratios.length };
+}
+
+/** Höhenmeter je km: über diesen Werten liegt wahrscheinlich eine Luftlinie über Gelände. */
+export function implausibleClimb(lengthM, up, activity) {
+  if (lengthM < 1000) return false;
+  const perKm = up / (lengthM / 1000);
+  return activity === 'hike' ? perKm > 300 : perKm > 90;
 }
 
 /**
  * Akkuverlauf entlang des Profils: Verbrauch nach Strecke + Aufstieg (mit 5-m-Hysterese wie die Hm-Summe),
  * Restladung des jeweils eingesetzten Akkus in %, Wechselpunkte (km) wenn ein Akku leer ist.
  */
-export function batteryCurve(profile, capacityWh, threshold = 5) {
+export function batteryCurve(profile, capacityWh, threshold = 5, scale = 1) {
   const a = ACTIVITIES.ebike;
   let up = 0;
   let ref = null;
@@ -86,7 +120,7 @@ export function batteryCurve(profile, capacityWh, threshold = 5) {
         ref = p.ele;
       } else if (ref - p.ele >= threshold) ref = p.ele;
     }
-    const wh = (p.dist / 1000) * a.whPerKm + up * a.whPerHm;
+    const wh = ((p.dist / 1000) * a.whPerKm + up * a.whPerHm) * scale;
     const used = Math.floor(wh / capacityWh);
     if (used > swaps.length) swaps.push(p.dist);
     return { dist: p.dist, wh, pct: 100 - ((wh - used * capacityWh) / capacityWh) * 100 };

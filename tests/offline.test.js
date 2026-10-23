@@ -30,3 +30,11 @@ test('Service Worker: App-Schale enthält alle Dateien der App', () => {
   const missing = needed.filter((f) => !shell.has(f));
   assert.deepEqual(missing, []);
 });
+
+test('index.html: modulepreload für jedes Modul (sonst lädt das Handy die Module als Kette)', () => {
+  const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  const pre = new Set([...html.matchAll(/rel="modulepreload" href="([^"]+)"/g)].map((m) => m[1]));
+  const root = new URL('..', import.meta.url).pathname;
+  const mods = [...readdirSync(join(root, 'js')).filter((f) => f.endsWith('.js')).map((f) => `js/${f}`), ...readdirSync(join(root, 'js/packages')).map((f) => `js/packages/${f}`)];
+  assert.deepEqual(mods.filter((m) => m !== 'js/app.js' && !pre.has(m)), []);
+});
