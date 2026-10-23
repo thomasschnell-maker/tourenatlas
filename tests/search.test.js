@@ -32,3 +32,12 @@ test('parseResults: Region zuerst, Typ übersetzt, Bounds umgestellt, Müll verw
   assert.equal(r[0].osm, 'https://www.openstreetmap.org/node/1');
   assert.throws(() => parseResults({}), /ungültige/);
 });
+
+test('splitPlaces: Komma-Liste, Semikolon, einzelne Koordinate bleibt zusammen', async () => {
+  const { splitPlaces } = await import('../js/search.js');
+  assert.deepEqual(splitPlaces('Sonthofen, Burgberg ,Immenstadt'), ['Sonthofen', 'Burgberg', 'Immenstadt']);
+  assert.deepEqual(splitPlaces('Oberstdorf; 47.42, 10.34'), ['Oberstdorf', '47.42, 10.34']);
+  assert.deepEqual(splitPlaces('47.42, 10.34'), ['47.42, 10.34']);
+  assert.deepEqual(splitPlaces('  '), []);
+  assert.deepEqual(splitPlaces('Bad Hindelang, , Hinterstein'), ['Bad Hindelang', 'Hinterstein']);
+});

@@ -4,6 +4,7 @@
 
 import { ROUTER, brouterUrl, captureView, formatDuration, newStation, newTour, parseBrouter, tourGpx, tourLine, tourStats } from './tours-core.js';
 import { blobToDataUrl, compressImage, dataUrlToBlob, requestPersistence, store } from './tours-store.js';
+import { geocode, splitPlaces } from '../search.js';
 
 const ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="18" r="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="18" cy="6" r="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 17.5c4-1 2-6 6-7.5s2-2.5 2.5-2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="2.5 2.5"/></svg>';
 const COLOR = '#d6007e';
@@ -14,11 +15,27 @@ let tours = [];
 let current = null;
 let adding = false;
 let stats = null;
+let year = 'all'; // Zeitverlauf: Jahresfilter der Tourenliste und der Übersichtskarte
 const thumbUrls = new Map();
 
 // ---------- Kartenebenen ----------
+const tourYear = (t) => (t.date || t.created || '').slice(0, 4);
+const visibleTours = () => tours.filter((t) => year === 'all' || tourYear(t) === year);
+
+/** Übersicht: alle Touren des gewählten Jahres; Stationen ohne Nummer. */
+function overviewGeo() {
+  const line = [];
+  const stations = [];
+  for (const t of visibleTours()) {
+    const coords = tourLine(t.stations, t.segments);
+    if (coords.length >= 2) line.push({ type: 'Feature', properties: { routed: true, tour: t.id }, geometry: { type: 'LineString', coordinates: coords } });
+    t.stations.forEach((s) => stations.push({ type: 'Feature', properties: { id: s.id, tour: t.id, n: '', name: s.name, photos: s.photos.length }, geometry: { type: 'Point', coordinates: s.lngLat } }));
+  }
+  return { line: { type: 'FeatureCollection', features: line }, stations: { type: 'FeatureCollection', features: stations } };
+}
+
 function geo() {
-  if (!current) return { line: EMPTY, stations: EMPTY };
+  if (!current) return overviewGeo();
   const st = current.stations;
   const lineFeatures = [];
   for (let i = 1; i < st.length; i++) {
@@ -62,7 +79,7 @@ function addLayers(map) {
     type: 'circle',
     source: 'tour-stations',
     paint: {
-      'circle-radius': 11,
+      'circle-radius': ['case', ['==', ['get', 'n'], ''], 6, 11],
       'circle-color': COLOR,
       'circle-stroke-color': ['case', ['>', ['get', 'photos'], 0], '#ffd400', '#ffffff'],
       'circle-stroke-width': 3,
@@ -122,13 +139,61 @@ async function persist() {
 }
 
 // ---------- Stationen ----------
-async function addStation(lngLat) {
-  const s = newStation([lngLat.lng, lngLat.lat], current.stations.length + 1);
+async function addStation(lngLat, name) {
+  const ll = Array.isArray(lngLat) ? lngLat : [lngLat.lng, lngLat.lat];
+  const s = newStation(ll, current.stations.length + 1);
+  if (name) s.name = name;
   s.ele = await ctx.sampler.elevation(s.lngLat);
   current.stations.push(s);
   refreshMap();
   if (current.stations.length > 1) await rebuildSegments([current.stations.length - 2]);
   else await persist();
+}
+
+/** "Sonthofen, Burgberg, Immenstadt" → je Ort der beste Treffer (Region zuerst) als Station. */
+async function addPlaces(text) {
+  const names = splitPlaces(text);
+  if (!names.length) return;
+  const missing = [];
+  for (const [i, q] of names.entries()) {
+    ctx.toast(`Suche „${q}“ (${i + 1}/${names.length}) …`, { busy: true, ttl: 0 });
+    try {
+      const hit = (await geocode(q))[0];
+      if (!hit) {
+        missing.push(q);
+        continue;
+      }
+      if (!hit.inRegion) missing.push(`${q} (ausserhalb, trotzdem gesetzt)`);
+      await addStation(hit.lngLat, hit.name);
+    } catch (err) {
+      missing.push(`${q} (${err.message})`);
+    }
+  }
+  if (missing.length) ctx.toast(`Nicht eindeutig: ${missing.join(', ')}`, { error: true, ttl: 8000 });
+  else ctx.toast(`${names.length} Station(en) gesetzt`);
+  fitTour();
+}
+
+function fitTour() {
+  if (!current?.stations.length) return;
+  const b = new maplibregl.LngLatBounds();
+  current.stations.forEach((s) => b.extend(s.lngLat));
+  ctx.map.fitBounds(b, { padding: visiblePadding(), maxZoom: 15, duration: 1200 });
+}
+
+/** Aus der Ortssuche gepinnt: in die offene Tour, sonst neue Tour anlegen. */
+async function pinStation({ name, lngLat }) {
+  if (!current) {
+    current = newTour(`Tour ${new Date().toLocaleDateString('de-DE')}`);
+    await store.putTour(current);
+    tours = await store.allTours();
+    current = tours.find((x) => x.id === current.id);
+    requestPersistence();
+  }
+  ctx.openPane('tours');
+  await addStation(lngLat, name);
+  ctx.toast(`„${name}“ als Station ${current.stations.length} gesetzt`);
+  fitTour();
 }
 
 async function removeStation(id) {
@@ -270,11 +335,14 @@ function setAdding(on) {
 function render() {
   const { pane, esc } = ctx;
   if (!current) {
+    const years = [...new Set(tours.map(tourYear).filter(Boolean))].sort().reverse();
+    const chips = years.length > 0 ? `<div class="chips">${['all', ...years].map((y) => `<button type="button" data-year="${y}" aria-pressed="${y === year}">${y === 'all' ? 'Alle' : y}</button>`).join('')}</div>` : '';
     pane.innerHTML = `
+      ${chips}
       <div class="row"><button type="button" class="btn primary" data-t="new">+ Neue Tour</button>
         <label class="btn">Sicherung laden<input type="file" accept=".json,application/json" data-t="import" hidden></label></div>
       <ul class="tour-list">${
-        tours
+        visibleTours()
           .sort((a, b) => (b.date || '').localeCompare(a.date || ''))
           .map(
             (t) => `<li><button type="button" data-open="${esc(t.id)}"><b>${esc(t.name)}</b>
@@ -284,6 +352,7 @@ function render() {
           )
           .join('') || '<li class="muted">Noch keine Touren. Lege die erste an.</li>'
       }</ul>
+      ${visibleTours().length ? '<p class="muted">Alle Touren der Auswahl sind auf der Karte; Linie antippen öffnet die Tour. Für ein Jahresplakat: Jahr wählen, dann Tab „Plakat“.</p>' : ''}
       <p class="muted">Touren und Fotos bleiben nur auf diesem Gerät. Safari löscht sie nach 7 Tagen ohne Besuch, ausser die App liegt auf dem Home-Bildschirm. Sicherung regelmässig exportieren.</p>`;
     return;
   }
@@ -296,6 +365,7 @@ function render() {
       <label><input type="radio" name="tmode" value="route" ${t.mode === 'route' ? 'checked' : ''}><span>Wegen folgen</span></label>
       <label><input type="radio" name="tmode" value="line" ${t.mode === 'line' ? 'checked' : ''}><span>Luftlinie</span></label>
     </div>
+    <form class="row" data-t="places-form"><input data-t="places" placeholder="Orte: Sonthofen, Burgberg, Immenstadt" aria-label="Orte als Stationen" enterkeyhint="done"><button type="submit" class="btn">Setzen</button></form>
     <button type="button" class="btn primary wide ${adding ? 'on' : ''}" data-t="add">${adding ? 'Fertig mit Setzen' : '+ Station auf Karte setzen'}</button>
     ${
       stats
@@ -375,11 +445,26 @@ function station(el) {
 
 // ---------- Ereignisse ----------
 function wire(pane) {
+  pane.addEventListener('submit', (e) => {
+    if (e.target.dataset.t !== 'places-form') return;
+    e.preventDefault();
+    const input = e.target.querySelector('[data-t="places"]');
+    const text = input.value;
+    input.value = '';
+    input.blur();
+    addPlaces(text);
+  });
   pane.addEventListener('click', async (e) => {
     const t = e.target.closest('[data-t]')?.dataset.t;
     const open = e.target.closest('[data-open]')?.dataset.open;
     const s = e.target.closest('[data-s]')?.dataset.s;
     const img = e.target.closest('img[data-pid]');
+    const y = e.target.closest('[data-year]')?.dataset.year;
+    if (y) {
+      year = y;
+      refreshMap();
+      return render();
+    }
     if (open) return openTour(open);
     if (img) return openLightbox(station(img), img.dataset.pid);
     if (t === 'new') {
@@ -388,8 +473,9 @@ function wire(pane) {
       tours = await store.allTours();
       current = tours.find((x) => x.id === current.id);
       stats = null;
-      setAdding(true);
+      // Nicht automatisch in den Tipp-Modus: Orte eintippen oder auf Karte setzen – beides sichtbar.
       render();
+      pane.querySelector('[data-t="places"]')?.focus();
       requestPersistence();
     }
     if (t === 'back') {
@@ -452,6 +538,18 @@ export default {
   async mount(c) {
     ctx = c;
     wire(c.pane);
+    window.addEventListener('ta:pin', (e) => pinStation(e.detail));
+    // Übersicht: Tour antippen öffnet sie.
+    const openFromMap = (e) => {
+      if (adding || current) return;
+      const id = e.features[0]?.properties.tour;
+      if (id) {
+        c.openPane('tours');
+        openTour(id);
+      }
+    };
+    c.map.on('click', 'tour-line', openFromMap);
+    c.map.on('click', 'tour-stations', openFromMap);
     c.map.on('click', 'tour-stations', (e) => {
       if (adding) return;
       const id = e.features[0]?.properties.id;
@@ -465,6 +563,7 @@ export default {
     } catch (err) {
       c.toast(`Lokaler Speicher nicht verfügbar: ${err.message}`, { error: true, ttl: 8000 });
     }
+    refreshMap();
     render();
   },
 

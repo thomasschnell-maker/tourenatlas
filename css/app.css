@@ -56,6 +56,9 @@ a { color: var(--accent); }
 #search-results button:active, #search-results button:hover { background: var(--bg-soft); }
 #search-results small { display: block; color: var(--muted); font-size: 12px; }
 #search-results li.muted { padding: 6px 14px; }
+#search-results li.hit { display: flex; align-items: center; }
+#search-results li.hit > button:first-child { flex: 1; min-width: 0; }
+#search-results .pin { flex: none; width: auto; margin-right: 10px; padding: 6px 10px; border: 1px solid #d6007e; color: #d6007e; border-radius: 8px; font-size: 14px; font-weight: 600; }
 #toast {
   position: absolute; top: calc(60px + var(--safe-t)); left: 50%; transform: translateX(-50%); z-index: 3;
   max-width: min(92vw, 520px); background: var(--bg); color: var(--fg); padding: 7px 14px; border-radius: 12px;
@@ -222,3 +225,6 @@ button.link { border: 0; background: none; color: var(--accent); padding: 0; cur
 .cards-5 { grid-template-columns: repeat(5, 1fr); gap: 6px; }
 .card.mini { padding: 6px 2px; }
 .card.mini small { font-size: 10px; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.chips button { border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 5px 14px; cursor: pointer; font-size: 15px; }
+.chips button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
