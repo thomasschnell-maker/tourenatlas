@@ -54,3 +54,37 @@ test('tourGpx: Wegpunkte, Track, XML-Escaping', () => {
   assert.equal((g.match(/<wpt /g) || []).length, 2);
   assert.match(g, /<ele>2224\.0<\/ele><\/trkpt>/);
 });
+
+test('Rad/E-Bike-Zeit und Akku-Faustregel', async () => {
+  const { rideTimeH, tourTimeH, batteryWh } = await import('../js/packages/tours-core.js');
+  // E-Bike: 80 km, 1300 Hm → 80/20 + 1300/900 = 4 + 1.44 h
+  assert.ok(Math.abs(rideTimeH(80000, 1300, 'ebike') - (4 + 1300 / 900)) < 1e-9);
+  assert.ok(Math.abs(tourTimeH(32000, 450, 450, 'bike') - 3) < 1e-9);
+  assert.equal(tourTimeH(8000, 0, 0, 'hike'), 2);
+  // 80 km · 6 Wh + 1300 Hm · 0,25 Wh = 480 + 325 = 805 Wh → bei 625 Wh: knapp 1,3 Akkus
+  assert.equal(batteryWh(80000, 1300), 805);
+});
+
+test('parseGpx: Track, Name, Zeit; Route als Ersatz; Fehler', async () => {
+  const { parseGpx } = await import('../js/packages/tours-core.js');
+  const gpx = `<?xml version="1.0"?><gpx version="1.1"><metadata><name><![CDATA[Grüntensee-Runde]]></name><time>2026-07-12T08:00:00Z</time></metadata>
+    <trk><trkseg><trkpt lat="47.514" lon="10.281"><ele>742</ele></trkpt><trkpt lat="47.52" lon="10.29"/><trkpt lon="10.30" lat="47.53"></trkpt></trkseg></trk></gpx>`;
+  const r = parseGpx(gpx);
+  assert.equal(r.name, 'Grüntensee-Runde');
+  assert.equal(r.time, '2026-07-12T08:00:00Z');
+  assert.deepEqual(r.coords, [[10.281, 47.514], [10.29, 47.52], [10.3, 47.53]]);
+  const rte = parseGpx('<gpx><rte><rtept lat="47" lon="10"/><rtept lat="47.1" lon="10.1"/></rte></gpx>');
+  assert.equal(rte.coords.length, 2);
+  assert.throws(() => parseGpx('<kml></kml>'), /Keine GPX/);
+  assert.throws(() => parseGpx('<gpx><trk></trk></gpx>'), /keinen Track/);
+});
+
+test('stationsFromTrack: Start, Ziel, ~alle 10 km', async () => {
+  const { stationsFromTrack } = await import('../js/packages/tours-core.js');
+  // 0.01° lon bei 47° ≈ 759 m → 60 Punkte ≈ 44.8 km → Zwischenstationen bei ~10/20/30/40 km
+  const coords = Array.from({ length: 60 }, (_, i) => [10 + i * 0.01, 47]);
+  const idx = stationsFromTrack(coords, 10);
+  assert.equal(idx[0], 0);
+  assert.equal(idx.at(-1), 59);
+  assert.equal(idx.length, 6);
+});
