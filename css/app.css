@@ -246,3 +246,17 @@ button.link { border: 0; background: none; color: var(--accent); padding: 0; cur
 .autophoto { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 12px; }
 .autophoto .muted { margin: 0; display: flex; align-items: center; gap: 6px; }
 .autophoto select { max-width: 160px; padding: 4px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); }
+.tgroup { margin-top: 12px; }
+.tgroup.dim { opacity: 0.45; }
+.tgroup-head { width: 100%; text-align: left; border: 0; background: none; padding: 4px 0; font-weight: 700; font-size: 15px; cursor: pointer; color: var(--fg); }
+.tgroup-head small { font-weight: 400; color: var(--muted); }
+.tgroup-head[aria-pressed="true"] { color: var(--accent); }
+.tour-list button { display: grid; grid-template-columns: auto 1fr; column-gap: 10px; align-items: center; }
+.tour-list small { grid-column: 2; }
+.tdot { width: 14px; height: 14px; border-radius: 50%; grid-row: span 2; box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(0,0,0,.15); }
+.colors { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
+.colors label { cursor: pointer; }
+.colors input { position: absolute; opacity: 0; pointer-events: none; }
+.colors i { display: block; width: 26px; height: 26px; border-radius: 50%; border: 3px solid transparent; }
+.colors input:checked + i { border-color: var(--fg); }
+.colors .btn { margin-left: auto; }

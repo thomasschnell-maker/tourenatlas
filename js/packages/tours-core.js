@@ -269,6 +269,16 @@ ${wpts}
 </gpx>`;
 }
 
+// Unterscheidbare Tourfarben (gut sichtbar auf Karte und Luftbild, nicht in der SAC-Farbskala).
+export const TOUR_COLORS = ['#d6007e', '#0a6cff', '#ff7a00', '#00a86b', '#8e44ff', '#e4002b', '#00a3b5', '#9a6b00'];
+
+/** Nächste freie Farbe: die am seltensten verwendete der Palette. */
+export function nextColor(tours) {
+  const used = new Map(TOUR_COLORS.map((c) => [c, 0]));
+  for (const t of tours) if (used.has(t.color)) used.set(t.color, used.get(t.color) + 1);
+  return [...used.entries()].sort((a, b) => a[1] - b[1])[0][0];
+}
+
 export function newTour(name = 'Neue Tour') {
   const now = new Date().toISOString();
   return { id: uid(), name, date: now.slice(0, 10), mode: 'route', activity: 'hike', batteryCapacityWh: 625, note: '', created: now, updated: now, stations: [], segments: [] };

@@ -1,18 +1,72 @@
 [
   {
     "id": "2026-sonthofen-oberjoch-gruentensee",
-    "version": 2,
+    "version": 3,
+    "group": "Oberjoch / Grüntensee",
+    "variant": "Runde über Jungholz und Königssträßle",
     "name": "Sonthofen – Oberjoch – Jungholz – Grüntensee",
     "activity": "ebike",
     "places": ["Sonthofen", "Bad Hindelang", "Oberjoch", "Unterjoch", "Jungholz", "Wertach", "Grüntensee", "Königssträßle|Königssträßle, Wertach|Königsträßle", "Burgberg im Allgäu", "Sonthofen"],
     "note": "E-Bike, 2 Akkus. „kungholz“ = Jungholz (Tirol). Rückweg ab Wertach über das Königssträßle nach Burgberg/Sonthofen."
   },
   {
-    "id": "2026-sonthofen-gunzesried-ofterschwanger-horn",
-    "version": 2,
-    "name": "Sonthofen – Gunzesried – Ofterschwanger Horn",
+    "id": "2026-ofterschwanger-horn-rueckweg-1",
+    "version": 3,
+    "group": "Ofterschwanger Horn",
+    "variant": "Rückweg 1 über Bolsterlang, Tiefenberg, Sigishofen",
+    "name": "Ofterschwanger Horn – Rückweg 1",
     "activity": "ebike",
-    "places": ["Sonthofen", "Altmummen|Alt Mummen|Mummen", "Immenstadt im Allgäu", "Gunzesried", "Allgäuer Berghof", "Ofterschwanger Horn", "Ofterschwang", "Sonthofen"],
-    "note": "E-Bike. Über Alt Mummen nach Immenstadt, Gunzesried, Allgäuer Berghof, Ofterschwanger Horn, runter nach Ofterschwang, zurück nach Sonthofen."
+    "places": ["Sonthofen", "Blaichach", "Immenstadt im Allgäu", "Altmummen|Alt Mummen", "Ettensberg", "Gunzesried", "Allgäuer Berghof", "Ofterschwanger Horn", "Allgäuer Berghof", "Ofterschwang", "Bolsterlang", "Tiefenberg, Ofterschwang|Tiefenberg", "Sigishofen", "Sonthofen"],
+    "note": "Laut Zettel: SF – Illerdamm – (Blaichach) Immenstadt – Kreisel links – R. Blaichach – nach ~600 m rechts Straße Altmummen – Ettensberg – Ortsmitte rechts Gunzesried – Brotzeitstelle – Gunzesried (Kirche) rechts – R. Blaichach/Bihlerdorf – Anhöhe rechts Abz. Allgäuer Berghof – Teerstraße bis Bergstation Sesselbahn – Aufstieg Ofterschwanger Horn – zurück Bergstation – Allgäuer Berghof – Schotterweg Ofterschwang (Talstation Sessellift). Rückweg 1: Bolsterlang – Abzw. (Sport Speiser) – Tiefenberg – Bushaltestelle links – Sigishofen – B19 – SF. Unleserlich: „Abz. Alpe D…“ bei Gunzesried."
+  },
+  {
+    "id": "2026-sonthofen-gunzesried-ofterschwanger-horn",
+    "version": 3,
+    "group": "Ofterschwanger Horn",
+    "variant": "Rückweg 2 (kürzer) über Westerhofen, Hüttenberg",
+    "name": "Ofterschwanger Horn – Rückweg 2",
+    "activity": "ebike",
+    "places": ["Sonthofen", "Blaichach", "Immenstadt im Allgäu", "Altmummen|Alt Mummen", "Ettensberg", "Gunzesried", "Allgäuer Berghof", "Ofterschwanger Horn", "Allgäuer Berghof", "Ofterschwang", "Westerhofen, Ofterschwang|Westerhofen", "Hüttenberg, Ofterschwang|Hüttenberg", "Sonthofen"],
+    "note": "Hinweg wie Rückweg 1. Rückweg 2 (kürzer): Ofterschwang – R. Westerhofen links – Hüttenberg (Käse) – Bergabfahrt, Westerhofen rechts – Hauptstraße links – Bauernhof (Feldweg links) – Illersiedlung – SF. „Ofterschwanger Hütten“ = Hüttenberg."
+  },
+  {
+    "id": "2026-ofterschwanger-horn-rueckweg-3",
+    "version": 3,
+    "group": "Ofterschwanger Horn",
+    "variant": "Rückweg 3 über Schweineberg, Sonnenalp",
+    "name": "Ofterschwanger Horn – Rückweg 3",
+    "activity": "ebike",
+    "places": ["Sonthofen", "Blaichach", "Immenstadt im Allgäu", "Altmummen|Alt Mummen", "Ettensberg", "Gunzesried", "Allgäuer Berghof", "Ofterschwanger Horn", "Allgäuer Berghof", "Ofterschwang", "Schweineberg, Ofterschwang|Schweineberg", "Sonnenalp|Hotel Sonnenalp", "Sigishofen", "Sonthofen"],
+    "note": "Hinweg wie Rückweg 1. Rückweg 3 (von Route 2 abzweigen): geradeaus – links – links (Berg) – rechts Straße nach Schweineberg – Sonnenalp – Sennerei – Einmündung zurück – geradeaus Hotel Freistil – Sigishofen (rechts B19) – SF."
+  },
+  {
+    "id": "2026-balderschwang-sibratsgfaell-oberstdorf",
+    "version": 3,
+    "group": "Balderschwang / Sibratsgfäll",
+    "variant": "Rückweg ① über Oberstdorf und Illerradweg",
+    "name": "Lochbachtal – Balderschwang – Sibratsgfäll – Rückweg ①",
+    "activity": "ebike",
+    "places": ["Sonthofen", "Fischen im Allgäu", "Obermaiselstein", "Hirschsprung, Obermaiselstein|Hirschsprung", "Lochbachtal|Lochbach", "Schelpenalpe|Schelpenalpe, Balderschwang", "Balderschwang", "Sibratsgfäll", "Hirschgund", "Rohrmoos, Oberstdorf|Rohrmoos", "Tiefenbach, Oberstdorf|Tiefenbach", "Oberstdorf", "Sonthofen"],
+    "note": "Laut Zettel: SF – Fischen (Ort) – Berg (Ampel) im Ort R. Obermaiselstein (Radweg) – O'stein – R. Tiefenbach – Hirschsprung – nach Parkplatz rechts Teerstraße (Schranke) – Lochbachtal – Alpe (Name unleserlich) – Abzweigung rechts – Wald-/Wiesenweg zur Schelpenalpe – Balderschwang – R. Hittisau – Sibratsgfäll (Abzw. ca. 4 km rechts) – im Ort (Kirche) links Hirschgund, Rohrmoos (Teerstraße) – Tiefenbach. Rückweg ①: Oberstdorf (McDonald's) – Illerradweg – SF/Breitach."
+  },
+  {
+    "id": "2026-balderschwang-sibratsgfaell-fischen",
+    "version": 3,
+    "group": "Balderschwang / Sibratsgfäll",
+    "variant": "Rückweg ② über Obermaiselstein, Fischen, Illerdamm",
+    "name": "Lochbachtal – Balderschwang – Sibratsgfäll – Rückweg ②",
+    "activity": "ebike",
+    "places": ["Sonthofen", "Fischen im Allgäu", "Obermaiselstein", "Hirschsprung, Obermaiselstein|Hirschsprung", "Lochbachtal|Lochbach", "Schelpenalpe|Schelpenalpe, Balderschwang", "Balderschwang", "Sibratsgfäll", "Hirschgund", "Rohrmoos, Oberstdorf|Rohrmoos", "Tiefenbach, Oberstdorf|Tiefenbach", "Obermaiselstein", "Fischen im Allgäu", "Sonthofen"],
+    "note": "Hinweg wie Rückweg ①. Rückweg ②: Tiefenbach links R. Obermaiselstein – Fischen – Illerdamm – SF."
+  },
+  {
+    "id": "2026-hindelang-jochstrasse-schnitzelalm",
+    "version": 3,
+    "group": "Hindelang / Jochstraße",
+    "variant": "Über Reckenberg, Vorderhindelang, Schnitzelalm",
+    "name": "Bad Hindelang – Jochstraße – Schnitzelalm",
+    "activity": "ebike",
+    "places": ["Sonthofen", "Waltener Straße, Sonthofen|Sonthofen", "Reckenberg, Bad Hindelang|Reckenberg", "Breiten, Sonthofen|Breiten", "Vorderhindelang", "Zillenbachstraße, Bad Hindelang|Bad Hindelang", "Schnitzelalm|Jochstraße 37, Bad Hindelang", "Alte Jochstraße, Bad Hindelang|Jochstraße, Bad Hindelang", "Richard-Wagner-Straße, Sonthofen|Sonthofen"],
+    "note": "Aus der Google-Maps-Fahrradroute (2 h 43): Waltener Straße – Reckenberg – Breiten – Vorderhindelang – Zillenbachstraße – Schnitzelalm (Jochstraße 37) – Alte Jochstraße – Richard-Wagner-Straße (Sonthofen)."
   }
 ]
