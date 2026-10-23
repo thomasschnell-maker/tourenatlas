@@ -1,3 +1,5 @@
 node_modules/
 *.pmtiles
 .DS_Store
+*.png
+*.gpx
