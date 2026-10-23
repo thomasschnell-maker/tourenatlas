@@ -2,13 +2,14 @@
 // Touren-Paket: Touren mit mehreren Stationen, Routing entlang echter Wege,
 // Fotos je Station mit gespeichertem 3D-Blick. Daten bleiben lokal auf dem Gerät.
 
-import { ACTIVITIES, ROUTER, assignPhotos, batteryCurve, brouterUrl, captureView, formatDuration, newStation, newTour, parseBrouter, parseGpx, stationDistances, stationsFromTrack, tourGpx, tourLine, tourStats, viewFromPhoto } from './tours-core.js';
+import { ACTIVITIES, ROUTER, TOUR_COLORS, assignPhotos, batteryCurve, brouterUrl, captureView, formatDuration, newStation, newTour, nextColor, parseBrouter, parseGpx, stationDistances, stationsFromTrack, tourGpx, tourLine, tourStats, viewFromPhoto } from './tours-core.js';
 import { readExif } from './exif.js';
 import { blobToDataUrl, compressImage, dataUrlToBlob, requestPersistence, store } from './tours-store.js';
 import { geocode, splitPlaces } from '../search.js';
 
 const ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="18" r="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="18" cy="6" r="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 17.5c4-1 2-6 6-7.5s2-2.5 2.5-2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="2.5 2.5"/></svg>';
-const COLOR = '#d6007e';
+const COLOR = TOUR_COLORS[0];
+const colorOf = (t) => t?.color || COLOR;
 const EMPTY = { type: 'FeatureCollection', features: [] };
 
 let ctx = null;
@@ -29,17 +30,45 @@ function lastActivity() {
   }
 }
 
+let group = null; // Gruppenfilter: nur diese Tourfamilie auf der Karte
+
+/** Tourenliste nach Gruppen (Tourfamilie mit Rückweg-Varianten), je Tour Farbe + Kennzahlen. */
+function renderGroups(esc) {
+  const list = visibleTours();
+  if (!list.length) return '<p class="muted">Noch keine Touren. Lege die erste an oder übernimm deine Touren.</p>';
+  const groups = new Map();
+  for (const t of list.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'de'))) {
+    const g = t.group || 'Ohne Gruppe';
+    if (!groups.has(g)) groups.set(g, []);
+    groups.get(g).push(t);
+  }
+  return [...groups.entries()]
+    .map(
+      ([g, ts]) => `<section class="tgroup ${group && group !== g ? 'dim' : ''}">
+        <button type="button" class="tgroup-head" data-group="${esc(g)}" aria-pressed="${group === g}">${esc(g)} <small>${ts.length} ${ts.length === 1 ? 'Tour' : 'Varianten'}${group === g ? ' · nur diese auf der Karte' : ''}</small></button>
+        <ul class="tour-list">${ts
+          .map(
+            (t) => `<li><button type="button" data-open="${esc(t.id)}"><i class="tdot" style="background:${esc(colorOf(t))}"></i><b>${esc(t.variant || t.name)}</b>
+              <small>${esc(ACTIVITIES[t.activity || 'hike'].label)} · ${t.stations.length} Stationen${t.summary ? ` · ${(t.summary.length / 1000).toFixed(1)} km · ${Math.round(t.summary.up)} Hm` : ''}</small></button></li>`
+          )
+          .join('')}</ul></section>`
+    )
+    .join('');
+}
+
 const tourYear = (t) => (t.date || t.created || '').slice(0, 4);
 const visibleTours = () => tours.filter((t) => year === 'all' || tourYear(t) === year);
+const mapTours = () => visibleTours().filter((t) => !group || (t.group || 'Ohne Gruppe') === group);
 
 /** Übersicht: alle Touren des gewählten Jahres; Stationen ohne Nummer. */
 function overviewGeo() {
   const line = [];
   const stations = [];
-  for (const t of visibleTours()) {
+  for (const t of mapTours()) {
     const coords = tourLine(t.stations, t.segments);
-    if (coords.length >= 2) line.push({ type: 'Feature', properties: { routed: true, tour: t.id }, geometry: { type: 'LineString', coordinates: coords } });
-    t.stations.forEach((s) => stations.push({ type: 'Feature', properties: { id: s.id, tour: t.id, n: '', name: s.name, photos: s.photos.length }, geometry: { type: 'Point', coordinates: s.lngLat } }));
+    const color = colorOf(t);
+    if (coords.length >= 2) line.push({ type: 'Feature', properties: { routed: true, tour: t.id, color }, geometry: { type: 'LineString', coordinates: coords } });
+    t.stations.forEach((s) => stations.push({ type: 'Feature', properties: { id: s.id, tour: t.id, n: '', name: s.name, photos: s.photos.length, color }, geometry: { type: 'Point', coordinates: s.lngLat } }));
   }
   return { line: { type: 'FeatureCollection', features: line }, stations: { type: 'FeatureCollection', features: stations } };
 }
@@ -60,7 +89,7 @@ function geo() {
     const routed = seg?.coords?.length >= 2;
     lineFeatures.push({
       type: 'Feature',
-      properties: { routed },
+      properties: { routed, color: colorOf(current) },
       geometry: { type: 'LineString', coordinates: routed ? seg.coords : [st[i - 1].lngLat, st[i].lngLat] }
     });
   }
@@ -70,7 +99,7 @@ function geo() {
       type: 'FeatureCollection',
       features: st.map((s, i) => ({
         type: 'Feature',
-        properties: { id: s.id, n: String(i + 1), name: s.name, photos: s.photos.length },
+        properties: { id: s.id, n: String(i + 1), name: s.name, photos: s.photos.length, color: colorOf(current) },
         geometry: { type: 'Point', coordinates: s.lngLat }
       }))
     }
@@ -89,7 +118,7 @@ function addLayers(map) {
     source: 'tour-line',
     layout: { 'line-join': 'round', 'line-cap': 'round' },
     // Luftlinie gestrichelt: dort liegt keine geprüfte Wegführung vor.
-    paint: { 'line-color': COLOR, 'line-width': 4.5, 'line-dasharray': ['case', ['get', 'routed'], ['literal', [1, 0]], ['literal', [1.5, 1.5]]] }
+    paint: { 'line-color': ['coalesce', ['get', 'color'], COLOR], 'line-width': 4.5, 'line-dasharray': ['case', ['get', 'routed'], ['literal', [1, 0]], ['literal', [1.5, 1.5]]] }
   });
   map.addLayer({
     id: 'tour-stations',
@@ -97,7 +126,7 @@ function addLayers(map) {
     source: 'tour-stations',
     paint: {
       'circle-radius': ['case', ['==', ['get', 'n'], ''], 6, 11],
-      'circle-color': COLOR,
+      'circle-color': ['coalesce', ['get', 'color'], COLOR],
       'circle-stroke-color': ['case', ['>', ['get', 'photos'], 0], '#ffd400', '#ffffff'],
       'circle-stroke-width': 3,
       // 'map': mit 3D-Gelände sonst im Test unsichtbar (viewport-Ausrichtung + Terrain).
@@ -208,6 +237,12 @@ async function addPlaces(text) {
   fitTour();
 }
 
+function fitTours(list) {
+  const b = new maplibregl.LngLatBounds();
+  list.forEach((t) => t.stations.forEach((s) => b.extend(s.lngLat)));
+  if (!b.isEmpty()) ctx.map.fitBounds(b, { padding: visiblePadding(), maxZoom: 14, duration: 1200 });
+}
+
 function fitTour() {
   if (!current?.stations.length) return;
   const b = new maplibregl.LngLatBounds();
@@ -218,7 +253,7 @@ function fitTour() {
 /** Aus der Ortssuche gepinnt: in die offene Tour, sonst neue Tour anlegen. */
 async function pinStation({ name, lngLat }) {
   if (!current) {
-    current = { ...newTour(`Tour ${new Date().toLocaleDateString('de-DE')}`), activity: lastActivity() };
+    current = { ...newTour(`Tour ${new Date().toLocaleDateString('de-DE')}`), activity: lastActivity(), color: nextColor(tours) };
     await store.putTour(current);
     tours = await store.allTours();
     current = tours.find((x) => x.id === current.id);
@@ -431,7 +466,16 @@ async function importMyTours() {
   for (const v of todo) {
     const old = tours.find((x) => x.templateId === v.id);
     if (old) for (const st of old.stations) for (const pid of st.photos) await store.deletePhoto(pid);
-    const t = { ...newTour(v.name), ...(old ? { id: old.id, date: old.date } : {}), templateId: v.id, templateVersion: v.version || 1, activity: v.activity || 'hike', note: v.note || '' };
+    const t = {
+      ...newTour(v.name),
+      ...(old ? { id: old.id, date: old.date, color: old.color } : { color: nextColor(tours) }),
+      templateId: v.id,
+      templateVersion: v.version || 1,
+      group: v.group || '',
+      variant: v.variant || '',
+      activity: v.activity || 'hike',
+      note: v.note || ''
+    };
     if (v.date) t.date = v.date;
     await store.putTour(t);
     tours = await store.allTours();
@@ -526,17 +570,7 @@ function render() {
         <label class="btn">Sicherung laden<input type="file" accept=".json,application/json" data-t="import" hidden></label></div>
       <div class="row"><button type="button" class="btn" data-t="mine">Meine Touren übernehmen</button>
         <label class="btn">GPX laden<input type="file" accept=".gpx,application/gpx+xml,application/xml,text/xml" data-t="gpxfile" hidden></label></div>
-      <ul class="tour-list">${
-        visibleTours()
-          .sort((a, b) => (b.date || '').localeCompare(a.date || ''))
-          .map(
-            (t) => `<li><button type="button" data-open="${esc(t.id)}"><b>${esc(t.name)}</b>
-              <small>${esc(t.date ? new Date(t.date).toLocaleDateString('de-DE') : '')} · ${t.stations.length} Stationen${
-                t.summary ? ` · ${(t.summary.length / 1000).toFixed(1)} km · ${Math.round(t.summary.up)} Hm` : ''
-              }</small></button></li>`
-          )
-          .join('') || '<li class="muted">Noch keine Touren. Lege die erste an.</li>'
-      }</ul>
+      ${renderGroups(esc)}
       ${visibleTours().length ? '<p class="muted">Alle Touren der Auswahl sind auf der Karte; Linie antippen öffnet die Tour. Für ein Jahresplakat: Jahr wählen, dann Tab „Plakat“.</p>' : ''}
       <p class="muted">Touren und Fotos bleiben nur auf diesem Gerät. Safari löscht sie nach 7 Tagen ohne Besuch, ausser die App liegt auf dem Home-Bildschirm. Sicherung regelmässig exportieren.</p>`;
     return;
@@ -546,6 +580,9 @@ function render() {
   pane.innerHTML = `
     <button type="button" class="link" data-t="back">‹ Alle Touren</button>
     <div class="row"><input data-t="name" value="${esc(t.name)}" aria-label="Name der Tour"><input type="date" data-t="date" value="${esc(t.date || '')}" aria-label="Datum"></div>
+    <div class="row"><input data-t="group" value="${esc(t.group || '')}" placeholder="Gruppe, z. B. Ofterschwanger Horn" aria-label="Gruppe"><input data-t="variant" value="${esc(t.variant || '')}" placeholder="Variante, z. B. Rückweg 2" aria-label="Variante"></div>
+    <div class="colors" role="radiogroup" aria-label="Farbe">${TOUR_COLORS.map((c) => `<label><input type="radio" name="tcolor" value="${c}" ${colorOf(t) === c ? 'checked' : ''}><i style="background:${c}"></i></label>`).join('')}
+      <button type="button" class="btn sm" data-t="variantcopy">Als Variante kopieren</button></div>
     <div class="seg" role="radiogroup" aria-label="Aktivität">${Object.entries(ACTIVITIES)
       .map(([k, a]) => `<label><input type="radio" name="tact" value="${k}" ${(t.activity || 'hike') === k ? 'checked' : ''}><span>${a.label}</span></label>`)
       .join('')}</div>
@@ -667,6 +704,14 @@ function wire(pane) {
     const open = e.target.closest('[data-open]')?.dataset.open;
     const s = e.target.closest('[data-s]')?.dataset.s;
     const img = e.target.closest('img[data-pid]');
+    const g = e.target.closest('[data-group]')?.dataset.group;
+    if (g) {
+      group = group === g ? null : g;
+      refreshMap();
+      render();
+      if (group) fitTours(mapTours());
+      return;
+    }
     const y = e.target.closest('[data-year]')?.dataset.year;
     if (y) {
       year = y;
@@ -676,7 +721,7 @@ function wire(pane) {
     if (open) return openTour(open);
     if (img) return openLightbox(station(img), img.dataset.pid);
     if (t === 'new') {
-      current = { ...newTour(`Tour ${new Date().toLocaleDateString('de-DE')}`), activity: lastActivity() };
+      current = { ...newTour(`Tour ${new Date().toLocaleDateString('de-DE')}`), activity: lastActivity(), color: nextColor(tours) };
       await store.putTour(current);
       tours = await store.allTours();
       current = tours.find((x) => x.id === current.id);
@@ -702,6 +747,25 @@ function wire(pane) {
       download(new Blob([tourGpx(current, line, await ctx.sampler.elevations(line))], { type: 'application/gpx+xml' }), `tour-${slug(current.name)}.gpx`);
     }
     if (t === 'backup') exportBackup(current);
+    if (t === 'variantcopy') {
+      // Kopie ohne Fotos, gleiche Gruppe, neue Farbe – danach z. B. den Rückweg ersetzen.
+      const copy = {
+        ...structuredClone({ ...current, stations: current.stations.map((x) => ({ ...x, photos: [] })) }),
+        id: newTour().id,
+        templateId: undefined,
+        photoPins: [],
+        group: current.group || current.name,
+        variant: `${current.variant || 'Variante'} (Kopie)`,
+        color: nextColor(tours),
+        created: new Date().toISOString()
+      };
+      if (!current.group) current.group = copy.group;
+      await store.putTour(current);
+      await store.putTour(copy);
+      tours = await store.allTours();
+      await openTour(copy.id);
+      ctx.toast('Variante angelegt – Stationen des Rückwegs löschen und neue setzen');
+    }
     if (t === 'offline') {
       const line = tourLine(current.stations, current.segments);
       const pts = line.length ? line : current.stations.map((x) => x.lngLat);
@@ -752,6 +816,14 @@ function wire(pane) {
       return persist();
     }
     if (el.dataset.t === 'note') current.note = el.value;
+    if (el.dataset.t === 'group') current.group = el.value.trim();
+    if (el.dataset.t === 'variant') current.variant = el.value.trim();
+    if (el.name === 'tcolor') {
+      current.color = el.value;
+      await store.putTour(current);
+      refreshMap();
+      return;
+    }
     if (el.dataset.t === 'autophotos' && el.files?.length) {
       const fb = Number(pane.querySelector('[data-t="fallback"]')?.value || 0);
       return autoAssignPhotos([...el.files], fb);

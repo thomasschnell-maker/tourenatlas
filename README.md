@@ -100,6 +100,10 @@ Erweiterungen hängen sich als Paket ein: eine Datei in `js/packages/` anlegen u
 - **Ortsalternativen:** `Altmummen|Alt Mummen|Mummen` probiert die Schreibweisen der Reihe nach. Eine Vorlage mit höherer `version` baut eine bereits übernommene Tour neu auf, statt sie zu verdoppeln.
 - **GPX-Import:** Aufgezeichnete Touren (Komoot, Strava, Garmin …) werden als Tour übernommen. Start, Ziel und etwa alle 10 km eine Station. Die gemessene Spur wird nie durch Routing überschrieben.
 - **Meine Touren übernehmen:** `data/touren.json` enthält Touren als Ortslisten. Ein Tipp setzt sie auf dem Gerät mit Ortssuche und Routing. Jede Tour wird nur einmal übernommen, Notizen markieren unsichere Deutungen. Achtung: Das Repository ist öffentlich, also auch diese Liste.
+- **Touren unterscheiden:**
+  - **Farbe:** Jede Tour hat eine eigene Farbe auf der Karte und in der Liste, wählbar.
+  - **Gruppe:** Touren mit gleichem Hinweg und unterschiedlichen Rückwegen stehen als Varianten unter einer Gruppenüberschrift. Ein Tipp auf die Überschrift zeigt nur diese Gruppe auf der Karte.
+  - **„Als Variante kopieren“:** dupliziert eine Tour ohne Fotos, danach den Rückweg ersetzen.
 - **Zeitverlauf:** Die Tourenliste lässt sich nach Jahr filtern. Alle Touren der Auswahl erscheinen gemeinsam auf der Karte, ein Tipp auf eine Linie öffnet die Tour. Zusammen mit dem Tab „Plakat“ ergibt das ein Jahresplakat.
 - **Verbindung:** „Wegen folgen“ routet zwischen den Stationen über [BRouter](https://brouter.de) mit dem Profil `hiking-mountain`. Die Route muss höchstens 500 m von beiden Stationen beginnen und enden (Orte, Seen und Gipfel liegen als Mittelpunkt oft etwas neben dem Weg), sonst gilt der Abschnitt als nicht geprüft. Schlägt das Routing fehl, bleibt der Abschnitt Luftlinie, gestrichelt dargestellt und mit Hinweis.
 - **Kennzahlen:** Länge, Auf- und Abstieg aus dem DEM. Die Gehzeit folgt DIN 33466 wie beim DAV: 4 km/h, 300 Hm/h aufwärts, 500 Hm/h abwärts; der grössere Wert plus die Hälfte des kleineren.
