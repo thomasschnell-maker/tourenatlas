@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f6e5a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Tourenatlas">
+  <title>Allgäu Tourenatlas 3D</title>
+  <meta name="description" content="3D-Tourenatlas Allgäu, Tirol, Vorarlberg: MapLibre GL, OpenFreeMap und Protomaps mit allen OSM-Wegen, Liften, Hütten, Wetter und Quellen-Kreuzvalidierung.">
+  <!-- Ladezeit: Verbindungen früh aufbauen, alle Module parallel statt als Kette laden -->
+  <link rel="preconnect" href="https://tiles.openfreemap.org" crossorigin>
+  <link rel="preconnect" href="https://s3.amazonaws.com" crossorigin>
+  <link rel="preconnect" href="https://overpass-api.de" crossorigin>
+  <link rel="preload" href="vendor/maplibre-gl/maplibre-gl.js" as="script">
+  <link rel="modulepreload" href="js/cells.js">
+  <link rel="modulepreload" href="js/config.js">
+  <link rel="modulepreload" href="js/dem.js">
+  <link rel="modulepreload" href="js/geo.js">
+  <link rel="modulepreload" href="js/offline-area.js">
+  <link rel="modulepreload" href="js/offline.js">
+  <link rel="modulepreload" href="js/overpass.js">
+  <link rel="modulepreload" href="js/region.js">
+  <link rel="modulepreload" href="js/packages/exif.js">
+  <link rel="modulepreload" href="js/packages/index.js">
+  <link rel="modulepreload" href="js/packages/poster-core.js">
+  <link rel="modulepreload" href="js/packages/poster.js">
+  <link rel="modulepreload" href="js/packages/tours-core.js">
+  <link rel="modulepreload" href="js/packages/tours-store.js">
+  <link rel="modulepreload" href="js/packages/tours.js">
+  <link rel="modulepreload" href="js/packages/weather-core.js">
+  <link rel="modulepreload" href="js/packages/weather.js">
+  <link rel="modulepreload" href="js/search.js">
+  <link rel="modulepreload" href="js/styles.js">
+  <link rel="modulepreload" href="js/textscale.js">
+  <link rel="modulepreload" href="js/validate.js">
+  <link rel="stylesheet" href="vendor/maplibre-gl/maplibre-gl.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <div id="map" role="application" aria-label="3D-Karte Allgäu"></div>
+
+  <form id="search" role="search" autocomplete="off">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <input type="search" enterkeyhint="search" placeholder="Ort, Gipfel, Hütte suchen" aria-label="Ort suchen">
+  </form>
+  <ul id="search-results" hidden></ul>
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+
+  <!-- Blatt: zeigt immer genau einen Bereich -->
+  <section id="sheet" aria-labelledby="sheet-title" hidden>
+    <button id="sheet-grip" type="button" aria-label="Blatt ein- oder ausklappen" aria-expanded="true"></button>
+    <header>
+      <h2 id="sheet-title"></h2>
+      <button id="sheet-close" type="button" aria-label="Schliessen">✕</button>
+    </header>
+    <div id="sheet-body">
+
+      <div class="pane" data-pane="base" data-title="Karte &amp; Ebenen">
+        <div class="cards">
+          <label class="card"><input type="radio" name="base" value="openfreemap" checked><span class="sw sw-map"></span><b>Karte</b><small>OpenFreeMap</small></label>
+          <label class="card"><input type="radio" name="base" value="aerial"><span class="sw sw-aerial"></span><b>Luftbild</b><small>Bayern / AT</small></label>
+          <label class="card"><input type="radio" name="base" value="protomaps" disabled><span class="sw sw-offline"></span><b>Offline</b><small>Protomaps</small></label>
+        </div>
+        <h3>Ebenen</h3>
+        <label class="switch"><input type="checkbox" id="eco"><span>Energiesparmodus (Akku schonen)</span></label>
+        <label class="switch"><input type="checkbox" id="terrain" checked><span>3D-Gelände</span></label>
+        <label class="range">Überhöhung <input id="exaggeration" type="range" min="1" max="2.5" step="0.1" value="1.3"> <output id="exaggeration-val">1.3×</output></label>
+        <label class="switch"><input type="checkbox" data-layer="hillshade" checked><span>Schummerung</span></label>
+        <label class="switch"><input type="checkbox" data-layer="ways" checked><span>Bergwege nach SAC-Skala</span></label>
+        <label class="switch"><input type="checkbox" data-layer="bikeroutes" checked><span>Radrouten (ausgeschildert)</span></label>
+        <label class="switch"><input type="checkbox" data-layer="lifts" checked><span>Seilbahnen &amp; Lifte</span></label>
+        <label class="switch"><input type="checkbox" data-layer="peaks" checked><span>Gipfel-Check &amp; Hütten</span></label>
+        <details class="block">
+          <summary>Legende</summary>
+          <ul class="legend" id="legend"></ul>
+        </details>
+        <h3>Offline unterwegs</h3>
+        <button id="offline-region" type="button" class="btn primary wide">Ganze Region offline speichern</button>
+        <button id="offline-view" type="button" class="btn wide">Sichtbaren Ausschnitt im Detail offline speichern</button>
+        <p class="muted">Region: alle Bergwege, Radrouten, Gipfel, Hütten + Übersichtskarte (einmalig im WLAN). Ausschnitt/Tour: zusätzlich Kartendetails bis Zoom 14. Ohne Netz gehen nicht: Ortssuche, Routing, Wetter.</p>
+        <details class="block">
+          <summary>Offline-Karte laden (Protomaps-Datei)</summary>
+          <label class="file">PMTiles-Datei wählen <input id="pm-file" type="file" accept=".pmtiles"></label>
+          <div class="row"><input id="pm-url" type="url" placeholder="https://…/allgaeu.pmtiles" aria-label="PMTiles-URL"><button id="pm-url-go" type="button" class="btn">Laden</button></div>
+          <ul id="pm-findings" class="findings"></ul>
+          <p class="muted">Einmalig am Computer mit <a href="https://github.com/protomaps/go-pmtiles/releases" target="_blank" rel="noopener">pmtiles</a> erstellen.
+            Datum von <a href="https://maps.protomaps.com/builds/" target="_blank" rel="noopener">maps.protomaps.com/builds</a> einsetzen:</p>
+          <pre id="pm-cmd"></pre>
+          <button id="pm-copy" type="button" class="btn">Befehl kopieren</button>
+        </details>
+      </div>
+
+      <div class="pane" data-pane="way" data-title="Weg">
+        <div id="sel-tags" class="tags"></div>
+        <svg id="profile" viewBox="0 0 300 110" preserveAspectRatio="none" aria-label="Höhenprofil"></svg>
+        <dl id="sel-stats" class="stats"></dl>
+        <ul id="sel-findings" class="findings"></ul>
+        <div class="actions">
+          <a id="sel-osm" target="_blank" rel="noopener">In OSM ansehen / korrigieren</a>
+          <button id="sel-gpx" type="button" class="btn">GPX</button>
+        </div>
+      </div>
+
+      <div class="pane" data-pane="info" data-title="Daten &amp; Quellen">
+        <h3>Wege im Ausschnitt</h3>
+        <dl id="quality" class="stats"><dt>–</dt><dd>Auf Zoom ≥ 12 gehen</dd></dl>
+        <h3>Quellen &amp; Lizenzen</h3>
+        <p class="muted" style="margin-top:0">Allgäu Tourenatlas 3D</p>
+        <ul id="sources" class="sources"></ul>
+        <p class="muted">Engine: MapLibre GL JS 5 (BSD-3) · PMTiles &amp; Protomaps-Stil (BSD-3).
+          Planungshilfe, kein Ersatz für Lagebeurteilung vor Ort.</p>
+        <button id="region" type="button" class="btn">Ganze Region zeigen</button>
+      </div>
+
+    </div>
+  </section>
+
+  <nav id="tabbar" aria-label="Menü">
+    <button type="button" data-tab="base"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span>Karte</span></button>
+    <!-- Paket-Tabs werden hier eingefügt -->
+    <button type="button" data-tab="info"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v6M12 7.5v.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Info</span></button>
+  </nav>
+
+  <script src="vendor/maplibre-gl/maplibre-gl.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

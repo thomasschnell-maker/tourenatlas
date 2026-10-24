@@ -1,0 +1,8 @@
+node_modules/
+*.pmtiles
+.DS_Store
+*.png
+*.gpx
+site-data/
+_site/
+data/cells/
