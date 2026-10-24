@@ -32,10 +32,12 @@ const r5 = (v) => Math.round(v * 1e5) / 1e5;
 const bboxName = (b) => b.map((v) => r5(v).toFixed(5)).join('_');
 // Je Server höchstens eine Abfrage gleichzeitig (Fairness), aber alle Server parallel.
 // Wer zuletzt scheiterte, kommt erst nach den anderen wieder dran.
-const servers = ENDPOINTS.map((url) => ({ url, busy: false, fails: 0 }));
+const servers = ENDPOINTS.map((url) => ({ url, busy: false, fails: 0, stale: false }));
 async function acquire(avoid) {
   for (;;) {
-    const free = servers.filter((sv) => !sv.busy).sort((a, b) => (a === avoid) - (b === avoid) || a.fails - b.fails);
+    // Veraltete Server nur, wenn alle anderen gerade scheitern
+    const fallback = servers.every((sv) => sv.stale || sv.fails >= TRIES);
+    const free = servers.filter((sv) => !sv.busy && (!sv.stale || fallback)).sort((a, b) => (a === avoid) - (b === avoid) || !!a.stale - !!b.stale || a.fails - b.fails);
     if (free.length) {
       free[0].busy = true;
       return free[0];
@@ -62,7 +64,11 @@ async function query(bbox) {
       const json = await res.json();
       if (json.remark && /error|timed out|runtime/i.test(json.remark)) throw new Error(json.remark.slice(0, 80));
       sv.fails = 0;
-      return { ...parseOverpass(json), host };
+      const parsed = parseOverpass(json);
+      // Server mit veraltetem Datenstand nur noch, wenn kein anderer frei ist
+      sv.stale = Date.now() - (Date.parse(parsed.meta?.osmBase) || Date.now()) > MAX_AGE_MS;
+      if (sv.stale) console.warn(`    ${host}: Datenstand ${parsed.meta.osmBase} veraltet → nachrangig, wird aufgefrischt`);
+      return { ...parsed, host };
     } catch (err) {
       last = new Error(`${host}: ${err.message}`);
       sv.fails++;
@@ -93,7 +99,9 @@ async function load(bbox, depth, results, holes) {
   if (existsSync(file)) {
     const old = { ...JSON.parse(readFileSync(file, 'utf8')), file };
     // Älter als eine Woche: auffrischen, solange Zeit ist – scheitert das, bleibt der alte Stand (besser als eine Lücke)
-    if (overBudget || Date.now() - Date.parse(old.fetched || 0) < MAX_AGE_MS) return results.push(old);
+    // Alter = OSM-Stand der Daten (nicht Abrufzeit): veraltete Spiegelserver liefern sonst monatealte Daten als „frisch“
+    const age = Date.now() - Math.min(Date.parse(old.fetched || 0) || 0, Date.parse(old.meta?.osmBase) || Infinity);
+    if (overBudget || age < MAX_AGE_MS) return results.push(old);
     try {
       const { host, ...r } = await query(bbox);
       writeFileSync(file, JSON.stringify({ ...r, fetched: new Date().toISOString() }));
