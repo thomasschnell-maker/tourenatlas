@@ -51,6 +51,13 @@ export function cellInBbox(key, size, [w, s, e, n]) {
   return cx >= w && cx <= e && cy >= s && cy <= n;
 }
 
+/** Berührt die Zelle eine Lücke der Regionsdaten (Teilabfrage, die beim Bau scheiterte)? Dann live laden. */
+export function cellInHole(key, size, holes = []) {
+  const [i, j] = key.split(':').map(Number);
+  const [w, s, e, n] = [i * size[0], j * size[1], (i + 1) * size[0], (j + 1) * size[1]];
+  return holes.some(([hw, hs, he, hn]) => w < he && e > hw && s < hn && n > hs);
+}
+
 /** Index der Regionsdaten laden; null, wenn (noch) keine vorhanden sind. */
 export async function loadRegionIndex(base = 'data/cells/') {
   try {
