@@ -108,7 +108,8 @@ async function load(bbox, depth, results, holes) {
       done++;
       console.log(`  ${bboxName(bbox)}: aufgefrischt (${host})`);
       return results.push({ ...r, fetched: new Date().toISOString(), file });
-    } catch {
+    } catch (err) {
+      console.warn(`  ${bboxName(bbox)}: Auffrischen gescheitert (${err.message}) → alter Stand ${old.meta?.osmBase} bleibt`);
       return results.push(old);
     }
   }
@@ -161,13 +162,14 @@ if (!results.length) {
   process.exit(1);
 }
 
-const merged = { ways: new Map(), peaks: new Map(), routes: new Map(), osmBase: null };
+const merged = { ways: new Map(), peaks: new Map(), routes: new Map(), osmBase: null, osmLatest: null };
 results.forEach((r, i) => {
   for (const f of r.ways.features) merged.ways.set(f.properties.osm_id, f);
   for (const f of r.peaks.features) merged.peaks.set(f.properties.osm_id, f);
   // Radrouten sind je Abfrage beschnitten → Teilstücke je Abfrage sammeln (Schlüssel inkl. Abfrage)
   r.routes.features.forEach((f, k) => merged.routes.set(`${i}/${f.properties.osm_id}/${k}`, f));
   if (r.meta?.osmBase && (!merged.osmBase || r.meta.osmBase < merged.osmBase)) merged.osmBase = r.meta.osmBase; // ältester Stand zählt
+  if (r.meta?.osmBase && (!merged.osmLatest || r.meta.osmBase > merged.osmLatest)) merged.osmLatest = r.meta.osmBase;
 });
 
 const cells = splitIntoCells(
@@ -195,6 +197,7 @@ const index = {
   gen,
   generated: new Date().toISOString(),
   osmBase: merged.osmBase,
+  osmLatest: merged.osmLatest,
   bbox: REGION.bbox,
   cellDeg: SOURCES.trails.cellDeg,
   cells: [...cells.keys()].sort(),

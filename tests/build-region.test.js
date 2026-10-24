@@ -54,6 +54,7 @@ test('build-region: viertelt überlastete Teilabfragen, meldet Lücken, setzt au
     assert.ok(hw <= 10.85 && 10.85 < he && hs <= 47.9 && 47.9 < hn);
     assert.ok(Math.abs((he - hw) * (hn - hs) - (0.1 * 0.075) / 16) < 1e-6);
     assert.ok(Date.now() - Date.parse(idx.osmBase) < 60000);
+    assert.ok(idx.osmLatest >= idx.osmBase);
     assert.equal(readdirSync(join(dir, 'cells', idx.gen)).length, idx.cells.length);
     // 163 normale Teile + 3 + 4 Stücke um (10.3, 47.4) + 3 + 3 um (10.85, 47.9) – je ein Weg
     assert.equal(idx.counts.ways, 163 + 7 + 6);
