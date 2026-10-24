@@ -9,7 +9,8 @@
 
 export const REGION = {
   name: 'Allgäu, Tirol, Vorarlberg, Bodensee',
-  bbox: [9.55, 47.22, 11.0, 47.98] // [W, S, E, N]
+  bbox: [9.55, 47.22, 11.0, 47.98], // [W, S, E, N]
+  focus: [10.28, 47.51] // Sonthofen: Schwerpunkt der eigenen Touren – Regionsdaten werden von hier aus aufgebaut
 };
 
 export const SOURCES = {

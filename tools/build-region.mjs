@@ -21,36 +21,57 @@ const chunkDir = process.argv[3] || 'site-data/chunks';
 // Für Tests: OVERPASS_URL (eigener Server), PAUSE_MS (Pause zwischen Abfragen), BUDGET_MIN (Zeitbudget).
 const ENDPOINTS = process.env.OVERPASS_URL ? [process.env.OVERPASS_URL] : SOURCES.trails.endpoints;
 const PAUSE = Number(process.env.PAUSE_MS ?? 2000);
-const BUDGET_MS = Number(process.env.BUDGET_MIN ?? 40) * 60000;
+const BUDGET_MS = Number(process.env.BUDGET_MIN ?? 100) * 60000;
 const CHUNK = [0.1, 0.075]; // ~7,5 × 8,3 km je Abfrage; bei Fehlern bis auf 1/16 davon geteilt
 const MAX_DEPTH = 2;
+const MAX_AGE_MS = 7 * 86400000; // Teilstücke wöchentlich auffrischen
 const TRIES = 3; // je Teilabfrage und Ebene – danach lieber teilen als warten
 const started = Date.now();
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const r5 = (v) => Math.round(v * 1e5) / 1e5;
 const bboxName = (b) => b.map((v) => r5(v).toFixed(5)).join('_');
-let endpointTurn = 0;
+// Je Server höchstens eine Abfrage gleichzeitig (Fairness), aber alle Server parallel.
+// Wer zuletzt scheiterte, kommt erst nach den anderen wieder dran.
+const servers = ENDPOINTS.map((url) => ({ url, busy: false, fails: 0 }));
+async function acquire(avoid) {
+  for (;;) {
+    const free = servers.filter((sv) => !sv.busy).sort((a, b) => (a === avoid) - (b === avoid) || a.fails - b.fails);
+    if (free.length) {
+      free[0].busy = true;
+      return free[0];
+    }
+    await sleep(PAUSE ? 200 : 2);
+  }
+}
 
 async function query(bbox) {
-  const body = new URLSearchParams({ data: buildQuery(bbox, 120) });
+  const body = new URLSearchParams({ data: buildQuery(bbox, 90) });
   let last;
+  let avoid;
   for (let attempt = 0; attempt < TRIES; attempt++) {
-    const url = ENDPOINTS[endpointTurn++ % ENDPOINTS.length]; // reihum, damit kein Server allein trägt
+    const sv = await acquire(avoid);
+    const host = new URL(sv.url).host;
     try {
-      const res = await fetch(url, {
+      const res = await fetch(sv.url, {
         method: 'POST',
         body,
         headers: { 'User-Agent': 'tourenatlas-region-build (github.com/thomasschnell-maker/tourenatlas)' },
-        signal: AbortSignal.timeout(150000)
+        signal: AbortSignal.timeout(100000) // erfolgreiche Abfragen brauchen ~35 s; hängende Server nicht abwarten
       });
-      if (!res.ok) throw new Error(`${new URL(url).host}: HTTP ${res.status}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
-      if (json.remark && /error|timed out|runtime/i.test(json.remark)) throw new Error(`${new URL(url).host}: ${json.remark.slice(0, 80)}`);
-      return parseOverpass(json);
+      if (json.remark && /error|timed out|runtime/i.test(json.remark)) throw new Error(json.remark.slice(0, 80));
+      sv.fails = 0;
+      return { ...parseOverpass(json), host };
     } catch (err) {
-      last = err;
-      console.warn(`    Versuch ${attempt + 1} fehlgeschlagen: ${err.message}`);
-      await sleep((process.env.PAUSE_MS ? 20 : 5000) * (attempt + 1));
+      last = new Error(`${host}: ${err.message}`);
+      sv.fails++;
+      avoid = sv;
+      console.warn(`    ${bboxName(bbox)} Versuch ${attempt + 1}: ${last.message}`);
+      await sleep((process.env.PAUSE_MS ? 1 : 5000) * (attempt + 1));
+    } finally {
+      // Pause vor der nächsten Abfrage an diesen Server (fair gegenüber dem öffentlichen Dienst)
+      setTimeout(() => (sv.busy = false), PAUSE);
     }
   }
   throw last;
@@ -68,8 +89,22 @@ const cached = (bbox, depth) => existsSync(fileFor(bbox)) || (depth < MAX_DEPTH 
 /** Liefert die geladenen Teilgebiete; Gebiete, die nicht geladen werden konnten, landen in `holes`. */
 async function load(bbox, depth, results, holes) {
   const file = fileFor(bbox);
-  if (existsSync(file)) return results.push({ ...JSON.parse(readFileSync(file, 'utf8')), file });
-  if (Date.now() - started > BUDGET_MS) return holes.push(bbox.map(r5));
+  const overBudget = Date.now() - started > BUDGET_MS;
+  if (existsSync(file)) {
+    const old = { ...JSON.parse(readFileSync(file, 'utf8')), file };
+    // Älter als eine Woche: auffrischen, solange Zeit ist – scheitert das, bleibt der alte Stand (besser als eine Lücke)
+    if (overBudget || Date.now() - Date.parse(old.fetched || 0) < MAX_AGE_MS) return results.push(old);
+    try {
+      const { host, ...r } = await query(bbox);
+      writeFileSync(file, JSON.stringify({ ...r, fetched: new Date().toISOString() }));
+      done++;
+      console.log(`  ${bboxName(bbox)}: aufgefrischt (${host})`);
+      return results.push({ ...r, fetched: new Date().toISOString(), file });
+    } catch {
+      return results.push(old);
+    }
+  }
+  if (overBudget) return holes.push(bbox.map(r5));
   // Schon einmal geteilt (Teilstücke im Cache) → nicht erneut das ganze Gebiet probieren
   if (depth < MAX_DEPTH && quarters(bbox).some((q) => cached(q, depth + 1))) {
     for (const q of quarters(bbox)) await load(q, depth + 1, results, holes);
@@ -77,11 +112,12 @@ async function load(bbox, depth, results, holes) {
   }
   try {
     const t0 = Date.now();
-    const r = await query(bbox);
-    writeFileSync(file, JSON.stringify(r));
-    results.push({ ...r, file });
-    console.log(`  ${bboxName(bbox)}: ${r.ways.features.length} Wege, ${r.peaks.features.length} Punkte, ${r.routes.features.length} Routen (${Date.now() - t0} ms)`);
-    await sleep(PAUSE); // fair gegenüber dem öffentlichen Server
+    const { host, ...r } = await query(bbox);
+    const fetched = new Date().toISOString();
+    writeFileSync(file, JSON.stringify({ ...r, fetched }));
+    results.push({ ...r, fetched, file });
+    done++;
+    console.log(`  ${bboxName(bbox)}: ${r.ways.features.length} Wege, ${r.peaks.features.length} Punkte, ${r.routes.features.length} Routen (${host}, ${Date.now() - t0} ms) – ${done} neu`);
   } catch (err) {
     if (depth >= MAX_DEPTH) {
       console.warn(`  ${bboxName(bbox)}: aufgegeben (${err.message}) → Lücke, App lädt dort live`);
@@ -96,15 +132,22 @@ mkdirSync(chunkDir, { recursive: true });
 const [W, S, E, N] = REGION.bbox;
 const chunks = [];
 for (let x = W; x < E - 1e-9; x += CHUNK[0]) for (let y = S; y < N - 1e-9; y += CHUNK[1]) chunks.push([x, y, Math.min(E, x + CHUNK[0]), Math.min(N, y + CHUNK[1])].map(r5));
-console.log(`Region ${REGION.name}: ${chunks.length} Teilabfragen, Zeitbudget ${BUDGET_MS / 60000} min`);
+// Vom Schwerpunkt (Touren-Gebiet) nach aussen: reicht die Zeit nicht, fehlen nur Randgebiete.
+const [fx, fy] = REGION.focus;
+const dist = ([w, s, e, n]) => Math.hypot(((w + e) / 2 - fx) * Math.cos((fy * Math.PI) / 180), (s + n) / 2 - fy);
+// Fehlende Gebiete vor dem Auffrischen vorhandener.
+chunks.sort((a, b) => cached(a, 0) - cached(b, 0) || dist(a) - dist(b));
+console.log(`Region ${REGION.name}: ${chunks.length} Teilabfragen, ${servers.length} Server parallel, Zeitbudget ${BUDGET_MS / 60000} min`);
 
 const results = [];
 const holes = [];
-for (const [i, bbox] of chunks.entries()) {
-  console.log(`${i + 1}/${chunks.length}`);
-  await load(bbox, 0, results, holes);
-}
-
+let done = 0;
+let next = 0;
+await Promise.all(
+  servers.map(async () => {
+    while (next < chunks.length) await load(chunks[next++], 0, results, holes);
+  })
+);
 if (!results.length) {
   console.error('Keine Teilabfrage erfolgreich – keine Regionsdaten.');
   process.exit(1);
@@ -129,7 +172,7 @@ const cells = splitIntoCells(
 );
 
 // Generation aus dem Inhalt: gleiche Teilabfragen → gleiche Dateinamen → Geräte behalten ihren Offline-Speicher.
-const gen = createHash('sha1').update(JSON.stringify([results.map((r) => r.file).sort(), holes, merged.osmBase])).digest('hex').slice(0, 12);
+const gen = createHash('sha1').update(JSON.stringify([results.map((r) => `${r.file}@${r.fetched}`).sort(), holes])).digest('hex').slice(0, 12);
 // Erst in einen Zwischenordner schreiben und nur bei Erfolg umbenennen – nie halbe Dateien auf der Seite.
 const tmp = `${out}.tmp`;
 rmSync(tmp, { recursive: true, force: true });
