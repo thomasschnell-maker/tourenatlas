@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { execFile } from 'node:child_process';
-import { mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { cellInHole } from '../js/region.js';
@@ -28,7 +28,7 @@ function mockOverpass() {
       const id = Math.round(w * 1e4) * 1e6 + Math.round(s * 1e4);
       const [cx, cy] = [(w + e) / 2, (s + n) / 2];
       res.end(JSON.stringify({
-        osm3s: { timestamp_osm_base: '2026-10-24T12:00:00Z' },
+        osm3s: { timestamp_osm_base: state.osmBase || new Date().toISOString() },
         elements: [{ type: 'way', id, tags: { highway: 'path' }, geometry: [{ lat: cy, lon: cx }, { lat: cy + 0.001, lon: cx + 0.001 }] }]
       }));
     });
@@ -53,7 +53,7 @@ test('build-region: viertelt überlastete Teilabfragen, meldet Lücken, setzt au
     const [hw, hs, he, hn] = idx.holes[0];
     assert.ok(hw <= 10.85 && 10.85 < he && hs <= 47.9 && 47.9 < hn);
     assert.ok(Math.abs((he - hw) * (hn - hs) - (0.1 * 0.075) / 16) < 1e-6);
-    assert.equal(idx.osmBase, '2026-10-24T12:00:00Z');
+    assert.ok(Date.now() - Date.parse(idx.osmBase) < 60000);
     assert.equal(readdirSync(join(dir, 'cells', idx.gen)).length, idx.cells.length);
     // 163 normale Teile + 3 + 4 Stücke um (10.3, 47.4) + 3 + 3 um (10.85, 47.9) – je ein Weg
     assert.equal(idx.counts.ways, 163 + 7 + 6);
@@ -81,6 +81,17 @@ test('build-region: viertelt überlastete Teilabfragen, meldet Lücken, setzt au
     const idx4 = JSON.parse(readFileSync(join(dir, 'cells', 'index.json'), 'utf8'));
     assert.notEqual(idx4.gen, idx.gen);
     assert.equal(idx4.counts.ways, idx.counts.ways);
+    // Spiegelserver mit monatealtem Stand: Daten gelten als veraltet → nächster Lauf frischt sie wieder auf
+    mock.state.osmBase = '2026-01-01T00:00:00Z';
+    const p0 = join(dir, 'chunks', readdirSync(join(dir, 'chunks'))[0]);
+    rmSync(p0);
+    await run([join(dir, 'cells'), join(dir, 'chunks')], env);
+    assert.equal(JSON.parse(readFileSync(p0, 'utf8')).meta.osmBase, '2026-01-01T00:00:00Z');
+    mock.state.osmBase = null;
+    const before5 = mock.count();
+    await run([join(dir, 'cells'), join(dir, 'chunks')], env);
+    assert.ok(Date.now() - Date.parse(JSON.parse(readFileSync(p0, 'utf8')).meta.osmBase) < 60000);
+    assert.equal(mock.count() - before5, 1 + 3); // das veraltete Stück + das Loch
   } finally {
     mock.server.close();
   }
