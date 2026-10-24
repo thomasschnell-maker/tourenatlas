@@ -41,3 +41,16 @@ test('splitPlaces: Komma-Liste, Semikolon, einzelne Koordinate bleibt zusammen',
   assert.deepEqual(splitPlaces('  '), []);
   assert.deepEqual(splitPlaces('Bad Hindelang, , Hinterstein'), ['Bad Hindelang', 'Hinterstein']);
 });
+
+test('pickCandidate: Region + Nähe zur vorherigen Station', async () => {
+  const { pickCandidate } = await import('../js/search.js');
+  const memmingen = { name: 'Hirschsprung', lngLat: [10.18, 47.97], inRegion: true };
+  const allgaeu = { name: 'Hirschsprung', lngLat: [10.233, 47.405], inRegion: true };
+  const draussen = { name: 'Rohrmoos', lngLat: [13.6, 47.4], inRegion: false };
+  const obermaiselstein = [10.24, 47.45];
+  assert.equal(pickCandidate([memmingen, allgaeu], obermaiselstein).hit, allgaeu);
+  assert.equal(pickCandidate([memmingen], obermaiselstein).hit, null);
+  assert.match(pickCandidate([memmingen], obermaiselstein).reason, /km von der vorherigen Station/);
+  assert.equal(pickCandidate([draussen], null).hit, null);
+  assert.equal(pickCandidate([memmingen, allgaeu], null).hit, memmingen); // ohne Vorgänger: Relevanz
+});

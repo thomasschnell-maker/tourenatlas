@@ -52,7 +52,7 @@ export const SOURCES = {
   },
   trails: {
     id: 'trails',
-    name: 'OpenStreetMap live (Overpass)',
+    name: 'OpenStreetMap (Regionsdaten wöchentlich, sonst live)',
     endpoints: [
       'https://overpass-api.de/api/interpreter',
       'https://overpass.private.coffee/api/interpreter',

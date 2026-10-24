@@ -83,7 +83,7 @@ Erweiterungen hängen sich als Paket ein: eine Datei in `js/packages/` anlegen u
 
 **Touren-Paket** (`js/packages/tours*.js`):
 - **Stationen:** „Neue Tour“ anlegen. Stationen lassen sich auf drei Wegen setzen:
-  - **Orte eintippen**, auch mehrere: `Sonthofen, Burgberg, Immenstadt`. Für jeden Ort wird der beste Treffer gesetzt, Treffer in der Region zuerst. Orte ohne eindeutigen Treffer meldet die App.
+  - **Orte eintippen**, auch mehrere: `Sonthofen, Burgberg, Immenstadt`. Für jeden Ort wird der plausibelste Treffer gesetzt: in der Region und höchstens 25 km von der vorherigen Station. Gleichnamige Orte wie Rohrmoos, Tiefenbach oder Hirschsprung gibt es mehrfach. Ohne plausiblen Treffer meldet die App den Ort mit Grund, statt ihn falsch zu setzen.
   - **Pinnen aus der Ortssuche** mit „+ Station“. Ist keine Tour offen, wird eine neue angelegt.
   - **Tippen auf die Karte.**
   
@@ -136,6 +136,16 @@ Erweiterungen hängen sich als Paket ein: eine Datei in `js/packages/` anlegen u
    ```
 4. In der App unter „Offline-Karte“ die Datei wählen, oder sie neben `index.html` hochladen und per URL laden.
 
+## Regionsdaten (schnell und offline)
+
+Bergwege, Radrouten, Gipfel und Hütten der Region (Allgäu, Tirol, Vorarlberg, Bodensee) werden **wöchentlich vorab berechnet**, nicht bei jedem Öffnen live abgefragt.
+
+- **Erzeugung:** `tools/build-region.mjs` läuft in GitHub Actions, montags 03:17 UTC und bei jedem Deploy, mit Cache je Kalenderwoche. Es nutzt dieselbe Overpass-Abfrage und denselben Parser wie die App und fragt die Region in 48 Teilen ab, mit Pausen und Wiederholung. Das Ergebnis wird in die App-Zellen zerlegt (`js/region.js`). Geschrieben wird erst in einen Zwischenordner, halbe Daten werden nie veröffentlicht.
+- **App:** Zellen in der Region kommen als statische Datei von GitHub Pages, gecacht und unveränderlich je Generation. Statt 3–30 s je Overpass-Abfrage dauert das Sekundenbruchteile, und die Ladeanzeige entfällt. Ausserhalb der Region oder ohne Regionsdaten fragt die App weiter live ab.
+- **„Ganze Region offline speichern“** (Tab Karte): alle Wege-Zellen plus Übersichtskarte und Höhen bis Zoom 12, im Test etwa 400 Dateien. Kartendetails bis Zoom 14 bringen „Tour offline speichern“ bzw. „Ausschnitt offline speichern“.
+- **Veröffentlichung:** `gh-pages` wird ohne Verlauf neu geschrieben, damit sich die wöchentlichen Daten nicht im Repository ansammeln.
+- **Aktualität:** wöchentlich. Der OSM-Stand steht unter Info → Quellen.
+
 ## Ladezeit und Akku (Handy)
 
 Gemessen in Headless-Chromium mit iPhone-Profil (Pixeldichte 3) und 4G-Drosselung (40 ms):
@@ -173,6 +183,8 @@ js/app.js           Karte, Menü, Laden, Interaktion
 js/cells.js         Zellenraster für das Nachladen der Wege
 js/search.js        Ortssuche (Nominatim)
 js/offline-area.js  Gebiet offline speichern (Kachelmathematik, Vorabladen)
+js/region.js        Regionsdaten: Zellen zerlegen und laden
+tools/build-region.mjs  Regionsdaten erzeugen (GitHub Actions, wöchentlich)
 sw.js               Service Worker (Offline-Betrieb)
 js/packages/        Pakete (Touren, Plakat, Wetter)
 js/textscale.js     Lesbarkeit: Beschriftungen skalieren

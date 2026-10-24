@@ -5,7 +5,7 @@
 import { ACTIVITIES, ASSIST, ROUTER, TOUR_COLORS, assignPhotos, calibrateEbike, implausibleClimb, batteryCurve, brouterUrl, captureView, formatDuration, newStation, newTour, nextColor, parseBrouter, parseGpx, stationDistances, stationsFromTrack, tourGpx, tourLine, tourStats, viewFromPhoto } from './tours-core.js';
 import { readExif } from './exif.js';
 import { blobToDataUrl, compressImage, dataUrlToBlob, requestPersistence, store } from './tours-store.js';
-import { geocode, splitPlaces } from '../search.js';
+import { geocode, pickCandidate, splitPlaces } from '../search.js';
 
 const ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="18" r="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="18" cy="6" r="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 17.5c4-1 2-6 6-7.5s2-2.5 2.5-2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="2.5 2.5"/></svg>';
 const COLOR = TOUR_COLORS[0];
@@ -217,16 +217,22 @@ async function addPlaces(text) {
     const q = alts[0];
     ctx.toast(`Suche „${q}“ (${i + 1}/${names.length}) …`, { busy: true, ttl: 0 });
     try {
+      // Plausibilität: in der Region und nah an der vorherigen Station – sonst nächste Schreibweise.
+      const prev = current.stations.at(-1)?.lngLat;
       let hit = null;
+      let reason = 'nicht gefunden';
       for (const alt of alts) {
-        hit = (await geocode(alt))[0];
-        if (hit) break;
+        const pick = pickCandidate(await geocode(alt), prev);
+        if (pick.hit) {
+          hit = pick.hit;
+          break;
+        }
+        reason = pick.reason || reason;
       }
       if (!hit) {
-        missing.push(q);
+        missing.push(`${q} (${reason})`);
         continue;
       }
-      if (!hit.inRegion) missing.push(`${q} (ausserhalb, trotzdem gesetzt)`);
       await addStation(hit.lngLat, hit.name);
     } catch (err) {
       missing.push(`${q} (${err.message})`);

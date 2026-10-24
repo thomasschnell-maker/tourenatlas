@@ -4,10 +4,10 @@
 
 import { WAY_HIGHWAYS } from './config.js';
 
-export function buildQuery([w, s, e, n]) {
+export function buildQuery([w, s, e, n], timeout = 25) {
   const bbox = [s, w, n, e].map((v) => v.toFixed(5)).join(',');
   const hw = WAY_HIGHWAYS.join('|');
-  return `[out:json][timeout:25][bbox:${bbox}];
+  return `[out:json][timeout:${timeout}][bbox:${bbox}];
 (
   way["highway"~"^(${hw})$"];
   way["highway"]["sac_scale"];

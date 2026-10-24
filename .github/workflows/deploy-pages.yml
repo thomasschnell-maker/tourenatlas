@@ -1,26 +1,27 @@
-# Veröffentlicht main automatisch auf GitHub Pages (Branch gh-pages).
-# Nur wenn die Tests grün sind – eine kaputte Version geht nie live.
+# Veröffentlicht main auf GitHub Pages (Branch gh-pages) – nur wenn die Tests grün sind.
+# Dazu kommen vorab berechnete Regionsdaten (Bergwege, Radrouten, Gipfel, Hütten), wöchentlich aufgefrischt.
 name: Deploy Pages
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '17 3 * * 1' # montags 03:17 UTC: Regionsdaten aus OpenStreetMap auffrischen
 
 permissions:
   contents: write
 
 concurrency:
   group: deploy-pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -29,5 +30,38 @@ jobs:
       - name: Tests
         run: npm test
 
-      - name: main nach gh-pages übertragen
-        run: git push --force origin HEAD:refs/heads/gh-pages
+      - name: Kalenderwoche
+        id: week
+        run: echo "key=$(date -u +%G-W%V)" >> "$GITHUB_OUTPUT"
+
+      - name: Regionsdaten aus dem Cache (je Woche)
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: site-data/cells
+          key: region-${{ steps.week.outputs.key }}-${{ hashFiles('tools/build-region.mjs', 'js/overpass.js', 'js/region.js', 'js/config.js', 'js/cells.js') }}
+
+      - name: Regionsdaten erzeugen (Overpass)
+        if: steps.cache.outputs.cache-hit != 'true'
+        continue-on-error: true # ohne Regionsdaten fragt die App live ab – Seite trotzdem veröffentlichen
+        run: node tools/build-region.mjs site-data/cells
+
+      - name: Seite zusammenstellen
+        run: |
+          mkdir -p _site
+          git archive HEAD | tar -x -C _site
+          if [ -f site-data/cells/index.json ]; then
+            mkdir -p _site/data/cells
+            cp -r site-data/cells/. _site/data/cells/
+            echo "Regionsdaten: $(du -sh site-data/cells | cut -f1)"
+          else
+            echo "::warning::Keine Regionsdaten – App fragt Overpass live ab"
+          fi
+
+      - name: Nach gh-pages veröffentlichen (ohne Verlauf, damit wöchentliche Daten das Repo nicht aufblähen)
+        working-directory: _site
+        run: |
+          git init -q -b gh-pages
+          git -c user.name="github-actions" -c user.email="github-actions@users.noreply.github.com" add -A
+          git -c user.name="github-actions" -c user.email="github-actions@users.noreply.github.com" commit -q -m "Deploy ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" gh-pages

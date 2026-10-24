@@ -90,6 +90,28 @@ export async function geocode(q) {
   return parseResults(await res.json());
 }
 
+/**
+ * Plausibelsten Treffer für eine Tourstation wählen: in der Region und höchstens maxKm von der
+ * vorherigen Station (gleichnamige Orte gibt es oft mehrfach, z. B. Rohrmoos, Tiefenbach).
+ * Liefert { hit, reason } – hit null, wenn kein Treffer plausibel ist.
+ */
+export function pickCandidate(results, prev, maxKm = 25) {
+  const R = 6371;
+  const km = (a, b) => {
+    const r = Math.PI / 180;
+    const x = Math.sin(((b[1] - a[1]) * r) / 2) ** 2 + Math.cos(a[1] * r) * Math.cos(b[1] * r) * Math.sin(((b[0] - a[0]) * r) / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(x));
+  };
+  const inRegion = results.filter((r) => r.inRegion);
+  if (!inRegion.length) return { hit: null, reason: 'nur Treffer ausserhalb der Region' };
+  if (!prev) return { hit: inRegion[0], reason: null };
+  const near = inRegion.map((r) => ({ r, d: km(prev, r.lngLat) })).filter((x) => x.d <= maxKm).sort((a, b) => a.d - b.d);
+  // Reihenfolge der Suche (Relevanz) respektieren, solange nah genug; sonst den nächstgelegenen.
+  const firstNear = inRegion.find((r) => km(prev, r.lngLat) <= maxKm);
+  if (firstNear) return { hit: firstNear, reason: null };
+  return near.length ? { hit: near[0].r, reason: null } : { hit: null, reason: `nächster Treffer ${Math.round(km(prev, inRegion[0].lngLat))} km von der vorherigen Station` };
+}
+
 /** Treffer als Station an die Touren übergeben (Touren-Paket hört auf dieses Ereignis). */
 export function pinAsStation(r) {
   window.dispatchEvent(new CustomEvent('ta:pin', { detail: { name: r.name, lngLat: r.lngLat } }));

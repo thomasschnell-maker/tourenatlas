@@ -9,6 +9,7 @@ import { openPmtiles } from './offline.js';
 import { PACKAGES } from './packages/index.js';
 import { initSearch } from './search.js';
 import { padBbox, prefetch, tileUrl, tilesForBbox } from './offline-area.js';
+import { cellInBbox, loadRegionIndex } from './region.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -167,6 +168,34 @@ let loadTimer = null;
 let loadGen = 0;
 let zoomHintShown = false;
 
+// Vorab berechnete Regionsdaten (falls vorhanden): Zellen kommen dann als statische Datei statt live von Overpass.
+let region = null;
+const regionReady = loadRegionIndex().then((idx) => {
+  region = idx;
+  if (idx) {
+    setSourceState('trails', 'ok', `Regionsdaten vom ${new Date(idx.osmBase || idx.generated).toLocaleDateString('de-DE')} (${idx.counts?.ways ?? '?'} Wege)`);
+    // Alte Generationen aus dem Gerätespeicher entfernen
+    caches?.open('ta-cells-v1').then((c) => c.keys().then((ks) => ks.filter((r) => !r.url.includes(`/${idx.gen}/`)).forEach((r) => c.delete(r)))).catch(() => {});
+  }
+  return idx;
+});
+
+/** Eine Zelle laden: Regionsdatei (schnell, offline) – sonst live über Overpass. */
+async function fetchCell(key) {
+  await regionReady;
+  const t = SOURCES.trails;
+  const sameGrid = region && region.cellDeg[0] === t.cellDeg[0] && region.cellDeg[1] === t.cellDeg[1];
+  if (sameGrid && region.set.has(key)) {
+    // Auch Randzellen, deren Mitte knapp ausserhalb liegt: vorhandene Datei immer bevorzugen.
+    const res = await fetch(region.url(key));
+    if (res.ok) return { ...(await res.json()), meta: { osmBase: region.osmBase }, endpoint: 'Regionsdaten' };
+  } else if (sameGrid && cellInBbox(key, t.cellDeg, region.bbox)) {
+    // In der Region, aber ohne Datei: dort gibt es keine Wege (leere Zellen werden nicht gespeichert).
+    return { ways: EMPTY, peaks: EMPTY, routes: EMPTY, meta: { osmBase: region.osmBase }, endpoint: 'Regionsdaten' };
+  }
+  return fetchOverpass(cellBbox(key, t.cellDeg), t.endpoints, undefined, t.timeoutMs);
+}
+
 map.on('moveend', scheduleLoad);
 
 function scheduleLoad() {
@@ -218,14 +247,16 @@ async function loadWays() {
   let failed = 0;
   let lastErr = null;
   let osmBase = null;
-  toast(`Lade Bergwege … 0/${todo.length}`, { busy: true });
+  // Aus Regionsdaten kommt alles in Sekundenbruchteilen – dann keine Ladeanzeige (ruhigeres Bild).
+  const quiet = !!region;
+  if (!quiet) toast(`Lade Bergwege … 0/${todo.length}`, { busy: true });
 
   const worker = async () => {
     while (todo.length && gen === loadGen) {
       const key = todo.shift();
       cells.set(key, 'pending');
       try {
-        const res = await fetchOverpass(cellBbox(key, t.cellDeg), t.endpoints, undefined, t.timeoutMs);
+        const res = await fetchCell(key);
         cells.set(key, { ways: res.ways, peaks: res.peaks, routes: res.routes });
         osmBase = res.meta.osmBase || osmBase;
         setSourceState('trails', 'ok', `Server: ${res.endpoint}`);
@@ -240,10 +271,11 @@ async function loadWays() {
         lastErr = err;
       }
       done++;
-      if (gen === loadGen) toast(`Lade Bergwege … ${done}/${done + todo.length}`, { busy: true });
+      if (gen === loadGen && !quiet) toast(`Lade Bergwege … ${done}/${done + todo.length}`, { busy: true });
     }
   };
-  await Promise.all(Array.from({ length: t.concurrency }, worker));
+  // Regionsdateien kommen vom eigenen Server/Cache → mehr parallel; Overpass schonend mit 2.
+  await Promise.all(Array.from({ length: region ? 6 : t.concurrency }, worker));
   if (gen !== loadGen) return;
 
   // Speicher begrenzen: älteste Zellen verwerfen.
@@ -254,7 +286,7 @@ async function loadWays() {
     toast(`Bergwege nicht geladen: ${lastErr?.message}. Karte verschieben zum erneuten Versuch.`, { error: true, ttl: 8000 });
   } else if (failed) {
     toast(`${done - failed}/${done} Bereiche geladen, ${failed} fehlgeschlagen (${lastErr?.message})`, { error: true, ttl: 6000 });
-  } else {
+  } else if (!quiet) {
     const base = osmBase ? new Date(osmBase).toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' }) : '';
     toast(`Bergwege geladen${base ? ` · OSM-Stand ${base}` : ''}`);
   }
@@ -644,7 +676,7 @@ async function saveOffline(bbox, label) {
   for (const [i, key] of keys.slice(0, 80).entries()) {
     toast(`Speichere Bergwege offline … ${i + 1}/${Math.min(keys.length, 80)}`, { busy: true, ttl: 0 });
     try {
-      const res = await fetchOverpass(cellBbox(key, t.cellDeg), t.endpoints, undefined, t.timeoutMs);
+      const res = await fetchCell(key);
       if (!cells.has(key) || cells.get(key) === 'pending') cells.set(key, { ways: res.ways, peaks: res.peaks, routes: res.routes });
       cellsOk++;
     } catch {}
@@ -654,6 +686,31 @@ async function saveOffline(bbox, label) {
   const mb = est?.usage ? ` · belegt ${(est.usage / 1e6).toFixed(0)} MB` : '';
   toast(`${label} offline: ${r.ok} Kacheln, ${cellsOk}/${Math.min(keys.length, 80)} Wege-Bereiche${r.failed ? `, ${r.failed} fehlgeschlagen` : ''}${mb}`, { error: r.failed > 0, ttl: 9000 });
 }
+
+/** Ganze Region: alle Wege-Zellen + Karte/Höhen bis Zoom 12 (Übersicht). Details je Tour: "Tour offline speichern". */
+async function saveRegionOffline() {
+  await regionReady;
+  if (!region) return toast('Regionsdaten noch nicht verfügbar – bitte später erneut versuchen', { error: true, ttl: 6000 });
+  if (!navigator.serviceWorker?.controller) return toast('Offline-Speicher noch nicht bereit – Seite einmal neu laden', { error: true, ttl: 6000 });
+  try {
+    await navigator.storage?.persist?.();
+  } catch {}
+  const urls = region.cells.map((k) => region.url(k));
+  const style = map.getStyle();
+  try {
+    const omt = style.sources?.openmaptiles;
+    if (omt?.url) {
+      const tj = await (await fetch(omt.url)).json();
+      if (tj.tiles?.[0]) urls.push(...tilesForBbox(region.bbox, 6, 12).map((t) => tileUrl(tj.tiles[0], t)));
+    }
+  } catch {}
+  urls.push(...tilesForBbox(region.bbox, 6, 12).map((t) => tileUrl(SOURCES.terrain.tiles[0], t)));
+  toast(`Speichere Region offline … 0/${urls.length}`, { busy: true, ttl: 0 });
+  const r = await prefetch(urls, { concurrency: 8, onProgress: (d, n) => d % 50 === 0 && toast(`Speichere Region offline … ${d}/${n}`, { busy: true, ttl: 0 }) });
+  const est = navigator.storage?.estimate ? await navigator.storage.estimate() : null;
+  toast(`Region offline: ${r.ok} Dateien${r.failed ? `, ${r.failed} fehlgeschlagen` : ''}${est?.usage ? ` · belegt ${(est.usage / 1e6).toFixed(0)} MB` : ''}`, { error: r.failed > 0, ttl: 9000 });
+}
+$('offline-region').addEventListener('click', saveRegionOffline);
 
 $('offline-view').addEventListener('click', () => {
   const b = map.getBounds();
