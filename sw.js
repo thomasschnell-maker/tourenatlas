@@ -7,6 +7,7 @@
 const APP = 'ta-app-v1';
 const TILES = 'ta-tiles-v1';
 const DATA = 'ta-data-v1';
+const CELLS = 'ta-cells-v1'; // Regionsdaten je Generation (alte löscht die App)
 const MAX_TILES = 6000;
 
 // App-Schale – muss alle Dateien enthalten, die index.html lädt (Test prüft das).
@@ -26,6 +27,7 @@ const SHELL = [
   'js/offline.js',
   'js/offline-area.js',
   'js/overpass.js',
+  'js/region.js',
   'js/search.js',
   'js/styles.js',
   'js/textscale.js',
@@ -57,7 +59,7 @@ self.addEventListener('install', (e) => {
 });
 
 self.addEventListener('activate', (e) => {
-  const keep = [APP, TILES, DATA];
+  const keep = [APP, TILES, DATA, CELLS];
   e.waitUntil(
     caches
       .keys()
@@ -106,7 +108,10 @@ self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
-  if (url.origin === self.location.origin) {
+  if (url.origin === self.location.origin && url.pathname.includes('/data/cells/') && !url.pathname.endsWith('index.json')) {
+    // Zellen-Dateien sind je Generation unveränderlich → Cache zuerst (schnell, offline).
+    e.respondWith(caches.open(CELLS).then(async (c) => (await c.match(req)) || fetch(req).then((res) => (res.ok && c.put(req, res.clone()), res))));
+  } else if (url.origin === self.location.origin) {
     e.respondWith(networkFirst(req, APP));
   } else if (TILE_HOSTS.includes(url.hostname)) {
     // Stil (/styles/…) und TileJSON (/planet) von OpenFreeMap haben keine Dateiendung und ändern sich → Netz zuerst.

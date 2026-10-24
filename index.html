@@ -20,6 +20,7 @@
   <link rel="modulepreload" href="js/offline-area.js">
   <link rel="modulepreload" href="js/offline.js">
   <link rel="modulepreload" href="js/overpass.js">
+  <link rel="modulepreload" href="js/region.js">
   <link rel="modulepreload" href="js/packages/exif.js">
   <link rel="modulepreload" href="js/packages/index.js">
   <link rel="modulepreload" href="js/packages/poster-core.js">
@@ -75,8 +76,9 @@
           <ul class="legend" id="legend"></ul>
         </details>
         <h3>Offline unterwegs</h3>
-        <button id="offline-view" type="button" class="btn wide">Sichtbaren Ausschnitt offline speichern</button>
-        <p class="muted">Speichert Karte, Höhenmodell, Bergwege und Radrouten für den Ausschnitt. Touren und Fotos sind ohnehin auf dem Gerät. Ohne Netz gehen nicht: Ortssuche, Routing, Wetter.</p>
+        <button id="offline-region" type="button" class="btn primary wide">Ganze Region offline speichern</button>
+        <button id="offline-view" type="button" class="btn wide">Sichtbaren Ausschnitt im Detail offline speichern</button>
+        <p class="muted">Region: alle Bergwege, Radrouten, Gipfel, Hütten + Übersichtskarte (einmalig im WLAN). Ausschnitt/Tour: zusätzlich Kartendetails bis Zoom 14. Ohne Netz gehen nicht: Ortssuche, Routing, Wetter.</p>
         <details class="block">
           <summary>Offline-Karte laden (Protomaps-Datei)</summary>
           <label class="file">PMTiles-Datei wählen <input id="pm-file" type="file" accept=".pmtiles"></label>
