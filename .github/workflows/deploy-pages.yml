@@ -7,7 +7,7 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: '17 3 * * *' # täglich 03:17 UTC: Regionsdaten vervollständigen bzw. wöchentlich auffrischen
+    - cron: '17 3 * * *' # täglich 03:17 UTC: Regionsdaten vervollständigen bzw. Teile älter als eine Woche auffrischen
 
 permissions:
   contents: write
@@ -19,7 +19,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 130
     steps:
       - uses: actions/checkout@v4
 
@@ -30,18 +30,14 @@ jobs:
       - name: Tests
         run: npm test
 
-      - name: Kalenderwoche
-        id: week
-        run: echo "key=$(date -u +%G-W%V)" >> "$GITHUB_OUTPUT"
-
-      # Erfolgreiche Teilabfragen je Kalenderwoche aufheben: scheitert ein Lauf an überlasteten
-      # Overpass-Servern, macht der nächste dort weiter (neuer Schlüssel je Lauf, Wiederherstellung per Präfix).
-      - name: Teilabfragen aus dem Cache (je Woche)
+      # Erfolgreiche Teilabfragen aufheben: scheitert ein Lauf an überlasteten Overpass-Servern, macht der nächste
+      # dort weiter. Teile älter als eine Woche werden aufgefrischt, bis dahin bleibt der alte Stand (nie Rückschritt).
+      - name: Teilabfragen aus dem Cache
         uses: actions/cache@v4
         with:
           path: site-data/chunks
-          key: chunks-${{ steps.week.outputs.key }}-${{ hashFiles('js/overpass.js') }}-${{ github.run_id }}
-          restore-keys: chunks-${{ steps.week.outputs.key }}-${{ hashFiles('js/overpass.js') }}-
+          key: chunks-${{ hashFiles('js/overpass.js') }}-${{ github.run_id }}
+          restore-keys: chunks-${{ hashFiles('js/overpass.js') }}-
 
       - name: Regionsdaten erzeugen (Overpass)
         continue-on-error: true # ohne Regionsdaten fragt die App live ab – Seite trotzdem veröffentlichen

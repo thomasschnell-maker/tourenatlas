@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { execFile } from 'node:child_process';
-import { mkdtempSync, readFileSync, readdirSync } from 'node:fs';
+import { mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { cellInHole } from '../js/region.js';
@@ -11,6 +11,7 @@ import { cellKey } from '../js/cells.js';
 // Mock-Overpass: Abfragen um (10.3, 47.4) sind erst ab 1/16 Fläche klein genug, um (10.85, 47.9) scheitert alles.
 function mockOverpass() {
   let requests = 0;
+  const state = { down: false };
   const server = createServer((req, res) => {
     let body = '';
     req.on('data', (c) => (body += c));
@@ -20,7 +21,7 @@ function mockOverpass() {
       const [s, w, n, e] = q.match(/\[bbox:([^\]]+)\]/)[1].split(',').map(Number);
       const has = (x, y) => w <= x && x < e && s <= y && y < n;
       const area = (e - w) * (n - s);
-      if ((has(10.3, 47.4) && area > 0.1 * 0.075 / 10) || has(10.85, 47.9)) {
+      if (state.down || (has(10.3, 47.4) && area > 0.1 * 0.075 / 10) || has(10.85, 47.9)) {
         res.writeHead(504);
         return res.end();
       }
@@ -32,7 +33,7 @@ function mockOverpass() {
       }));
     });
   });
-  return new Promise((resolve) => server.listen(0, () => resolve({ server, url: `http://127.0.0.1:${server.address().port}/`, count: () => requests })));
+  return new Promise((resolve) => server.listen(0, () => resolve({ server, state, url: `http://127.0.0.1:${server.address().port}/`, count: () => requests })));
 }
 
 const run = (args, env) =>
@@ -40,7 +41,7 @@ const run = (args, env) =>
     execFile('node', ['tools/build-region.mjs', ...args], { env: { ...process.env, ...env } }, (err, stdout, stderr) => (err ? reject(new Error(stderr || err.message)) : resolve(stdout)))
   );
 
-test('build-region: viertelt überlastete Teilabfragen, meldet Lücken, setzt aus dem Cache fort', { timeout: 60000 }, async () => {
+test('build-region: viertelt überlastete Teilabfragen, meldet Lücken, setzt aus dem Cache fort', { timeout: 120000 }, async () => {
   const mock = await mockOverpass();
   const dir = mkdtempSync(join(tmpdir(), 'ta-region-'));
   const env = { OVERPASS_URL: mock.url, PAUSE_MS: '0' };
@@ -64,6 +65,22 @@ test('build-region: viertelt überlastete Teilabfragen, meldet Lücken, setzt au
     const idx2 = JSON.parse(readFileSync(join(dir, 'cells', 'index.json'), 'utf8'));
     assert.equal(mock.count() - before, 3); // nur das Loch selbst, 3 Versuche – geteilte Gebiete nicht erneut im Ganzen
     assert.equal(idx2.gen, idx.gen);
+    // Eine Woche später, alle Server überlastet: alte Stände bleiben, keine neuen Lücken
+    for (const f of readdirSync(join(dir, 'chunks'))) {
+      const p = join(dir, 'chunks', f);
+      writeFileSync(p, JSON.stringify({ ...JSON.parse(readFileSync(p, 'utf8')), fetched: '2026-01-01T00:00:00Z' }));
+    }
+    mock.state.down = true;
+    await run([join(dir, 'cells'), join(dir, 'chunks')], env);
+    const idx3 = JSON.parse(readFileSync(join(dir, 'cells', 'index.json'), 'utf8'));
+    assert.equal(idx3.counts.ways, idx.counts.ways);
+    assert.equal(idx3.holes.length, 1);
+    // Server wieder da: aufgefrischt → neue Generation (Geräte laden neu)
+    mock.state.down = false;
+    await run([join(dir, 'cells'), join(dir, 'chunks')], env);
+    const idx4 = JSON.parse(readFileSync(join(dir, 'cells', 'index.json'), 'utf8'));
+    assert.notEqual(idx4.gen, idx.gen);
+    assert.equal(idx4.counts.ways, idx.counts.ways);
   } finally {
     mock.server.close();
   }
