@@ -7,7 +7,7 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: '17 3 * * 1' # montags 03:17 UTC: Regionsdaten aus OpenStreetMap auffrischen
+    - cron: '17 3 * * *' # täglich 03:17 UTC: Regionsdaten vervollständigen bzw. wöchentlich auffrischen
 
 permissions:
   contents: write
@@ -34,17 +34,18 @@ jobs:
         id: week
         run: echo "key=$(date -u +%G-W%V)" >> "$GITHUB_OUTPUT"
 
-      - name: Regionsdaten aus dem Cache (je Woche)
-        id: cache
+      # Erfolgreiche Teilabfragen je Kalenderwoche aufheben: scheitert ein Lauf an überlasteten
+      # Overpass-Servern, macht der nächste dort weiter (neuer Schlüssel je Lauf, Wiederherstellung per Präfix).
+      - name: Teilabfragen aus dem Cache (je Woche)
         uses: actions/cache@v4
         with:
-          path: site-data/cells
-          key: region-${{ steps.week.outputs.key }}-${{ hashFiles('tools/build-region.mjs', 'js/overpass.js', 'js/region.js', 'js/config.js', 'js/cells.js') }}
+          path: site-data/chunks
+          key: chunks-${{ steps.week.outputs.key }}-${{ hashFiles('js/overpass.js') }}-${{ github.run_id }}
+          restore-keys: chunks-${{ steps.week.outputs.key }}-${{ hashFiles('js/overpass.js') }}-
 
       - name: Regionsdaten erzeugen (Overpass)
-        if: steps.cache.outputs.cache-hit != 'true'
         continue-on-error: true # ohne Regionsdaten fragt die App live ab – Seite trotzdem veröffentlichen
-        run: node tools/build-region.mjs site-data/cells
+        run: node tools/build-region.mjs site-data/cells site-data/chunks
 
       - name: Seite zusammenstellen
         run: |

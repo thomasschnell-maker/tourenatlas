@@ -9,7 +9,7 @@ import { openPmtiles } from './offline.js';
 import { PACKAGES } from './packages/index.js';
 import { initSearch } from './search.js';
 import { padBbox, prefetch, tileUrl, tilesForBbox } from './offline-area.js';
-import { cellInBbox, loadRegionIndex } from './region.js';
+import { cellInBbox, cellInHole, loadRegionIndex } from './region.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -173,7 +173,7 @@ let region = null;
 const regionReady = loadRegionIndex().then((idx) => {
   region = idx;
   if (idx) {
-    setSourceState('trails', 'ok', `Regionsdaten vom ${new Date(idx.osmBase || idx.generated).toLocaleDateString('de-DE')} (${idx.counts?.ways ?? '?'} Wege)`);
+    setSourceState('trails', 'ok', `Regionsdaten vom ${new Date(idx.osmBase || idx.generated).toLocaleDateString('de-DE')} (${idx.counts?.ways ?? '?'} Wege${idx.holes?.length ? `, ${idx.holes.length} Teilgebiete live` : ''})`);
     // Alte Generationen aus dem Gerätespeicher entfernen
     caches?.open('ta-cells-v1').then((c) => c.keys().then((ks) => ks.filter((r) => !r.url.includes(`/${idx.gen}/`)).forEach((r) => c.delete(r)))).catch(() => {});
   }
@@ -185,11 +185,12 @@ async function fetchCell(key) {
   await regionReady;
   const t = SOURCES.trails;
   const sameGrid = region && region.cellDeg[0] === t.cellDeg[0] && region.cellDeg[1] === t.cellDeg[1];
-  if (sameGrid && region.set.has(key)) {
+  const hole = sameGrid && cellInHole(key, t.cellDeg, region.holes);
+  if (sameGrid && !hole && region.set.has(key)) {
     // Auch Randzellen, deren Mitte knapp ausserhalb liegt: vorhandene Datei immer bevorzugen.
     const res = await fetch(region.url(key));
     if (res.ok) return { ...(await res.json()), meta: { osmBase: region.osmBase }, endpoint: 'Regionsdaten' };
-  } else if (sameGrid && cellInBbox(key, t.cellDeg, region.bbox)) {
+  } else if (sameGrid && !hole && cellInBbox(key, t.cellDeg, region.bbox)) {
     // In der Region, aber ohne Datei: dort gibt es keine Wege (leere Zellen werden nicht gespeichert).
     return { ways: EMPTY, peaks: EMPTY, routes: EMPTY, meta: { osmBase: region.osmBase }, endpoint: 'Regionsdaten' };
   }
@@ -248,7 +249,7 @@ async function loadWays() {
   let lastErr = null;
   let osmBase = null;
   // Aus Regionsdaten kommt alles in Sekundenbruchteilen – dann keine Ladeanzeige (ruhigeres Bild).
-  const quiet = !!region;
+  const quiet = !!region && !region.holes?.length;
   if (!quiet) toast(`Lade Bergwege … 0/${todo.length}`, { busy: true });
 
   const worker = async () => {
@@ -275,7 +276,7 @@ async function loadWays() {
     }
   };
   // Regionsdateien kommen vom eigenen Server/Cache → mehr parallel; Overpass schonend mit 2.
-  await Promise.all(Array.from({ length: region ? 6 : t.concurrency }, worker));
+  await Promise.all(Array.from({ length: quiet ? 6 : t.concurrency }, worker));
   if (gen !== loadGen) return;
 
   // Speicher begrenzen: älteste Zellen verwerfen.

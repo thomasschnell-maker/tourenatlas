@@ -140,11 +140,11 @@ Erweiterungen hängen sich als Paket ein: eine Datei in `js/packages/` anlegen u
 
 Bergwege, Radrouten, Gipfel und Hütten der Region (Allgäu, Tirol, Vorarlberg, Bodensee) werden **wöchentlich vorab berechnet**, nicht bei jedem Öffnen live abgefragt.
 
-- **Erzeugung:** `tools/build-region.mjs` läuft in GitHub Actions, montags 03:17 UTC und bei jedem Deploy, mit Cache je Kalenderwoche. Es nutzt dieselbe Overpass-Abfrage und denselben Parser wie die App und fragt die Region in 48 Teilen ab, mit Pausen und Wiederholung. Das Ergebnis wird in die App-Zellen zerlegt (`js/region.js`). Geschrieben wird erst in einen Zwischenordner, halbe Daten werden nie veröffentlicht.
+- **Erzeugung:** `tools/build-region.mjs` läuft in GitHub Actions, täglich 03:17 UTC und bei jedem Deploy. Es nutzt dieselbe Overpass-Abfrage und denselben Parser wie die App. Die Region wird in 165 Teilen von je ~7,5 × 8,3 km abgefragt, reihum über drei Server. Scheitert ein Teil (502/504 bei Überlast), wird es geviertelt, bis auf 1/16. Jeder erfolgreiche Teil landet im Actions-Cache der Kalenderwoche, ein abgebrochener Lauf macht beim nächsten dort weiter. Nach 40 min Zeitbudget werden die vorhandenen Daten trotzdem veröffentlicht. Fehlende Gebiete stehen als `holes` im Index, dort fragt die App live ab. Die Generation (Dateipfad) ergibt sich aus dem Inhalt, gleiche Daten behalten also den Offline-Speicher der Geräte. Geschrieben wird erst in einen Zwischenordner, halbe Dateien werden nie veröffentlicht.
 - **App:** Zellen in der Region kommen als statische Datei von GitHub Pages, gecacht und unveränderlich je Generation. Statt 3–30 s je Overpass-Abfrage dauert das Sekundenbruchteile, und die Ladeanzeige entfällt. Ausserhalb der Region oder ohne Regionsdaten fragt die App weiter live ab.
 - **„Ganze Region offline speichern“** (Tab Karte): alle Wege-Zellen plus Übersichtskarte und Höhen bis Zoom 12, im Test etwa 400 Dateien. Kartendetails bis Zoom 14 bringen „Tour offline speichern“ bzw. „Ausschnitt offline speichern“.
 - **Veröffentlichung:** `gh-pages` wird ohne Verlauf neu geschrieben, damit sich die wöchentlichen Daten nicht im Repository ansammeln.
-- **Aktualität:** wöchentlich. Der OSM-Stand steht unter Info → Quellen.
+- **Aktualität:** je Kalenderwoche neu abgefragt. Der OSM-Stand steht unter Info → Quellen.
 
 ## Ladezeit und Akku (Handy)
 
@@ -184,7 +184,7 @@ js/cells.js         Zellenraster für das Nachladen der Wege
 js/search.js        Ortssuche (Nominatim)
 js/offline-area.js  Gebiet offline speichern (Kachelmathematik, Vorabladen)
 js/region.js        Regionsdaten: Zellen zerlegen und laden
-tools/build-region.mjs  Regionsdaten erzeugen (GitHub Actions, wöchentlich)
+tools/build-region.mjs  Regionsdaten erzeugen (GitHub Actions, fortsetzbar)
 sw.js               Service Worker (Offline-Betrieb)
 js/packages/        Pakete (Touren, Plakat, Wetter)
 js/textscale.js     Lesbarkeit: Beschriftungen skalieren
