@@ -173,7 +173,11 @@ let region = null;
 const regionReady = loadRegionIndex().then((idx) => {
   region = idx;
   if (idx) {
-    setSourceState('trails', 'ok', `Regionsdaten vom ${new Date(idx.osmBase || idx.generated).toLocaleDateString('de-DE')} (${idx.counts?.ways ?? '?'} Wege${idx.holes?.length ? `, ${idx.holes.length} Teilgebiete live` : ''})`);
+    const day = (t) => new Date(t).toLocaleDateString('de-DE');
+    const latest = idx.osmLatest || idx.osmBase || idx.generated;
+    // Ehrlich: Hauptstand nennen und, falls einzelne Gebiete deutlich älter sind, auch den ältesten
+    const older = idx.osmBase && Date.parse(latest) - Date.parse(idx.osmBase) > 7 * 86400000 ? `, einzelne Gebiete Stand ${day(idx.osmBase)}` : '';
+    setSourceState('trails', 'ok', `Regionsdaten Stand ${day(latest)}${older} (${idx.counts?.ways ?? '?'} Wege${idx.holes?.length ? `, ${idx.holes.length} Teilgebiete live` : ''})`);
     // Alte Generationen aus dem Gerätespeicher entfernen
     caches?.open('ta-cells-v1').then((c) => c.keys().then((ks) => ks.filter((r) => !r.url.includes(`/${idx.gen}/`)).forEach((r) => c.delete(r)))).catch(() => {});
   }
