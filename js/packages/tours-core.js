@@ -13,6 +13,39 @@ export function brouterUrl(a, b, profile = 'hiking-mountain') {
   return `${ROUTER.url}?lonlats=${ll(a)}|${ll(b)}&profile=${profile}&alternativeidx=0&format=geojson`;
 }
 
+/** Ganze Tour in einer Anfrage (BRouter routet über alle Stationen) – statt einer Anfrage je Abschnitt. */
+export function brouterUrlMulti(points, profile = 'hiking-mountain') {
+  const ll = (p) => `${p[0].toFixed(6)},${p[1].toFixed(6)}`;
+  return `${ROUTER.url}?lonlats=${points.map(ll).join('|')}&profile=${profile}&alternativeidx=0&format=geojson`;
+}
+
+/**
+ * Gesamtroute an den Stationen in Abschnitte teilen. Je Station der erste Punkt nach der vorherigen
+ * Teilung, der näher als toleranceM liegt, dann bis zum nächsten Minimum weiter – so werden mehrfach
+ * besuchte Orte (Hin- und Rückweg über denselben Ort) in der richtigen Reihenfolge getroffen.
+ * Liefert null, wenn eine Station nicht auf der Route liegt.
+ */
+export function splitRoute(line, points, toleranceM = 500) {
+  const cuts = [0];
+  let from = 0;
+  for (let k = 1; k < points.length - 1; k++) {
+    let j = -1;
+    for (let i = from; i < line.length; i++) {
+      if (haversine(line[i], points[k]) <= toleranceM) {
+        j = i;
+        while (j + 1 < line.length && haversine(line[j + 1], points[k]) < haversine(line[j], points[k])) j++;
+        break;
+      }
+    }
+    if (j < 0) return null;
+    cuts.push(j);
+    from = j + 1;
+  }
+  cuts.push(line.length - 1);
+  if (haversine(line[0], points[0]) > toleranceM || haversine(line.at(-1), points.at(-1)) > toleranceM) return null;
+  return cuts.slice(1).map((c, k) => line.slice(cuts[k], c + 1));
+}
+
 /** BRouter-GeoJSON → [[lon, lat], …]. Prüft, dass die Route an den Stationen beginnt/endet. */
 // 500 m: Orte, Seen und Gipfel werden als Mittelpunkt gefunden, der nächste Weg liegt oft einige hundert Meter daneben.
 export function parseBrouter(json, a, b, toleranceM = 500) {

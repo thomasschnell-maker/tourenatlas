@@ -123,7 +123,8 @@ export const START_VIEW = {
   // Oberstdorf – Nebelhorn – Höfats: dichtes, gut gepflegtes OSM-Bergwegenetz.
   center: [10.33, 47.405],
   zoom: 12.6,
-  pitch: 62,
+  // 50° statt 62°: weniger Horizont = deutlich weniger Kacheln beim Start (spürbar im Mobilfunk)
+  pitch: 50,
   bearing: 160
 };
 

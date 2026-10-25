@@ -2,7 +2,7 @@
 // Touren-Paket: Touren mit mehreren Stationen, Routing entlang echter Wege,
 // Fotos je Station mit gespeichertem 3D-Blick. Daten bleiben lokal auf dem Gerät.
 
-import { ACTIVITIES, ASSIST, ROUTER, TOUR_COLORS, assignPhotos, calibrateEbike, implausibleClimb, batteryCurve, brouterUrl, captureView, formatDuration, newStation, newTour, nextColor, parseBrouter, parseGpx, stationDistances, stationsFromTrack, tourGpx, tourLine, tourStats, viewFromPhoto } from './tours-core.js';
+import { ACTIVITIES, ASSIST, ROUTER, TOUR_COLORS, assignPhotos, calibrateEbike, implausibleClimb, batteryCurve, brouterUrl, brouterUrlMulti, splitRoute, captureView, formatDuration, newStation, newTour, nextColor, parseBrouter, parseGpx, stationDistances, stationsFromTrack, tourGpx, tourLine, tourStats, viewFromPhoto } from './tours-core.js';
 import { readExif } from './exif.js';
 import { blobToDataUrl, compressImage, dataUrlToBlob, requestPersistence, store } from './tours-store.js';
 import { geocode, pickCandidate, splitPlaces } from '../search.js';
@@ -169,8 +169,34 @@ async function routeSegment(a, b) {
   }
 }
 
+/** Ganze Tour mit einer Anfrage routen; false, wenn das nicht geht (dann Abschnitt für Abschnitt). */
+async function routeWhole() {
+  const st = current.stations;
+  if (current.mode !== 'route' || st.length < 3 || current.segments.some((s) => s?.recorded)) return false;
+  try {
+    const profile = ACTIVITIES[current.activity || 'hike'].profile;
+    const res = await fetch(brouterUrlMulti(st.map((s) => s.lngLat), profile));
+    if (!res.ok) return false;
+    const f = (await res.json())?.features?.[0];
+    const line = f?.geometry?.coordinates?.map((c) => [c[0], c[1]]);
+    const parts = line && splitRoute(line, st.map((s) => s.lngLat));
+    if (!parts) return false;
+    current.segments = parts.map((coords) => ({ coords }));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 async function rebuildSegments(indices) {
   const st = current.stations;
+  if (!indices) {
+    ctx.toast('Berechne Route …', { busy: true });
+    if (await routeWhole()) {
+      ctx.toast('');
+      return persist();
+    }
+  }
   current.segments.length = Math.max(0, st.length - 1);
   const todo = indices ?? st.slice(1).map((_, i) => i);
   ctx.toast(`Berechne Route …`, { busy: true });
@@ -243,17 +269,19 @@ async function addPlaces(text) {
   fitTour();
 }
 
+// Touren immer von oben zeigen: in 3D-Schräglage passt die Tour nicht ins freie Kartenstück über dem Blatt,
+// die Karte zeigte dann bis zum Horizont (z. B. Memmingen) und die Tour lag verdeckt im Vordergrund.
 function fitTours(list) {
   const b = new maplibregl.LngLatBounds();
   list.forEach((t) => t.stations.forEach((s) => b.extend(s.lngLat)));
-  if (!b.isEmpty()) ctx.map.fitBounds(b, { padding: visiblePadding(), maxZoom: 14, duration: 1200 });
+  if (!b.isEmpty()) ctx.map.fitBounds(b, { padding: visiblePadding(), maxZoom: 14, pitch: 0, bearing: 0, duration: 1200 });
 }
 
 function fitTour() {
   if (!current?.stations.length) return;
   const b = new maplibregl.LngLatBounds();
   current.stations.forEach((s) => b.extend(s.lngLat));
-  ctx.map.fitBounds(b, { padding: visiblePadding(), maxZoom: 15, duration: 1200 });
+  ctx.map.fitBounds(b, { padding: visiblePadding(), maxZoom: 15, pitch: 0, bearing: 0, duration: 1200 });
 }
 
 /** Aus der Ortssuche gepinnt: in die offene Tour, sonst neue Tour anlegen. */
@@ -734,7 +762,7 @@ async function openTour(id) {
   if (current?.stations.length) {
     const b = new maplibregl.LngLatBounds();
     current.stations.forEach((s) => b.extend(s.lngLat));
-    ctx.map.fitBounds(b, { padding: visiblePadding(), maxZoom: 15, duration: 1200 });
+    ctx.map.fitBounds(b, { padding: visiblePadding(), maxZoom: 15, pitch: 0, bearing: 0, duration: 1200 });
     stats = await tourStats(tourLine(current.stations, current.segments), ctx.sampler, 25, current.activity || 'hike');
     render();
   }

@@ -103,20 +103,37 @@ async function dumpTours(page) {
       tours
     });
   }
+  report.toasts = toasts;
+  report.console = logs.slice(0, 80);
+  // Regionsdaten erreichbar?
+  report.regionIndex = await page.evaluate(async () => {
+    const r = await fetch('data/cells/index.json', { cache: 'no-store' });
+    if (!r.ok) return `HTTP ${r.status}`;
+    const j = await r.json();
+    const c = await fetch(`data/cells/${j.gen}/${j.cells[500].replace(':', '_')}.json`, { cache: 'no-store' });
+    return { gen: j.gen, cells: j.cells.length, holes: j.holes?.length, osmBase: j.osmBase, osmLatest: j.osmLatest, sample: c.status };
+  }).catch((e) => String(e));
+  fs.writeFileSync(`${out}/report.json`, JSON.stringify(report, null, 1));
   // Touren-Ansicht und jede Vorlage einzeln
   await page.click('#tabbar button[data-tab="tours"]').catch(() => {});
   await sleep(1500);
   await page.screenshot({ path: `${out}/touren-liste.png` });
   const n = await page.locator('.tour-list button').count();
   for (let i = 0; i < n; i++) {
-    await page.locator('.tour-list button').nth(i).click();
-    await sleep(6000);
-    await page.screenshot({ path: `${out}/tour-${i + 1}.png` });
-    await page.click('[data-t="back"]').catch(() => {});
-    await sleep(1000);
+    try {
+      await page.locator('.tour-list button').nth(i).click({ timeout: 10000 });
+      await sleep(6000);
+      // Blatt einklappen, damit die Tour auf der Karte sichtbar ist
+      await page.evaluate(() => document.getElementById('sheet').classList.add('peek'));
+      await sleep(2500);
+      await page.screenshot({ path: `${out}/tour-${i + 1}.png` });
+      await page.evaluate(() => document.getElementById('sheet').classList.remove('peek'));
+      await page.click('[data-t="back"]', { timeout: 10000 });
+      await sleep(1000);
+    } catch (e) {
+      report.console.push(`Tour ${i + 1}: ${e.message.split('\n')[0]}`);
+    }
   }
-  report.toasts = toasts;
-  report.console = logs.slice(0, 80);
   fs.writeFileSync(`${out}/report.json`, JSON.stringify(report, null, 1));
   console.log(JSON.stringify(report, null, 1));
   await browser.close();

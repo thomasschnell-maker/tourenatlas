@@ -1,11 +1,12 @@
 # Prüft die veröffentlichte App wie auf einem iPhone (Ladezeit, Touren) und legt Bericht + Screenshots
-# auf den Branch live-check. Läuft manuell oder bei Push auf Claude-Branches.
+# auf den Branch live-check. Läuft nach jeder Veröffentlichung und manuell.
 name: Live-Check
 
 on:
   workflow_dispatch:
-  push:
-    branches: ['claude/**']
+  workflow_run:
+    workflows: ['Deploy Pages']
+    types: [completed]
 
 permissions:
   contents: write
@@ -24,7 +25,7 @@ jobs:
           npm i --no-save playwright@1.49.1
           npx playwright install --with-deps chromium
       - name: Live-Prüfung
-        run: node tools/live-check.cjs https://thomasschnell-maker.github.io/tourenatlas/ live-check
+        run: sleep 60 && \ node tools/live-check.cjs https://thomasschnell-maker.github.io/tourenatlas/ live-check
       - name: Ergebnis auf Branch live-check
         if: always()
         working-directory: live-check

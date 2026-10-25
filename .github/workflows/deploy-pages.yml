@@ -65,6 +65,11 @@ jobs:
         working-directory: _site
         run: |
           git init -q -b gh-pages
+          # Die .gitignore des Repos schliesst data/cells/ aus (dort nur lokale Testdaten) – für die Seite gilt sie nicht
+          rm -f .gitignore
           git -c user.name="github-actions" -c user.email="github-actions@users.noreply.github.com" add -A
+          # Absicherung: vorhandene Regionsdaten müssen wirklich mit veröffentlicht werden
+          if [ -f data/cells/index.json ] && [ "$(git ls-files data/cells | wc -l)" -lt 10 ]; then echo "::error::Regionsdaten fehlen im Commit"; exit 1; fi
+          echo "Veröffentlicht: $(git ls-files | wc -l) Dateien, davon $(git ls-files data/cells | wc -l) Regionsdaten"
           git -c user.name="github-actions" -c user.email="github-actions@users.noreply.github.com" commit -q -m "Deploy ${GITHUB_SHA::7}"
           git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" gh-pages
