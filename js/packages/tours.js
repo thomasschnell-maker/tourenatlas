@@ -458,16 +458,96 @@ function profileCursor(ev) {
   ctx.toast(`km ${(p.dist / 1000).toFixed(1)} · ${p.ele != null ? Math.round(p.ele) + ' m' : '–'}`, { ttl: 1500 });
 }
 
-// ---------- Früher vorgegebene Touren entfernen ----------
-// Die Vorlagen (data/touren.json) stimmten nicht und wurden gestrichen. Hier verschwinden sie auch vom Gerät;
-// selbst angelegte Touren und Kopien („Als Variante kopieren“, ohne templateId) bleiben unberührt.
+// ---------- Vorgegebene Touren ----------
+// Die erste Vorlagenliste (v4) stimmte nicht: diese Touren verschwinden vom Gerät. Selbst angelegte Touren,
+// Kopien und neue Vorlagen bleiben unberührt.
+const OLD_TEMPLATE_IDS = new Set([
+  '2026-sonthofen-oberjoch-gruentensee',
+  '2026-ofterschwanger-horn-rueckweg-1',
+  '2026-sonthofen-gunzesried-ofterschwanger-horn',
+  '2026-ofterschwanger-horn-rueckweg-3',
+  '2026-balderschwang-sibratsgfaell-oberstdorf',
+  '2026-balderschwang-sibratsgfaell-fischen',
+  '2026-hindelang-jochstrasse-schnitzelalm'
+]);
 async function removeTemplateTours() {
-  const old = tours.filter((t) => t.templateId);
+  const old = tours.filter((t) => OLD_TEMPLATE_IDS.has(t.templateId));
   for (const t of old) await store.deleteTour(t.id);
   if (old.length) {
     tours = await store.allTours();
-    ctx.toast(`${old.length} vorgegebene Tour(en) entfernt – eigene Touren bleiben`, { ttl: 6000 });
+    ctx.toast(`${old.length} alte vorgegebene Tour(en) entfernt – eigene Touren bleiben`, { ttl: 6000 });
   }
+}
+
+// Gelöschte Vorlagen merken, damit sie nicht wiederkommen.
+function dismissed() {
+  try {
+    return JSON.parse(localStorage.getItem('ta.dismissedTemplates') || '[]');
+  } catch {
+    return [];
+  }
+}
+function dismiss(id) {
+  try {
+    localStorage.setItem('ta.dismissedTemplates', JSON.stringify([...new Set([...dismissed(), id])]));
+  } catch {}
+}
+
+/**
+ * Neue Vorlagen automatisch eintragen. data/touren.json enthält fertige Koordinaten (beim Veröffentlichen
+ * mit Gebiets- und Abstandsprüfung ermittelt, tools/resolve-tours.mjs) – auf dem Gerät wird nichts mehr
+ * per Ortsname gesucht, nur die Strecke zwischen den Stationen geroutet.
+ */
+async function importTemplates() {
+  let list;
+  try {
+    const res = await fetch('data/touren.json', { cache: 'no-cache' });
+    if (!res.ok) return;
+    list = await res.json();
+  } catch {
+    return;
+  }
+  const skip = dismissed();
+  const todo = list.filter((v) => {
+    if (!Array.isArray(v.stations) || v.stations.length < 2 || skip.includes(v.id)) return false;
+    const t = tours.find((x) => x.templateId === v.id);
+    return !t || (t.templateVersion || 1) < (v.version || 1);
+  });
+  if (!todo.length) return;
+  requestPersistence();
+  const prevCurrent = current;
+  for (const [k, v] of todo.entries()) {
+    ctx.toast(`Trage „${v.name}“ ein (${k + 1}/${todo.length}) …`, { busy: true, ttl: 0 });
+    const old = tours.find((x) => x.templateId === v.id);
+    if (old) await store.deleteTour(old.id);
+    const missing = v.missing?.length ? ` Nicht gefunden: ${v.missing.map((m) => m.split(' (')[0]).join(', ')}.` : '';
+    const t = {
+      ...newTour(v.name),
+      templateId: v.id,
+      templateVersion: v.version || 1,
+      group: v.group || '',
+      variant: v.variant || '',
+      activity: v.activity || 'hike',
+      note: `${v.note || ''}${missing}`,
+      color: v.color || nextColor(tours)
+    };
+    t.stations = v.stations.map((s, i) => ({ ...newStation(s.lngLat, i + 1), name: s.name }));
+    try {
+      const eles = await ctx.sampler.elevations(t.stations.map((s) => s.lngLat));
+      t.stations.forEach((s, i) => (s.ele = eles[i]));
+    } catch {}
+    current = t;
+    await store.putTour(t);
+    tours = await store.allTours();
+    await rebuildSegments(); // Strecke entlang der Wege (Rad bzw. Wandern), speichert
+  }
+  current = null;
+  stats = null;
+  tours = await store.allTours();
+  refreshMap();
+  if (prevCurrent && tours.some((x) => x.id === prevCurrent.id)) await openTour(prevCurrent.id);
+  else render();
+  ctx.toast(`${todo.length} Tour(en) eingetragen: ${todo.map((v) => v.variant || v.name).join(' · ')}`, { ttl: 8000 });
 }
 
 // ---------- GPX-Import: aufgezeichnete Spur als Tour ----------
@@ -769,6 +849,7 @@ function wire(pane) {
       ctx.saveOffline([Math.min(...lons), Math.min(...lats), Math.max(...lons), Math.max(...lats)], `„${current.name}“`);
     }
     if (t === 'delete' && confirm(`Tour „${current.name}“ mit allen Fotos löschen?`)) {
+      if (current.templateId) dismiss(current.templateId); // vorgegebene Tour kommt nicht wieder
       await store.deleteTour(current.id);
       current = null;
       tours = await store.allTours();
@@ -879,6 +960,7 @@ export default {
     try {
       tours = await store.allTours();
       await removeTemplateTours();
+      importTemplates(); // im Hintergrund – die App ist sofort bedienbar
     } catch (err) {
       c.toast(`Lokaler Speicher nicht verfügbar: ${err.message}`, { error: true, ttl: 8000 });
     }

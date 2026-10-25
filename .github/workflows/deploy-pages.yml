@@ -43,10 +43,16 @@ jobs:
         continue-on-error: true # ohne Regionsdaten fragt die App live ab – Seite trotzdem veröffentlichen
         run: node tools/build-region.mjs site-data/cells site-data/chunks
 
+      # Vorgegebene Touren: Ortsnamen → Koordinaten (nur Oberallgäu, Abstandsprüfung). Das Protokoll zeigt jede Station.
+      - name: Vorgegebene Touren auflösen (Nominatim)
+        continue-on-error: true
+        run: node tools/resolve-tours.mjs data/touren-quelle.json site-data/touren.json
+
       - name: Seite zusammenstellen
         run: |
           mkdir -p _site
           git archive HEAD | tar -x -C _site
+          if [ -f site-data/touren.json ]; then cp site-data/touren.json _site/data/touren.json; fi
           if [ -f site-data/cells/index.json ]; then
             mkdir -p _site/data/cells
             cp -r site-data/cells/. _site/data/cells/

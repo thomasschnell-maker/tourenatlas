@@ -107,7 +107,7 @@ Erweiterungen hängen sich als Paket ein: eine Datei in `js/packages/` anlegen u
   - **iPhone:** Beim Auswählen unter „Optionen“ den Ort mitsenden, sonst entfernt iOS die GPS-Daten.
 - **Ortsalternativen:** `Altmummen|Alt Mummen|Mummen` probiert die Schreibweisen der Reihe nach.
 - **GPX-Import:** Aufgezeichnete Touren (Komoot, Strava, Garmin …) werden als Tour übernommen. Start, Ziel und etwa alle 10 km eine Station. Die gemessene Spur wird nie durch Routing überschrieben.
-- **Keine vorgegebenen Touren:** Die früheren Vorlagen (`data/touren.json`) sind entfernt, ebenso die daraus übernommenen Touren auf dem Gerät. Selbst angelegte Touren und Kopien bleiben.
+- **Vorgegebene Touren:** Sie stehen in `data/touren-quelle.json` als Ortslisten mit Suchbegriffen. Beim Veröffentlichen ermittelt `tools/resolve-tours.mjs` die Koordinaten über Nominatim. Gesucht wird nur im Oberallgäu, und jede Station darf höchstens 10 km von der vorherigen entfernt liegen. Nicht auflösbare Stationen fallen weg und stehen in der Tournotiz. Das Protokoll des Laufs zeigt jede Station mit Treffer und Abstand. Die App trägt neue Vorlagen beim Start automatisch ein und routet nur noch zwischen festen Koordinaten, auf dem Handy wird kein Ortsname mehr gesucht. Gelöschte Vorlagen kommen nicht wieder. Die erste Vorlagenliste (v4) war fehlerhaft und wird vom Gerät entfernt.
 - **Touren unterscheiden:**
   - **Farbe:** Jede Tour hat eine eigene Farbe auf der Karte und in der Liste, wählbar.
   - **Gruppe:** Touren mit gleichem Hinweg und unterschiedlichen Rückwegen stehen als Varianten unter einer Gruppenüberschrift. Ein Tipp auf die Überschrift zeigt nur diese Gruppe auf der Karte.
