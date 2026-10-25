@@ -4,7 +4,7 @@
 // - Overpass-Antworten (Bergwege, Radrouten): Netz zuerst, offline die zuletzt geladene Antwort.
 // Ortssuche, Routing und Wetter werden bewusst nicht gecacht (veralten, Nutzungsregeln der Dienste).
 
-const APP = 'ta-app-v1';
+const APP = 'ta-app-v2';
 const TILES = 'ta-tiles-v1';
 const DATA = 'ta-data-v1';
 const CELLS = 'ta-cells-v1'; // Regionsdaten je Generation (alte löscht die App)
@@ -40,8 +40,7 @@ const SHELL = [
   'js/packages/tours-store.js',
   'js/packages/tours.js',
   'js/packages/weather-core.js',
-  'js/packages/weather.js',
-  'data/touren.json'
+  'js/packages/weather.js'
 ];
 
 const TILE_HOSTS = [
