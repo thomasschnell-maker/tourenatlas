@@ -331,8 +331,40 @@ function openPane(name, title) {
 
 /** Blatt auf die Kopfzeile einklappen (Karte frei) oder wieder aufklappen. */
 function setSheetPeek(peek) {
-  $('sheet').classList.toggle('peek', peek);
-  $('sheet-grip').setAttribute('aria-expanded', String(!peek));
+  setSheetSize(peek ? 'peek' : 'half');
+}
+
+// Drei Höhen auf dem Handy: eingeklappt (nur Kopfzeile) · halb · voll.
+const SIZES = ['peek', 'half', 'full'];
+function sheetSize() {
+  const c = $('sheet').classList;
+  return c.contains('peek') ? 'peek' : c.contains('full') ? 'full' : 'half';
+}
+function setSheetSize(size) {
+  $('sheet').classList.toggle('peek', size === 'peek');
+  $('sheet').classList.toggle('full', size === 'full');
+  $('sheet-grip').setAttribute('aria-expanded', String(size !== 'peek'));
+}
+function stepSheet(dir) {
+  const i = SIZES.indexOf(sheetSize());
+  setSheetSize(SIZES[Math.max(0, Math.min(SIZES.length - 1, i + dir))]);
+}
+
+// Griff/Kopfzeile: nach oben wischen = grösser, nach unten = kleiner, Tippen = halb ↔ eingeklappt
+for (const el of [$('sheet-grip'), $('sheet-title')]) {
+  let y0 = null;
+  el.addEventListener('pointerdown', (e) => {
+    y0 = e.clientY;
+    el.setPointerCapture?.(e.pointerId); // Loslassen auch ausserhalb des Griffs erkennen
+  });
+  el.addEventListener('pointerup', (e) => {
+    if (y0 == null) return;
+    const dy = e.clientY - y0;
+    y0 = null;
+    if (Math.abs(dy) < 12) setSheetSize(sheetSize() === 'peek' ? 'half' : 'peek');
+    else stepSheet(dy < 0 ? 1 : -1);
+  });
+  el.addEventListener('pointercancel', () => (y0 = null));
 }
 
 function closeSheet() {
@@ -366,8 +398,12 @@ $('tabbar').addEventListener('click', (e) => {
   else openPane(btn.dataset.tab);
 });
 $('sheet-close').addEventListener('click', closeSheet);
-$('sheet-grip').addEventListener('click', () => setSheetPeek(!$('sheet').classList.contains('peek')));
-$('sheet-title').addEventListener('click', () => setSheetPeek(!$('sheet').classList.contains('peek')));
+$('sheet-grip').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    setSheetSize(sheetSize() === 'peek' ? 'half' : 'peek');
+  }
+});
 
 // ---------- Interaktion auf der Karte ----------
 for (const layer of ['ways', 'lifts', 'peaks', 'huts']) {
@@ -692,11 +728,16 @@ async function saveOffline(bbox, label) {
   toast(`${label} offline: ${r.ok} Kacheln, ${cellsOk}/${Math.min(keys.length, 80)} Wege-Bereiche${r.failed ? `, ${r.failed} fehlgeschlagen` : ''}${mb}`, { error: r.failed > 0, ttl: 9000 });
 }
 
-/** Ganze Region: alle Wege-Zellen + Karte/Höhen bis Zoom 12 (Übersicht). Details je Tour: "Tour offline speichern". */
-async function saveRegionOffline() {
+/** Ganze Region: alle Wege-Zellen + Karte/Höhen bis Zoom 12 (Übersicht). Details je Tour: "Tour offline speichern".
+ *  auto: im Hintergrund, ohne Fehlermeldungen; Fortschritt nur am Knopf. */
+let regionSaving = false;
+async function saveRegionOffline({ auto = false } = {}) {
   await regionReady;
-  if (!region) return toast('Regionsdaten noch nicht verfügbar – bitte später erneut versuchen', { error: true, ttl: 6000 });
-  if (!navigator.serviceWorker?.controller) return toast('Offline-Speicher noch nicht bereit – Seite einmal neu laden', { error: true, ttl: 6000 });
+  const btn = $('offline-region');
+  if (regionSaving) return auto || toast('Region wird bereits gespeichert …');
+  if (!region) return auto || toast('Regionsdaten noch nicht verfügbar – bitte später erneut versuchen', { error: true, ttl: 6000 });
+  if (!navigator.serviceWorker?.controller) return auto || toast('Offline-Speicher noch nicht bereit – Seite einmal neu laden', { error: true, ttl: 6000 });
+  regionSaving = true;
   try {
     await navigator.storage?.persist?.();
   } catch {}
@@ -710,12 +751,66 @@ async function saveRegionOffline() {
     }
   } catch {}
   urls.push(...tilesForBbox(region.bbox, 6, 12).map((t) => tileUrl(SOURCES.terrain.tiles[0], t)));
-  toast(`Speichere Region offline … 0/${urls.length}`, { busy: true, ttl: 0 });
-  const r = await prefetch(urls, { concurrency: 8, onProgress: (d, n) => d % 50 === 0 && toast(`Speichere Region offline … ${d}/${n}`, { busy: true, ttl: 0 }) });
+  const label = btn.textContent;
+  const progress = (d, n) => {
+    btn.textContent = `Region wird offline gespeichert … ${Math.round((d / n) * 100)} %`;
+    if (!auto && d % 50 === 0) toast(`Speichere Region offline … ${d}/${n}`, { busy: true, ttl: 0 });
+  };
+  if (auto) toast('Region wird im Hintergrund für unterwegs gespeichert', { ttl: 4000 });
+  else toast(`Speichere Region offline … 0/${urls.length}`, { busy: true, ttl: 0 });
+  // Im Hintergrund schonend (wenige parallele Abrufe), damit die Karte flüssig bleibt
+  const r = await prefetch(urls, { concurrency: auto ? 3 : 8, onProgress: progress });
+  regionSaving = false;
+  btn.textContent = label;
   const est = navigator.storage?.estimate ? await navigator.storage.estimate() : null;
-  toast(`Region offline: ${r.ok} Dateien${r.failed ? `, ${r.failed} fehlgeschlagen` : ''}${est?.usage ? ` · belegt ${(est.usage / 1e6).toFixed(0)} MB` : ''}`, { error: r.failed > 0, ttl: 9000 });
+  // Fast alles da → als erledigt merken; einzelne Fehler holt der nächste Start nach
+  if (r.failed <= urls.length * 0.02) {
+    try {
+      localStorage.setItem('ta.offlineGen', region.gen);
+    } catch {}
+  }
+  updateOfflineState();
+  toast(`Region offline: ${r.ok} Dateien${r.failed ? `, ${r.failed} fehlgeschlagen` : ''}${est?.usage ? ` · belegt ${(est.usage / 1e6).toFixed(0)} MB` : ''}`, { error: !auto && r.failed > 0, ttl: auto ? 5000 : 9000 });
 }
-$('offline-region').addEventListener('click', saveRegionOffline);
+
+function offlineGen() {
+  try {
+    return localStorage.getItem('ta.offlineGen');
+  } catch {
+    return null;
+  }
+}
+function autoOfflineOn() {
+  try {
+    return localStorage.getItem('ta.autoOffline') !== '0';
+  } catch {
+    return true;
+  }
+}
+function updateOfflineState() {
+  const done = region && offlineGen() === region.gen;
+  $('offline-state').textContent = !region ? '' : done ? '✓ Region ist auf diesem Gerät gespeichert (aktueller Stand).' : 'Region noch nicht (oder nicht im aktuellen Stand) gespeichert.';
+}
+
+/** Region automatisch offline halten: einmal je Datenstand, nicht bei Datensparmodus oder Mobilfunk (falls erkennbar). */
+async function autoSaveRegion() {
+  await regionReady;
+  updateOfflineState();
+  if (!region || !autoOfflineOn() || offlineGen() === region.gen) return;
+  const c = navigator.connection;
+  if (c?.saveData || c?.type === 'cellular' || /2g/.test(c?.effectiveType || '')) return;
+  if (!navigator.serviceWorker?.controller) await new Promise((r) => navigator.serviceWorker?.addEventListener('controllerchange', r, { once: true }));
+  setTimeout(() => saveRegionOffline({ auto: true }), 6000); // erst nach dem ersten Kartenaufbau
+}
+$('auto-offline').checked = autoOfflineOn();
+$('auto-offline').addEventListener('change', (e) => {
+  try {
+    localStorage.setItem('ta.autoOffline', e.target.checked ? '1' : '0');
+  } catch {}
+  if (e.target.checked) autoSaveRegion();
+});
+if ('serviceWorker' in navigator) map.once('idle', autoSaveRegion);
+$('offline-region').addEventListener('click', () => saveRegionOffline());
 
 $('offline-view').addEventListener('click', () => {
   const b = map.getBounds();

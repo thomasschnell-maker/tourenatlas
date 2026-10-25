@@ -55,6 +55,11 @@ Bekannte Grenzen:
 
 Unten liegt eine Tab-Leiste. Jeder Tab öffnet ein Blatt mit genau einem Thema, ein zweiter Tipp schliesst es wieder.
 
+- **Handy hochkant:** Das Blatt kommt von unten und hat drei Höhen: eingeklappt, halb und voll. Am Griff nach oben wischen macht es grösser, nach unten kleiner. Antippen klappt ein und aus. Alle Tippflächen sind mindestens 44 px gross.
+- **Handy quer und Tablet:** Das Blatt ist eine Seitenleiste, die Karte bleibt sichtbar.
+- **PC:** Suche und Blatt stehen als breite Seitenleiste links, die Tab-Leiste schwebt unten als Pille. Die Schrift wächst mit der Bildschirmbreite mit: 17 px ab 900 px, 18 px ab 1280 px, 19 px ab 1800 px, 21 px ab 2400 px.
+- **Offline automatisch:** Die Region wird einmal je Datenstand im Hintergrund gespeichert. Das entfällt bei Datensparmodus oder erkennbarem Mobilfunk und lässt sich unter Karte → „Region automatisch offline halten“ abschalten.
+
 | Tab | Inhalt |
 |---|---|
 | **Karte** | Grundkarte (OpenFreeMap, Luftbild, Offline), Ebenen (3D, Überhöhung, Schummerung, Bergwege, Lifte, Gipfel), Legende |
@@ -100,9 +105,9 @@ Erweiterungen hängen sich als Paket ein: eine Datei in `js/packages/` anlegen u
   - **Kein GPS:** Das Foto kommt an die Station des zeitlich nächsten Fotos mit GPS, sonst an die gewählte Rückfallstation.
   - **3D-Blick:** Mit `GPSImgDirection` steht die Kamera am Aufnahmeort und schaut in Fotorichtung (Neigung 72°). Aufnahmeorte erscheinen als gelbe Punkte auf der Karte.
   - **iPhone:** Beim Auswählen unter „Optionen“ den Ort mitsenden, sonst entfernt iOS die GPS-Daten.
-- **Ortsalternativen:** `Altmummen|Alt Mummen|Mummen` probiert die Schreibweisen der Reihe nach. Eine Vorlage mit höherer `version` baut eine bereits übernommene Tour neu auf, statt sie zu verdoppeln.
+- **Ortsalternativen:** `Altmummen|Alt Mummen|Mummen` probiert die Schreibweisen der Reihe nach.
 - **GPX-Import:** Aufgezeichnete Touren (Komoot, Strava, Garmin …) werden als Tour übernommen. Start, Ziel und etwa alle 10 km eine Station. Die gemessene Spur wird nie durch Routing überschrieben.
-- **Meine Touren übernehmen:** `data/touren.json` enthält Touren als Ortslisten. Ein Tipp setzt sie auf dem Gerät mit Ortssuche und Routing. Jede Tour wird nur einmal übernommen, Notizen markieren unsichere Deutungen. Achtung: Das Repository ist öffentlich, also auch diese Liste.
+- **Keine vorgegebenen Touren:** Die früheren Vorlagen (`data/touren.json`) sind entfernt, ebenso die daraus übernommenen Touren auf dem Gerät. Selbst angelegte Touren und Kopien bleiben.
 - **Touren unterscheiden:**
   - **Farbe:** Jede Tour hat eine eigene Farbe auf der Karte und in der Liste, wählbar.
   - **Gruppe:** Touren mit gleichem Hinweg und unterschiedlichen Rückwegen stehen als Varianten unter einer Gruppenüberschrift. Ein Tipp auf die Überschrift zeigt nur diese Gruppe auf der Karte.

@@ -76,9 +76,11 @@
           <ul class="legend" id="legend"></ul>
         </details>
         <h3>Offline unterwegs</h3>
-        <button id="offline-region" type="button" class="btn primary wide">Ganze Region offline speichern</button>
+        <label class="switch"><input type="checkbox" id="auto-offline" checked><span>Region automatisch offline halten</span></label>
+        <p class="muted" id="offline-state"></p>
+        <button id="offline-region" type="button" class="btn primary wide">Ganze Region jetzt offline speichern</button>
         <button id="offline-view" type="button" class="btn wide">Sichtbaren Ausschnitt im Detail offline speichern</button>
-        <p class="muted">Region: alle Bergwege, Radrouten, Gipfel, Hütten + Übersichtskarte (einmalig im WLAN). Ausschnitt/Tour: zusätzlich Kartendetails bis Zoom 14. Ohne Netz gehen nicht: Ortssuche, Routing, Wetter.</p>
+        <p class="muted">Region: alle Bergwege, Radrouten, Gipfel, Hütten + Übersichtskarte, etwa 20–30 MB. Automatisch einmal je Datenstand im Hintergrund, nicht bei Datensparmodus. Ausschnitt/Tour: zusätzlich Kartendetails bis Zoom 14. Ohne Netz gehen nicht: Ortssuche, Routing, Wetter.</p>
         <details class="block">
           <summary>Offline-Karte laden (Protomaps-Datei)</summary>
           <label class="file">PMTiles-Datei wählen <input id="pm-file" type="file" accept=".pmtiles"></label>

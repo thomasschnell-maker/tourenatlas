@@ -458,54 +458,16 @@ function profileCursor(ev) {
   ctx.toast(`km ${(p.dist / 1000).toFixed(1)} · ${p.ele != null ? Math.round(p.ele) + ' m' : '–'}`, { ttl: 1500 });
 }
 
-// ---------- Meine Touren (Vorlagen aus data/touren.json) ----------
-async function importMyTours() {
-  let list;
-  try {
-    const res = await fetch('data/touren.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    list = await res.json();
-  } catch (err) {
-    return ctx.toast(`Tourenliste nicht ladbar: ${err.message}`, { error: true, ttl: 6000 });
-  }
-  // Neu oder in der Liste korrigiert (höhere version) → übernehmen bzw. die vorhandene Tour neu aufbauen.
-  const todo = list.filter((v) => {
-    const t = tours.find((x) => x.templateId === v.id);
-    return !t || (t.templateVersion || 1) < (v.version || 1);
-  });
-  // Reine Zusatzangaben (z. B. tatsächlich verbrauchte Akkus) ohne Neuaufbau ergänzen – Fotos bleiben erhalten.
-  for (const v of list) {
-    const t = tours.find((x) => x.templateId === v.id);
-    if (t && v.actualBatteries && !t.actualBatteries) {
-      t.actualBatteries = v.actualBatteries;
-      if (v.batteryCapacityWh) t.batteryCapacityWh = v.batteryCapacityWh;
-      await store.putTour(t);
-    }
-  }
-  if (!todo.length) return ctx.toast('Alle Touren aus der Liste sind aktuell übernommen');
-  requestPersistence();
-  for (const v of todo) {
-    const old = tours.find((x) => x.templateId === v.id);
-    if (old) for (const st of old.stations) for (const pid of st.photos) await store.deletePhoto(pid);
-    const t = {
-      ...newTour(v.name),
-      ...(old ? { id: old.id, date: old.date, color: old.color } : { color: nextColor(tours) }),
-      templateId: v.id,
-      templateVersion: v.version || 1,
-      group: v.group || '',
-      variant: v.variant || '',
-      activity: v.activity || 'hike',
-      note: v.note || '',
-      ...(v.actualBatteries ? { actualBatteries: v.actualBatteries } : {}),
-      ...(v.batteryCapacityWh ? { batteryCapacityWh: v.batteryCapacityWh } : {})
-    };
-    if (v.date) t.date = v.date;
-    await store.putTour(t);
+// ---------- Früher vorgegebene Touren entfernen ----------
+// Die Vorlagen (data/touren.json) stimmten nicht und wurden gestrichen. Hier verschwinden sie auch vom Gerät;
+// selbst angelegte Touren und Kopien („Als Variante kopieren“, ohne templateId) bleiben unberührt.
+async function removeTemplateTours() {
+  const old = tours.filter((t) => t.templateId);
+  for (const t of old) await store.deleteTour(t.id);
+  if (old.length) {
     tours = await store.allTours();
-    await openTour(t.id);
-    await addPlaces(v.places.join('; '));
+    ctx.toast(`${old.length} vorgegebene Tour(en) entfernt – eigene Touren bleiben`, { ttl: 6000 });
   }
-  ctx.toast(`${todo.length} Tour(en) übernommen – Stationen bitte prüfen`, { ttl: 6000 });
 }
 
 // ---------- GPX-Import: aufgezeichnete Spur als Tour ----------
@@ -591,8 +553,7 @@ function render() {
       ${chips}
       <div class="row"><button type="button" class="btn primary" data-t="new">+ Neue Tour</button>
         <label class="btn">Sicherung laden<input type="file" accept=".json,application/json" data-t="import" hidden></label></div>
-      <div class="row"><button type="button" class="btn" data-t="mine">Meine Touren übernehmen</button>
-        <label class="btn">GPX laden<input type="file" accept=".gpx,application/gpx+xml,application/xml,text/xml" data-t="gpxfile" hidden></label></div>
+      <div class="row"><label class="btn">GPX laden<input type="file" accept=".gpx,application/gpx+xml,application/xml,text/xml" data-t="gpxfile" hidden></label></div>
       ${renderGroups(esc)}
       ${visibleTours().length ? '<p class="muted">Alle Touren der Auswahl sind auf der Karte; Linie antippen öffnet die Tour. Für ein Jahresplakat: Jahr wählen, dann Tab „Plakat“.</p>' : ''}
       <p class="muted">Touren und Fotos bleiben nur auf diesem Gerät. Safari löscht sie nach 7 Tagen ohne Besuch, ausser die App liegt auf dem Home-Bildschirm. Sicherung regelmässig exportieren.</p>`;
@@ -704,7 +665,8 @@ function visiblePadding() {
   const sheet = document.getElementById('sheet');
   const r = sheet && !sheet.hidden ? sheet.getBoundingClientRect() : null;
   const mapH = ctx.map.getContainer().clientHeight;
-  const wide = window.innerWidth >= 900;
+  // Seitenleiste (PC, Handy quer) statt Blatt von unten?
+  const wide = r ? r.width < window.innerWidth * 0.6 : window.innerWidth >= 900;
   return {
     top: 80,
     right: 60,
@@ -806,7 +768,6 @@ function wire(pane) {
       const lats = pts.map((p) => p[1]);
       ctx.saveOffline([Math.min(...lons), Math.min(...lats), Math.max(...lons), Math.max(...lats)], `„${current.name}“`);
     }
-    if (t === 'mine') importMyTours();
     if (t === 'delete' && confirm(`Tour „${current.name}“ mit allen Fotos löschen?`)) {
       await store.deleteTour(current.id);
       current = null;
@@ -917,6 +878,7 @@ export default {
     });
     try {
       tours = await store.allTours();
+      await removeTemplateTours();
     } catch (err) {
       c.toast(`Lokaler Speicher nicht verfügbar: ${err.message}`, { error: true, ttl: 8000 });
     }

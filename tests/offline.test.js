@@ -26,7 +26,7 @@ test('Service Worker: App-Schale enthält alle Dateien der App', () => {
   const shell = new Set([...sw.matchAll(/^\s*'([^']+)',?$/gm)].map((m) => m[1]));
   const root = new URL('..', import.meta.url).pathname;
   const walk = (dir) => readdirSync(join(root, dir)).flatMap((f) => (statSync(join(root, dir, f)).isDirectory() ? walk(join(dir, f)) : [join(dir, f)]));
-  const needed = [...walk('js'), ...walk('css'), ...walk('vendor').filter((f) => /\.(js|css)$/.test(f)), 'index.html', 'data/touren.json'];
+  const needed = [...walk('js'), ...walk('css'), ...walk('vendor').filter((f) => /\.(js|css)$/.test(f)), 'index.html'];
   const missing = needed.filter((f) => !shell.has(f));
   assert.deepEqual(missing, []);
 });
