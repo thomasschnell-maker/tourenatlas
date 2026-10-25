@@ -35,7 +35,8 @@ async function search(q) {
 async function resolve(st, prev) {
   const tried = [];
   for (const q of st.q) {
-    const hits = await search(q);
+    // Bevorzugte Kategorie zuerst (z. B. place: Ortsmitte statt Mittelpunkt der Gemeindefläche)
+    const hits = (await search(q)).slice().sort((a, b) => (st.prefer ? !a.type.startsWith(st.prefer) - !b.type.startsWith(st.prefer) : 0));
     const ok = hits.find((h) => !prev || km(prev, h.lngLat) <= (cfg.maxStepKm || 10));
     if (ok) return { ...ok, query: q };
     tried.push(`${q}: ${hits.length ? `${hits.length} Treffer, alle > ${cfg.maxStepKm} km` : 'kein Treffer'}`);
@@ -49,6 +50,7 @@ let failures = 0;
 for (const t of cfg.tours) {
   const stations = [];
   const missing = [];
+  const landmarks = [];
   for (const seg of t.segments) {
     for (const [i, st] of cfg.segments[seg].entries()) {
       const prev = stations.at(-1)?.lngLat;
@@ -61,6 +63,12 @@ for (const t of cfg.tours) {
         console.log(`  ✗ ${t.id} · ${st.name}: ${r.error}`);
         continue;
       }
+      if (st.landmark) {
+        // Orientierungspunkt (z. B. Abzweigung): nur prüfen und merken, die Strecke führt nicht dorthin
+        landmarks.push({ name: st.name, lngLat: r.lngLat, display: r.display });
+        console.log(`  · ${t.id} · Orientierung ${st.name} ← „${r.query}“ ${r.type} ${r.lngLat.map((v) => v.toFixed(4)).join(', ')} (${km(prev, r.lngLat).toFixed(1)} km von ${stations.at(-1).name}) · ${r.display}`);
+        continue;
+      }
       // Gleiche Station wie die vorherige (z. B. Ende Hinweg = Start Rückweg) nicht doppelt
       if (prev && km(prev, r.lngLat) < 0.05) continue;
       stations.push({ name: st.name, lngLat: r.lngLat.map((v) => Math.round(v * 1e5) / 1e5), source: { query: r.query, osm: r.osm, type: r.type, display: r.display } });
@@ -68,7 +76,7 @@ for (const t of cfg.tours) {
     }
   }
   const { segments, ...meta } = t;
-  result.push({ ...meta, stations, missing });
+  result.push({ ...meta, stations, missing, landmarks });
 }
 mkdirSync(dirname(out), { recursive: true });
 writeFileSync(out, JSON.stringify(result, null, 1));
