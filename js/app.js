@@ -759,7 +759,7 @@ async function saveRegionOffline({ auto = false } = {}) {
   if (auto) toast('Region wird im Hintergrund für unterwegs gespeichert', { ttl: 4000 });
   else toast(`Speichere Region offline … 0/${urls.length}`, { busy: true, ttl: 0 });
   // Im Hintergrund schonend (wenige parallele Abrufe), damit die Karte flüssig bleibt
-  const r = await prefetch(urls, { concurrency: auto ? 3 : 8, onProgress: progress });
+  const r = await prefetch(urls, { concurrency: auto ? 2 : 8, onProgress: progress });
   regionSaving = false;
   btn.textContent = label;
   const est = navigator.storage?.estimate ? await navigator.storage.estimate() : null;
@@ -800,7 +800,10 @@ async function autoSaveRegion() {
   const c = navigator.connection;
   if (c?.saveData || c?.type === 'cellular' || /2g/.test(c?.effectiveType || '')) return;
   if (!navigator.serviceWorker?.controller) await new Promise((r) => navigator.serviceWorker?.addEventListener('controllerchange', r, { once: true }));
-  setTimeout(() => saveRegionOffline({ auto: true }), 6000); // erst nach dem ersten Kartenaufbau
+  // Erst wenn die App längst bedienbar ist und die Karte gerade nichts nachlädt – sonst bremst das den Start
+  await new Promise((r) => setTimeout(r, 30000));
+  if (!map.areTilesLoaded()) await new Promise((r) => map.once('idle', r));
+  saveRegionOffline({ auto: true });
 }
 $('auto-offline').checked = autoOfflineOn();
 $('auto-offline').addEventListener('change', (e) => {

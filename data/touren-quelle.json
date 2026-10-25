@@ -190,7 +190,7 @@
   "tours": [
     {
       "id": "ofterschwanger-horn-route-1",
-      "version": 2,
+      "version": 3,
       "group": "Ofterschwanger Horn",
       "variant": "Route 1 – über Bolsterlang, Tiefenberg, Sigishofen",
       "name": "Ofterschwanger Horn – Route 1",
@@ -204,7 +204,7 @@
     },
     {
       "id": "ofterschwanger-horn-route-2",
-      "version": 2,
+      "version": 3,
       "group": "Ofterschwanger Horn",
       "variant": "Route 2 (kürzer) – über Hüttenberg, Westerhofen",
       "name": "Ofterschwanger Horn – Route 2",
@@ -218,7 +218,7 @@
     },
     {
       "id": "ofterschwanger-horn-route-3",
-      "version": 2,
+      "version": 3,
       "group": "Ofterschwanger Horn",
       "variant": "Route 3 – ab Route 1 (*) über Schweineberg, Sonnenalp",
       "name": "Ofterschwanger Horn – Route 3",

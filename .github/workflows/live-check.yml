@@ -1,0 +1,36 @@
+# Prüft die veröffentlichte App wie auf einem iPhone (Ladezeit, Touren) und legt Bericht + Screenshots
+# auf den Branch live-check. Läuft nach jeder Veröffentlichung und manuell.
+name: Live-Check
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ['Deploy Pages']
+    types: [completed]
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Playwright
+        run: |
+          npm i --no-save playwright@1.49.1
+          npx playwright install --with-deps chromium
+      - name: Live-Prüfung
+        run: sleep 60 && \ node tools/live-check.cjs https://thomasschnell-maker.github.io/tourenatlas/ live-check
+      - name: Ergebnis auf Branch live-check
+        if: always()
+        working-directory: live-check
+        run: |
+          git init -q -b live-check
+          git -c user.name="github-actions" -c user.email="github-actions@users.noreply.github.com" add -A
+          git -c user.name="github-actions" -c user.email="github-actions@users.noreply.github.com" commit -q -m "Live-Check ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" live-check

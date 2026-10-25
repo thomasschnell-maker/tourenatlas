@@ -133,3 +133,19 @@ test('Akku: Unterstützungsstufe, persönliche Kalibrierung, Plausibilität', as
   const prof = [{ dist: 0, ele: 0 }, { dist: 100000, ele: 0 }];
   assert.equal(Math.round(batteryCurve(prof, 625, 5, 2).total), 1200);
 });
+
+test('splitRoute: Gesamtroute an Stationen teilen, auch bei Hin- und Rückweg über denselben Ort', async () => {
+  const { splitRoute, brouterUrlMulti } = await import('../js/packages/tours-core.js');
+  // A(0) → B(0.01) → C(0.02) → B → A, Punkte alle ~0.0025° (~190 m)
+  const xs = [0, 0.0025, 0.005, 0.0075, 0.01, 0.0125, 0.015, 0.0175, 0.02, 0.0175, 0.015, 0.0125, 0.01, 0.0075, 0.005, 0.0025, 0];
+  const line = xs.map((x) => [10 + x, 47.5]);
+  const P = (x) => [10 + x, 47.5003];
+  const parts = splitRoute(line, [P(0), P(0.01), P(0.02), P(0.01), P(0)]);
+  assert.equal(parts.length, 4);
+  assert.deepEqual(parts.map((p) => p.length), [5, 5, 5, 5]);
+  assert.deepEqual(parts[1][0], line[4]);
+  assert.deepEqual(parts[3].at(-1), line.at(-1));
+  // Station abseits der Route → null (Rückfall auf Abschnitts-Routing)
+  assert.equal(splitRoute(line, [P(0), [10.01, 47.6], P(0)]), null);
+  assert.match(brouterUrlMulti([[10, 47], [10.1, 47.1], [10.2, 47.2]], 'trekking'), /lonlats=10\.000000,47\.000000\|10\.100000,47\.100000\|10\.200000,47\.200000&profile=trekking/);
+});
