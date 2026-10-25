@@ -1,0 +1,73 @@
+{
+  "_hinweis": "Quelle der vorgegebenen Touren. Koordinaten ermittelt tools/resolve-tours.mjs beim Veröffentlichen (Nominatim, nur Oberallgäu, Abstandsprüfung) → data/touren.json. Mehrere Suchbegriffe je Station werden der Reihe nach probiert.",
+  "viewbox": [10.05, 47.40, 10.45, 47.62],
+  "maxStepKm": 10,
+  "segments": {
+    "hinweg": [
+      { "name": "Sonthofen", "q": ["Sonthofen"] },
+      { "name": "Immenstadt", "q": ["Immenstadt im Allgäu"] },
+      { "name": "Altmummen", "q": ["Altmummen", "Alt Mummen", "Mummen"] },
+      { "name": "Ettensberg", "q": ["Ettensberg"] },
+      { "name": "Gunzesried", "q": ["Gunzesried"] },
+      { "name": "Allgäuer Berghof", "q": ["Allgäuer Berghof", "Alpe Eck"] },
+      { "name": "Bergstation Sesselbahn", "q": ["Bergstation Weltcup-Express", "Weltcup-Express Bergstation", "Weltcup Express"], "optional": true },
+      { "name": "Ofterschwanger Horn", "q": ["Ofterschwanger Horn"] },
+      { "name": "Allgäuer Berghof", "q": ["Allgäuer Berghof", "Alpe Eck"] },
+      { "name": "Ofterschwang (Talstation Sessellift)", "q": ["Talstation Weltcup-Express", "Ofterschwang"] }
+    ],
+    "route1": [
+      { "name": "Bolsterlang", "q": ["Bolsterlang"] },
+      { "name": "Tiefenberg", "q": ["Tiefenberg, Bolsterlang", "Tiefenberg"] },
+      { "name": "Sigishofen", "q": ["Sigishofen"] },
+      { "name": "Sonthofen", "q": ["Sonthofen"] }
+    ],
+    "route2": [
+      { "name": "Hüttenberg (Käse)", "q": ["Hüttenberg, Ofterschwang", "Hüttenberg"] },
+      { "name": "Westerhofen", "q": ["Westerhofen, Ofterschwang", "Westerhofen"] },
+      { "name": "Sonthofen", "q": ["Sonthofen"] }
+    ],
+    "route3": [
+      { "name": "Bolsterlang", "q": ["Bolsterlang"] },
+      { "name": "Tiefenberg", "q": ["Tiefenberg, Bolsterlang", "Tiefenberg"] },
+      { "name": "Schweineberg", "q": ["Schweineberg, Ofterschwang", "Schweineberg"] },
+      { "name": "Sonnenalp", "q": ["Sonnenalp Resort", "Sonnenalp, Ofterschwang", "Sonnenalp"] },
+      { "name": "Sigishofen", "q": ["Sigishofen"] },
+      { "name": "Sonthofen", "q": ["Sonthofen"] }
+    ]
+  },
+  "tours": [
+    {
+      "id": "ofterschwanger-horn-route-1",
+      "version": 1,
+      "group": "Ofterschwanger Horn",
+      "variant": "Route 1 – über Bolsterlang, Tiefenberg, Sigishofen",
+      "name": "Ofterschwanger Horn – Route 1",
+      "activity": "ebike",
+      "color": "#d6007e",
+      "segments": ["hinweg", "route1"],
+      "note": "Laut Zettel: SF – Illerdamm – (Blaichach) Immenstadt – Kreisel links (Umfahrung) – Kreisel links – R. Blaichach – nach ca. 600 m rechts Straße Altmummen – Ettensberg – Ortsmitte rechts Gunzesried – nach Brotzeitstelle (rechts) – Abz. Alpe D… (unleserlich) – Gunzesried (Kirche) rechts – R. Blaichach/Bihlerdorf – Anhöhe rechts Abz. Allgäuer Berghof – Teerstraße bis Bergstation Sesselbahn – Teerstraße links folgen – nach Hütte – Aufstieg Ofterschwanger Horn – Rückweg Straße folgen – Abzw. rechts – Gabelung rechts – Bergstation – Allgäuer Berghof – rechts – Schotterweg Ofterschwang – Talstation Sessellift. Route 1: Ofterschwang – Bolsterlang – Abzw. R. D… (unleserlich, bei Sport Speiser) – Straße folgen – n. Abz. Tiefenberg – Straße folgen – rechts halten (*) – Bushaltestelle links – R. Sigishofen – B19 – SF."
+    },
+    {
+      "id": "ofterschwanger-horn-route-2",
+      "version": 1,
+      "group": "Ofterschwanger Horn",
+      "variant": "Route 2 (kürzer) – über Hüttenberg, Westerhofen",
+      "name": "Ofterschwanger Horn – Route 2",
+      "activity": "ebike",
+      "color": "#0a6cff",
+      "segments": ["hinweg", "route2"],
+      "note": "Hinweg wie Route 1. Route 2 (kürzer): Ofterschwang – R. Westerhofen links – Kabelweg(?) Hüttenberg – Käse – Bergabfahrt, Westerhofen rechts – Hauptstraße links – Bauernhof (Feldweg links) – Illersiedlung – SF."
+    },
+    {
+      "id": "ofterschwanger-horn-route-3",
+      "version": 1,
+      "group": "Ofterschwanger Horn",
+      "variant": "Route 3 – ab Route 1 (*) über Schweineberg, Sonnenalp",
+      "name": "Ofterschwanger Horn – Route 3",
+      "activity": "ebike",
+      "color": "#ff7a00",
+      "segments": ["hinweg", "route3"],
+      "note": "Hinweg wie Route 1, Rückweg wie Route 1 bis zum * (nach Tiefenberg). Route 3: * geradeaus – links – links (Berg) – rechts Straße nach Schweineberg – Sonnenalp – Sennerei – Einmündung zurück – geradeaus Hotel Freistil – Sigishofen (rechts B19) – SF."
+    }
+  ]
+}
