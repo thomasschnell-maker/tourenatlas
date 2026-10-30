@@ -1,10 +1,10 @@
 // Service Worker: App offline nutzbar machen.
-// - App-Dateien: Netz zuerst (immer aktuell), bei Funkloch aus dem Cache.
+// - App-Dateien: Netz zuerst (immer aktuell), aber nach 1,5 s die gespeicherte Fassung; vendor/: Cache zuerst.
 // - Karten-/Höhen-/Bildkacheln, Schriften: Cache zuerst (ändern sich praktisch nicht), Grössenlimit.
 // - Overpass-Antworten (Bergwege, Radrouten): Netz zuerst, offline die zuletzt geladene Antwort.
 // Ortssuche, Routing und Wetter werden bewusst nicht gecacht (veralten, Nutzungsregeln der Dienste).
 
-const APP = 'ta-app-v2';
+const APP = 'ta-app-v3'; // bei neuer MapLibre-/PMTiles-Version erhöhen (vendor/ wird sonst nicht neu geladen)
 const TILES = 'ta-tiles-v1';
 const DATA = 'ta-data-v1';
 const CELLS = 'ta-cells-v1'; // Regionsdaten je Generation (alte löscht die App)
@@ -67,17 +67,27 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-async function networkFirst(req, cacheName) {
+/**
+ * Netz zuerst – aber höchstens waitMs warten, wenn eine gespeicherte Fassung da ist. Langsames Netz
+ * (Funkloch, Berg) blockiert so den Start nicht; die frische Antwort landet trotzdem im Cache.
+ */
+async function networkFirst(req, cacheName, waitMs = 0) {
   const cache = await caches.open(cacheName);
-  try {
-    const res = await fetch(req);
+  const net = fetch(req).then((res) => {
     if (res.ok) cache.put(req, res.clone());
     return res;
-  } catch (err) {
-    const hit = await cache.match(req, { ignoreSearch: cacheName === APP });
-    if (hit) return hit;
-    throw err;
-  }
+  });
+  const hit = await cache.match(req, { ignoreSearch: cacheName === APP });
+  if (!hit) return net;
+  if (!waitMs) return net.catch(() => hit);
+  const late = new Promise((r) => setTimeout(() => r(hit), waitMs));
+  return Promise.race([net.catch(() => hit), late]);
+}
+
+// Bibliotheken unter vendor/ ändern sich nur mit neuer Version (dann neuer Cache-Name) → Cache zuerst.
+async function vendorFirst(req) {
+  const cache = await caches.open(APP);
+  return (await cache.match(req)) || fetch(req).then((res) => (res.ok && cache.put(req, res.clone()), res));
 }
 
 let putsSinceTrim = 0;
@@ -110,12 +120,14 @@ self.addEventListener('fetch', (e) => {
   if (url.origin === self.location.origin && url.pathname.includes('/data/cells/') && !url.pathname.endsWith('index.json')) {
     // Zellen-Dateien sind je Generation unveränderlich → Cache zuerst (schnell, offline).
     e.respondWith(caches.open(CELLS).then(async (c) => (await c.match(req)) || fetch(req).then((res) => (res.ok && c.put(req, res.clone()), res))));
+  } else if (url.origin === self.location.origin && url.pathname.includes('/vendor/')) {
+    e.respondWith(vendorFirst(req));
   } else if (url.origin === self.location.origin) {
-    e.respondWith(networkFirst(req, APP));
+    e.respondWith(networkFirst(req, APP, 1500));
   } else if (TILE_HOSTS.includes(url.hostname)) {
     // Stil (/styles/…) und TileJSON (/planet) von OpenFreeMap haben keine Dateiendung und ändern sich → Netz zuerst.
     const isMeta = url.hostname === 'tiles.openfreemap.org' && !/\.\w+$/.test(url.pathname);
-    e.respondWith(isMeta ? networkFirst(req, DATA) : cacheFirst(req));
+    e.respondWith(isMeta ? networkFirst(req, DATA, 2000) : cacheFirst(req));
   } else if (DATA_HOSTS.includes(url.hostname)) {
     e.respondWith(networkFirst(req, DATA));
   }
