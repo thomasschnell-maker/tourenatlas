@@ -149,3 +149,55 @@ test('splitRoute: Gesamtroute an Stationen teilen, auch bei Hin- und Rückweg ü
   assert.equal(splitRoute(line, [P(0), [10.01, 47.6], P(0)]), null);
   assert.match(brouterUrlMulti([[10, 47], [10.1, 47.1], [10.2, 47.2]], 'trekking'), /lonlats=10\.000000,47\.000000\|10\.100000,47\.100000\|10\.200000,47\.200000&profile=trekking/);
 });
+
+test('splitRoute: dicht beieinander liegende Stationen und Route, die sich erst entfernt', async () => {
+  const { splitRoute } = await import('../js/packages/tours-core.js');
+  // Start 0, Weg geht erst nach Westen (weg von Station 1), dann nach Osten; Station 1 liegt 300 m östlich
+  const xs = [0, -0.002, -0.004, -0.002, 0, 0.002, 0.004, 0.006, 0.008, 0.01];
+  const line = xs.map((x) => [10 + x, 47.5]);
+  const P = (x) => [10 + x, 47.5];
+  const parts = splitRoute(line, [P(0), P(0.004), P(0.01)]);
+  // Station 1 gehört auf Index 6 (x = 0.004), nicht auf den ersten nahen Punkt am Anfang
+  assert.equal(parts[0].length, 7);
+  assert.deepEqual(parts[0].at(-1), line[6]);
+  assert.ok(parts.every((p) => p.length >= 2));
+});
+
+test('nearestSegment: Tipp nahe der Linie findet den richtigen Abschnitt', async () => {
+  const { nearestSegment } = await import('../js/packages/tours-core.js');
+  const st = [{ lngLat: [10, 47.5] }, { lngLat: [10.02, 47.5] }, { lngLat: [10.02, 47.52] }];
+  // Abschnitt 0 gerouted mit Umweg nach Süden, Abschnitt 1 Luftlinie
+  const segs = [{ coords: [[10, 47.5], [10.01, 47.49], [10.02, 47.5]] }, null];
+  const a = nearestSegment(st, segs, [10.01, 47.4905]);
+  assert.equal(a.index, 0);
+  assert.ok(a.distM < 60);
+  const b = nearestSegment(st, segs, [10.0205, 47.51]);
+  assert.equal(b.index, 1);
+  assert.ok(b.distM < 50);
+  assert.equal(nearestSegment([st[0]], [], [10, 47.5]), null);
+});
+
+test('progressOnTour: Position, Rest, Höhenmeter, nächste Station, Abweichung, Hin-/Rückweg', async () => {
+  const { progressOnTour } = await import('../js/packages/tours-core.js');
+  // Hin (0→1000 m, steigend) und zurück auf derselben Linie
+  const profile = [];
+  for (let i = 0; i <= 20; i++) {
+    const back = i > 10;
+    const x = (back ? 20 - i : i) * 0.0013; // ~100 m je Schritt
+    profile.push({ dist: i * 100, ele: 500 + (back ? 20 - i : i) * 10, coord: [10 + x, 47.5] });
+  }
+  const st = [0, 1000, 2000];
+  const a = progressOnTour(profile, st, [10 + 3 * 0.0013, 47.5001], 0);
+  assert.equal(a.dist, 300);
+  assert.equal(a.remaining, 1700);
+  assert.equal(a.upRemaining, 70);
+  assert.deepEqual(a.next, { index: 1, inM: 700 });
+  assert.ok(a.offM < 20);
+  // Auf dem Rückweg am selben Ort: bleibt auf dem Rückweg (vorwärts suchen)
+  const b = progressOnTour(profile, st, [10 + 3 * 0.0013, 47.5001], 1600);
+  assert.equal(b.dist, 1700);
+  assert.equal(b.next.index, 2);
+  // Abseits
+  const c = progressOnTour(profile, st, [10 + 3 * 0.0013, 47.503], 0);
+  assert.ok(c.offM > 300);
+});

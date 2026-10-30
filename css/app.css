@@ -295,6 +295,7 @@ button.link { border: 0; background: none; color: var(--accent); padding: 0; cur
 /* Handy quer: Blatt als Seitenleiste, Karte bleibt sichtbar */
 @media (orientation: landscape) and (max-height: 520px) {
   #sheet { left: env(safe-area-inset-left, 0px); right: auto; top: calc(64px + var(--safe-t)); width: min(420px, 48vw); max-height: none; border-radius: 0 16px 0 0; }
+  #sheet.peek { bottom: auto; border-radius: 0 16px 16px 0; }
   #sheet.full { max-height: none; }
   #sheet-grip { display: none; }
   #search { max-width: min(420px, 48vw); }
@@ -322,6 +323,7 @@ button.link { border: 0; background: none; color: var(--accent); padding: 0; cur
   #tabbar svg { width: 26px; height: 26px; }
   #sheet { left: 16px; right: auto; top: 80px; bottom: 102px; width: var(--side); max-height: none; border-radius: 18px; transform: none; }
   #sheet.full { max-height: none; }
+  #sheet.peek { bottom: auto; } /* eingeklappt: nur die Kopfzeile, kein leeres Feld */
   #sheet-grip { display: none; }
   #sheet header { padding: 14px 20px 8px; }
   #sheet h2 { font-size: 1.3rem; }
@@ -340,3 +342,12 @@ button.link { border: 0; background: none; color: var(--accent); padding: 0; cur
 @media (prefers-reduced-motion: reduce) {
   #sheet, .btn { transition: none; }
 }
+
+/* ---------- Unterwegs ---------- */
+#ride-panel { position: absolute; z-index: 5; left: 10px; right: 10px; bottom: calc(var(--tabbar-h) + var(--safe-b) + 66px); background: var(--bg); color: var(--fg); border-radius: 14px; box-shadow: var(--shadow); padding: 10px 14px; font-size: 0.95rem; line-height: 1.5; }
+#ride-panel b { font-size: 1.15rem; }
+.ride-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 6px; font-size: 0.85rem; }
+.ride-row label { display: flex; align-items: center; gap: 5px; }
+.ride-row .btn { margin-left: auto; }
+.ride-warn { color: var(--warn); font-weight: 700; }
+@media (min-width: 900px) { #ride-panel { left: auto; right: 70px; width: 26rem; bottom: 110px; } }
