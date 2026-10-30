@@ -9,8 +9,7 @@ export const ROUTER = {
 };
 
 export function brouterUrl(a, b, profile = 'hiking-mountain') {
-  const ll = (p) => `${p[0].toFixed(6)},${p[1].toFixed(6)}`;
-  return `${ROUTER.url}?lonlats=${ll(a)}|${ll(b)}&profile=${profile}&alternativeidx=0&format=geojson`;
+  return brouterUrlMulti([a, b], profile);
 }
 
 /** Ganze Tour in einer Anfrage (BRouter routet über alle Stationen) – statt einer Anfrage je Abschnitt. */
@@ -20,29 +19,44 @@ export function brouterUrlMulti(points, profile = 'hiking-mountain') {
 }
 
 /**
- * Gesamtroute an den Stationen in Abschnitte teilen. Je Station der erste Punkt nach der vorherigen
- * Teilung, der näher als toleranceM liegt, dann bis zum nächsten Minimum weiter – so werden mehrfach
- * besuchte Orte (Hin- und Rückweg über denselben Ort) in der richtigen Reihenfolge getroffen.
- * Liefert null, wenn eine Station nicht auf der Route liegt.
+ * Gesamtroute an den Stationen in Abschnitte teilen. BRouter führt die Route durch die (auf den Weg
+ * gezogenen) Stationen; gesucht ist je Station ein Routenpunkt, in Reihenfolge streng aufsteigend, mit
+ * kleinster Summe der Abstände (dynamische Programmierung). So landen mehrfach besuchte Orte (Hin- und
+ * Rückweg) und dicht beieinander liegende Stationen richtig. Liefert null, wenn eine Station weiter als
+ * toleranceM von der Route entfernt liegt.
  */
 export function splitRoute(line, points, toleranceM = 500) {
-  const cuts = [0];
-  let from = 0;
-  for (let k = 1; k < points.length - 1; k++) {
-    let j = -1;
-    for (let i = from; i < line.length; i++) {
-      if (haversine(line[i], points[k]) <= toleranceM) {
-        j = i;
-        while (j + 1 < line.length && haversine(line[j + 1], points[k]) < haversine(line[j], points[k])) j++;
-        break;
+  const m = line.length;
+  const n = points.length;
+  if (n < 2 || m < n) return null;
+  if (haversine(line[0], points[0]) > toleranceM || haversine(line[m - 1], points[n - 1]) > toleranceM) return null;
+  // best[i]: kleinste Abstandssumme, wenn Station k auf Punkt i liegt; back: Vorgänger für die Rückverfolgung
+  let best = new Float64Array(m).fill(Infinity);
+  best[0] = 0;
+  const backs = [];
+  for (let k = 1; k < n; k++) {
+    const next = new Float64Array(m).fill(Infinity);
+    const back = new Int32Array(m).fill(-1);
+    let runMin = Infinity;
+    let runArg = -1;
+    const last = k === n - 1;
+    for (let i = 1; i < m; i++) {
+      if (best[i - 1] < runMin) {
+        runMin = best[i - 1];
+        runArg = i - 1;
       }
+      if (last && i !== m - 1) continue; // Ziel liegt am Routenende
+      if (runArg < 0 || i > m - (n - k)) continue; // Platz für die restlichen Stationen lassen
+      next[i] = runMin + haversine(line[i], points[k]);
+      back[i] = runArg;
     }
-    if (j < 0) return null;
-    cuts.push(j);
-    from = j + 1;
+    backs.push(back);
+    best = next;
   }
-  cuts.push(line.length - 1);
-  if (haversine(line[0], points[0]) > toleranceM || haversine(line.at(-1), points.at(-1)) > toleranceM) return null;
+  if (!Number.isFinite(best[m - 1])) return null;
+  const cuts = [m - 1];
+  for (let k = n - 1; k >= 1; k--) cuts.unshift(backs[k - 1][cuts[0]]);
+  if (cuts.some((c, k) => haversine(line[c], points[k]) > toleranceM)) return null;
   return cuts.slice(1).map((c, k) => line.slice(cuts[k], c + 1));
 }
 

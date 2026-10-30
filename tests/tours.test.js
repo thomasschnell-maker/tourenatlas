@@ -149,3 +149,16 @@ test('splitRoute: Gesamtroute an Stationen teilen, auch bei Hin- und Rückweg ü
   assert.equal(splitRoute(line, [P(0), [10.01, 47.6], P(0)]), null);
   assert.match(brouterUrlMulti([[10, 47], [10.1, 47.1], [10.2, 47.2]], 'trekking'), /lonlats=10\.000000,47\.000000\|10\.100000,47\.100000\|10\.200000,47\.200000&profile=trekking/);
 });
+
+test('splitRoute: dicht beieinander liegende Stationen und Route, die sich erst entfernt', async () => {
+  const { splitRoute } = await import('../js/packages/tours-core.js');
+  // Start 0, Weg geht erst nach Westen (weg von Station 1), dann nach Osten; Station 1 liegt 300 m östlich
+  const xs = [0, -0.002, -0.004, -0.002, 0, 0.002, 0.004, 0.006, 0.008, 0.01];
+  const line = xs.map((x) => [10 + x, 47.5]);
+  const P = (x) => [10 + x, 47.5];
+  const parts = splitRoute(line, [P(0), P(0.004), P(0.01)]);
+  // Station 1 gehört auf Index 6 (x = 0.004), nicht auf den ersten nahen Punkt am Anfang
+  assert.equal(parts[0].length, 7);
+  assert.deepEqual(parts[0].at(-1), line[6]);
+  assert.ok(parts.every((p) => p.length >= 2));
+});

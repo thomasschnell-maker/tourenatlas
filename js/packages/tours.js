@@ -4,6 +4,7 @@
 
 import { ACTIVITIES, ASSIST, ROUTER, TOUR_COLORS, assignPhotos, calibrateEbike, implausibleClimb, batteryCurve, brouterUrl, brouterUrlMulti, splitRoute, captureView, formatDuration, newStation, newTour, nextColor, parseBrouter, parseGpx, stationDistances, stationsFromTrack, tourGpx, tourLine, tourStats, viewFromPhoto } from './tours-core.js';
 import { readExif } from './exif.js';
+import { haversine } from '../geo.js';
 import { blobToDataUrl, compressImage, dataUrlToBlob, requestPersistence, store } from './tours-store.js';
 import { geocode, pickCandidate, splitPlaces } from '../search.js';
 
@@ -157,10 +158,12 @@ function refreshMap() {
 }
 
 // ---------- Routing ----------
-async function routeSegment(a, b) {
-  if (current.mode !== 'route') return { coords: null };
+// Routing arbeitet auf der übergebenen Tour, nie auf `current`: Der Nutzer kann während einer laufenden
+// Berechnung eine andere Tour öffnen, und das Eintragen der Vorlagen läuft im Hintergrund.
+async function routeSegment(t, a, b) {
+  if (t.mode !== 'route') return { coords: null };
   try {
-    const profile = ACTIVITIES[current.activity || 'hike'].profile;
+    const profile = ACTIVITIES[t.activity || 'hike'].profile;
     const res = await fetch(brouterUrl(a.lngLat, b.lngLat, profile));
     if (!res.ok) throw new Error(`BRouter: HTTP ${res.status}`);
     return { coords: parseBrouter(await res.json(), a.lngLat, b.lngLat) };
@@ -169,53 +172,71 @@ async function routeSegment(a, b) {
   }
 }
 
-/** Ganze Tour mit einer Anfrage routen; false, wenn das nicht geht (dann Abschnitt für Abschnitt). */
-async function routeWhole() {
-  const st = current.stations;
-  if (current.mode !== 'route' || st.length < 3 || current.segments.some((s) => s?.recorded)) return false;
+/**
+ * Ganze Tour mit einer Anfrage routen. true: erledigt. false: Route passt nicht zu den Stationen
+ * (dann Abschnitt für Abschnitt). Wirft bei Server-/Netzfehlern – dann nicht noch N weitere Anfragen schicken.
+ */
+async function routeWhole(t) {
+  const st = t.stations;
+  if (t.mode !== 'route' || st.length < 3 || t.segments.some((s) => s?.recorded)) return false;
+  const profile = ACTIVITIES[t.activity || 'hike'].profile;
+  const res = await fetch(brouterUrlMulti(st.map((s) => s.lngLat), profile));
+  if (!res.ok) throw new Error(`BRouter: HTTP ${res.status}`);
+  let line;
   try {
-    const profile = ACTIVITIES[current.activity || 'hike'].profile;
-    const res = await fetch(brouterUrlMulti(st.map((s) => s.lngLat), profile));
-    if (!res.ok) return false;
-    const f = (await res.json())?.features?.[0];
-    const line = f?.geometry?.coordinates?.map((c) => [c[0], c[1]]);
-    const parts = line && splitRoute(line, st.map((s) => s.lngLat));
-    if (!parts) return false;
-    current.segments = parts.map((coords) => ({ coords }));
-    return true;
+    line = parseBrouter(await res.json(), st[0].lngLat, st.at(-1).lngLat);
   } catch {
     return false;
   }
+  const parts = splitRoute(line, st.map((s) => s.lngLat));
+  if (!parts) return false;
+  t.segments = parts.map((coords) => ({ coords }));
+  return true;
+}
+
+/** Abschnitte einer Tour neu berechnen (alle oder nur indices). Liefert die Zahl der Luftlinien-Abschnitte. */
+async function routeTour(t, indices) {
+  const st = t.stations;
+  if (!indices) {
+    try {
+      if (await routeWhole(t)) return 0;
+    } catch (err) {
+      t.segments = st.slice(1).map((_, i) => (t.segments[i]?.recorded ? t.segments[i] : { coords: null, error: err.message }));
+      return t.segments.filter((s) => s.error).length;
+    }
+  }
+  t.segments.length = Math.max(0, st.length - 1);
+  for (const i of indices ?? st.slice(1).map((_, k) => k)) {
+    if (i < 0 || i >= st.length - 1) continue;
+    if (t.segments[i]?.recorded) continue; // aufgezeichnete GPX-Spur nie überschreiben
+    t.segments[i] = await routeSegment(t, st[i], st[i + 1]);
+  }
+  return t.segments.filter((s) => s?.error).length;
 }
 
 async function rebuildSegments(indices) {
-  const st = current.stations;
-  if (!indices) {
-    ctx.toast('Berechne Route …', { busy: true });
-    if (await routeWhole()) {
-      ctx.toast('');
-      return persist();
-    }
-  }
-  current.segments.length = Math.max(0, st.length - 1);
-  const todo = indices ?? st.slice(1).map((_, i) => i);
-  ctx.toast(`Berechne Route …`, { busy: true });
-  for (const i of todo) {
-    if (i < 0 || i >= st.length - 1) continue;
-    if (current.segments[i]?.recorded) continue; // aufgezeichnete GPX-Spur nie überschreiben
-    current.segments[i] = await routeSegment(st[i], st[i + 1]);
-  }
-  const failed = current.segments.filter((s) => s?.error);
-  if (failed.length) ctx.toast(`${failed.length} Abschnitt(e) als Luftlinie: ${failed[0].error}`, { error: true, ttl: 7000 });
+  const t = current;
+  ctx.toast('Berechne Route …', { busy: true });
+  const failed = await routeTour(t, indices);
+  const err = t.segments.find((s) => s?.error)?.error;
+  if (failed) ctx.toast(`${failed} Abschnitt(e) als Luftlinie: ${err}`, { error: true, ttl: 7000 });
   else ctx.toast('');
-  await persist();
+  if (current === t) return persist();
+  // Inzwischen andere Tour geöffnet: die berechnete trotzdem speichern
+  t.summary = summarize(await tourStats(tourLine(t.stations, t.segments), ctx.sampler, 25, t.activity || 'hike'));
+  await store.putTour(t);
 }
 
+const summarize = (st) => (st ? { length: st.length, up: st.up, timeH: st.timeH } : null);
+
 async function persist() {
-  await store.putTour(current);
-  stats = await tourStats(tourLine(current.stations, current.segments), ctx.sampler, 25, current.activity || 'hike');
-  current.summary = stats ? { length: stats.length, up: stats.up, timeH: stats.timeH } : null;
-  await store.putTour(current);
+  const t = current;
+  await store.putTour(t);
+  const st = await tourStats(tourLine(t.stations, t.segments), ctx.sampler, 25, t.activity || 'hike');
+  t.summary = summarize(st);
+  await store.putTour(t);
+  if (current !== t) return; // während der Berechnung andere Tour geöffnet
+  stats = st;
   refreshMap();
   render();
 }
@@ -227,6 +248,7 @@ async function addStation(lngLat, name) {
   if (name) s.name = name;
   s.ele = await ctx.sampler.elevation(s.lngLat);
   current.stations.push(s);
+  if (current.templateId) current.edited = true; // Vorlagen-Updates überschreiben das nicht mehr
   refreshMap();
   if (current.stations.length > 1) await rebuildSegments([current.stations.length - 2]);
   else await persist();
@@ -271,17 +293,22 @@ async function addPlaces(text) {
 
 // Touren immer von oben zeigen: in 3D-Schräglage passt die Tour nicht ins freie Kartenstück über dem Blatt,
 // die Karte zeigte dann bis zum Horizont (z. B. Memmingen) und die Tour lag verdeckt im Vordergrund.
-function fitTours(list) {
+const TOP_VIEW = { pitch: 0, bearing: 0, duration: 1200 };
+// Ausschnitt nach der ganzen Strecke, nicht nur den Stationen (Wege laufen oft ausserhalb)
+function tourBounds(list) {
   const b = new maplibregl.LngLatBounds();
-  list.forEach((t) => t.stations.forEach((s) => b.extend(s.lngLat)));
-  if (!b.isEmpty()) ctx.map.fitBounds(b, { padding: visiblePadding(), maxZoom: 14, pitch: 0, bearing: 0, duration: 1200 });
+  for (const t of list) for (const p of t.stations.length > 1 ? tourLine(t.stations, t.segments) : t.stations.map((s) => s.lngLat)) b.extend(p);
+  return b;
+}
+
+function fitTours(list) {
+  const b = tourBounds(list);
+  if (!b.isEmpty()) ctx.map.fitBounds(b, { ...TOP_VIEW, padding: visiblePadding(), maxZoom: 14 });
 }
 
 function fitTour() {
   if (!current?.stations.length) return;
-  const b = new maplibregl.LngLatBounds();
-  current.stations.forEach((s) => b.extend(s.lngLat));
-  ctx.map.fitBounds(b, { padding: visiblePadding(), maxZoom: 15, pitch: 0, bearing: 0, duration: 1200 });
+  ctx.map.fitBounds(tourBounds([current]), { ...TOP_VIEW, padding: visiblePadding(), maxZoom: 15 });
 }
 
 /** Aus der Ortssuche gepinnt: in die offene Tour, sonst neue Tour anlegen. */
@@ -300,6 +327,7 @@ async function pinStation({ name, lngLat }) {
 }
 
 async function removeStation(id) {
+  if (current.templateId) current.edited = true;
   const i = current.stations.findIndex((s) => s.id === id);
   if (i < 0) return;
   for (const pid of current.stations[i].photos) await store.deletePhoto(pid);
@@ -543,11 +571,18 @@ async function importTemplates() {
   });
   if (!todo.length) return;
   requestPersistence();
-  const prevCurrent = current;
+  let done = 0;
+  const kept = [];
   for (const [k, v] of todo.entries()) {
-    ctx.toast(`Trage „${v.name}“ ein (${k + 1}/${todo.length}) …`, { busy: true, ttl: 0 });
     const old = tours.find((x) => x.templateId === v.id);
-    if (old) await store.deleteTour(old.id);
+    // Selbst bearbeitete Strecke nie überschreiben – nur die Versionsnummer merken
+    if (old?.edited) {
+      old.templateVersion = v.version || 1;
+      await store.putTour(old);
+      kept.push(old.variant || old.name);
+      continue;
+    }
+    ctx.toast(`Trage „${v.name}“ ein (${k + 1}/${todo.length}) …`, { busy: true, ttl: 0 });
     const missing = v.missing?.length ? ` Nicht gefunden: ${v.missing.map((m) => m.split(' (')[0]).join(', ')}.` : '';
     const t = {
       ...newTour(v.name),
@@ -560,22 +595,57 @@ async function importTemplates() {
       color: v.color || nextColor(tours)
     };
     t.stations = v.stations.map((s, i) => ({ ...newStation(s.lngLat, i + 1), name: s.name }));
+    if (old) carryOver(old, t);
     try {
       const eles = await ctx.sampler.elevations(t.stations.map((s) => s.lngLat));
       t.stations.forEach((s, i) => (s.ele = eles[i]));
     } catch {}
-    current = t;
+    // Ohne `current`: der Nutzer kann währenddessen frei andere Touren öffnen und bearbeiten
+    await routeTour(t);
+    t.summary = summarize(await tourStats(tourLine(t.stations, t.segments), ctx.sampler, 25, t.activity));
     await store.putTour(t);
     tours = await store.allTours();
-    await rebuildSegments(); // Strecke entlang der Wege (Rad bzw. Wandern), speichert
+    if (current?.id === t.id) current = tours.find((x) => x.id === t.id);
+    done++;
+    refreshMap();
+    if (!current) render();
   }
-  current = null;
-  stats = null;
-  tours = await store.allTours();
-  refreshMap();
-  if (prevCurrent && tours.some((x) => x.id === prevCurrent.id)) await openTour(prevCurrent.id);
-  else render();
-  ctx.toast(`${todo.length} Tour(en) eingetragen: ${todo.map((v) => v.variant || v.name).join(' · ')}`, { ttl: 8000 });
+  if (current) await openTour(current.id);
+  const msg = [done ? `${done} Tour(en) eingetragen` : '', kept.length ? `selbst bearbeitet, bleibt: ${kept.join(', ')}` : ''].filter(Boolean).join(' · ');
+  if (msg) ctx.toast(msg, { ttl: 8000 });
+}
+
+/**
+ * Neue Fassung einer Vorlage: alles übernehmen, was der Nutzer beigetragen hat – Fotos (an die Station
+ * mit gleichem Namen, sonst die nächstgelegene), 3D-Blicke, Notizen, Datum, Farbe, Akku-Angaben.
+ * Die Tour behält ihre ID, damit die gespeicherten Fotos zugeordnet bleiben.
+ */
+function carryOver(old, t) {
+  Object.assign(t, {
+    id: old.id,
+    date: old.date,
+    created: old.created,
+    color: old.color || t.color,
+    photoPins: old.photoPins || [],
+    ...(old.actualBatteries ? { actualBatteries: old.actualBatteries } : {}),
+    ...(old.batteryCapacityWh ? { batteryCapacityWh: old.batteryCapacityWh } : {}),
+    ...(old.assist ? { assist: old.assist } : {})
+  });
+  const adopted = new Set();
+  for (const os of old.stations) {
+    if (!os.photos?.length && !os.view && !os.note) continue;
+    const byName = t.stations.find((s) => s.name === os.name && !adopted.has(s));
+    const target = byName || t.stations.reduce((b, s) => (haversine(s.lngLat, os.lngLat) < haversine(b.lngLat, os.lngLat) ? s : b));
+    target.photos.push(...(os.photos || []));
+    target.view ||= os.view;
+    if (os.note) target.note = [target.note, os.note].filter(Boolean).join(' · ');
+    if (byName) {
+      target.id = os.id; // gleiche Station: alte ID behalten, Aufnahmeorte bleiben verknüpft
+      adopted.add(target);
+    } else {
+      for (const p of t.photoPins) if (p.stationId === os.id) p.stationId = target.id;
+    }
+  }
 }
 
 // ---------- GPX-Import: aufgezeichnete Spur als Tour ----------
@@ -760,9 +830,7 @@ async function openTour(id) {
   refreshMap();
   render();
   if (current?.stations.length) {
-    const b = new maplibregl.LngLatBounds();
-    current.stations.forEach((s) => b.extend(s.lngLat));
-    ctx.map.fitBounds(b, { padding: visiblePadding(), maxZoom: 15, pitch: 0, bearing: 0, duration: 1200 });
+    fitTour();
     stats = await tourStats(tourLine(current.stations, current.segments), ctx.sampler, 25, current.activity || 'hike');
     render();
   }

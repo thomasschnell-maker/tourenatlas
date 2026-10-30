@@ -803,6 +803,9 @@ async function autoSaveRegion() {
   // Erst wenn die App längst bedienbar ist und die Karte gerade nichts nachlädt – sonst bremst das den Start
   await new Promise((r) => setTimeout(r, 30000));
   if (!map.areTilesLoaded()) await new Promise((r) => map.once('idle', r));
+  // In der Wartezeit kann der Nutzer abgeschaltet, selbst gespeichert oder das Netz gewechselt haben
+  const c2 = navigator.connection;
+  if (!autoOfflineOn() || offlineGen() === region.gen || c2?.saveData || c2?.type === 'cellular') return;
   saveRegionOffline({ auto: true });
 }
 $('auto-offline').checked = autoOfflineOn();
