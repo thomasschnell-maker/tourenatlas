@@ -176,3 +176,28 @@ test('nearestSegment: Tipp nahe der Linie findet den richtigen Abschnitt', async
   assert.ok(b.distM < 50);
   assert.equal(nearestSegment([st[0]], [], [10, 47.5]), null);
 });
+
+test('progressOnTour: Position, Rest, Höhenmeter, nächste Station, Abweichung, Hin-/Rückweg', async () => {
+  const { progressOnTour } = await import('../js/packages/tours-core.js');
+  // Hin (0→1000 m, steigend) und zurück auf derselben Linie
+  const profile = [];
+  for (let i = 0; i <= 20; i++) {
+    const back = i > 10;
+    const x = (back ? 20 - i : i) * 0.0013; // ~100 m je Schritt
+    profile.push({ dist: i * 100, ele: 500 + (back ? 20 - i : i) * 10, coord: [10 + x, 47.5] });
+  }
+  const st = [0, 1000, 2000];
+  const a = progressOnTour(profile, st, [10 + 3 * 0.0013, 47.5001], 0);
+  assert.equal(a.dist, 300);
+  assert.equal(a.remaining, 1700);
+  assert.equal(a.upRemaining, 70);
+  assert.deepEqual(a.next, { index: 1, inM: 700 });
+  assert.ok(a.offM < 20);
+  // Auf dem Rückweg am selben Ort: bleibt auf dem Rückweg (vorwärts suchen)
+  const b = progressOnTour(profile, st, [10 + 3 * 0.0013, 47.5001], 1600);
+  assert.equal(b.dist, 1700);
+  assert.equal(b.next.index, 2);
+  // Abseits
+  const c = progressOnTour(profile, st, [10 + 3 * 0.0013, 47.503], 0);
+  assert.ok(c.offM > 300);
+});

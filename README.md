@@ -106,6 +106,16 @@ Erweiterungen hängen sich als Paket ein: eine Datei in `js/packages/` anlegen u
   - **3D-Blick:** Mit `GPSImgDirection` steht die Kamera am Aufnahmeort und schaut in Fotorichtung (Neigung 72°). Aufnahmeorte erscheinen als gelbe Punkte auf der Karte.
   - **iPhone:** Beim Auswählen unter „Optionen“ den Ort mitsenden, sonst entfernt iOS die GPS-Daten.
 - **Ortsalternativen:** `Altmummen|Alt Mummen|Mummen` probiert die Schreibweisen der Reihe nach.
+- **Touren bearbeiten:** „+ Stationen setzen / verschieben“ schaltet den Bearbeiten-Modus ein:
+  - Station ziehen verschiebt sie, beide angrenzenden Abschnitte werden neu geroutet.
+  - Tipp nahe der Linie fügt dort einen Zwischenpunkt ein, das lenkt die Route z. B. über den Illerdamm.
+  - Tipp daneben hängt eine Station an.
+  - Bearbeitete Vorlagen-Touren werden von späteren Vorlagen-Updates nie überschrieben.
+  - Ein Vorlagen-Update übernimmt Fotos, 3D-Blicke, Notizen, Datum, Farbe und Akku-Angaben.
+- **Unterwegs: Tour fahren:** GPS-Position auf der Tour, gefahrene und verbleibende km, verbleibende Höhenmeter und die nächste Station. Beim E-Bike kommt der Akku-Restbedarf dazu, kalibriert wie das Höhenprofil.
+  - Ab 120 m Abstand warnt die App: „abseits der Route“.
+  - Hin- und Rückweg auf derselben Straße springen nicht, weil die Suche vorwärts ab der letzten Position läuft.
+  - „Bildschirm an“ ist nur auf Wunsch eingeschaltet, weil es Akku kostet.
 - **GPX-Import:** Aufgezeichnete Touren (Komoot, Strava, Garmin …) werden als Tour übernommen. Start, Ziel und etwa alle 10 km eine Station. Die gemessene Spur wird nie durch Routing überschrieben.
 - **Vorgegebene Touren:** Sie stehen in `data/touren-quelle.json` als Ortslisten mit Suchbegriffen. Beim Veröffentlichen ermittelt `tools/resolve-tours.mjs` die Koordinaten über Nominatim. Gesucht wird nur im Oberallgäu, und jede Station darf höchstens 10 km von der vorherigen entfernt liegen. Nicht auflösbare Stationen fallen weg und stehen in der Tournotiz. Das Protokoll des Laufs zeigt jede Station mit Treffer und Abstand. Die App trägt neue Vorlagen beim Start automatisch ein und routet nur noch zwischen festen Koordinaten, auf dem Handy wird kein Ortsname mehr gesucht. Gelöschte Vorlagen kommen nicht wieder. Die erste Vorlagenliste (v4) war fehlerhaft und wird vom Gerät entfernt.
 - **Touren unterscheiden:**

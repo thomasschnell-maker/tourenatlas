@@ -2,7 +2,7 @@
 // Touren-Paket: Touren mit mehreren Stationen, Routing entlang echter Wege,
 // Fotos je Station mit gespeichertem 3D-Blick. Daten bleiben lokal auf dem Gerät.
 
-import { ACTIVITIES, ASSIST, ROUTER, TOUR_COLORS, assignPhotos, calibrateEbike, implausibleClimb, batteryCurve, brouterUrl, brouterUrlMulti, splitRoute, nearestSegment, captureView, formatDuration, newStation, newTour, nextColor, parseBrouter, parseGpx, stationDistances, stationsFromTrack, tourGpx, tourLine, tourStats, viewFromPhoto } from './tours-core.js';
+import { ACTIVITIES, ASSIST, ROUTER, TOUR_COLORS, assignPhotos, calibrateEbike, implausibleClimb, batteryCurve, brouterUrl, brouterUrlMulti, splitRoute, nearestSegment, progressOnTour, batteryWh, captureView, formatDuration, newStation, newTour, nextColor, parseBrouter, parseGpx, stationDistances, stationsFromTrack, tourGpx, tourLine, tourStats, viewFromPhoto } from './tours-core.js';
 import { readExif } from './exif.js';
 import { haversine } from '../geo.js';
 import { blobToDataUrl, compressImage, dataUrlToBlob, requestPersistence, store } from './tours-store.js';
@@ -534,6 +534,80 @@ function batteryScale(t) {
   return { scale: (ASSIST[t.assist || 'tour']?.f ?? 1) * cal.factor, cal };
 }
 
+// ---------- Unterwegs: Tour fahren mit GPS ----------
+// Eigener Positions-Strom (nicht der Ortungsknopf der Karte), damit Fortschritt, Rest und Abweichung
+// laufend berechnet werden. Läuft weiter, auch wenn eine andere Tour geöffnet wird, bis „Beenden“.
+let ride = null;
+
+function startRide(t, st) {
+  if (!navigator.geolocation) return ctx.toast('Ortung wird von diesem Browser nicht unterstützt', { error: true });
+  stopRide(true);
+  const stationDist = stationDistances(t.stations, st.profile);
+  ride = { tour: t, stats: st, stationDist, lastDist: 0, follow: true, marker: null, wake: null, watch: null, fix: null };
+  const panel = document.createElement('div');
+  panel.id = 'ride-panel';
+  panel.setAttribute('role', 'status');
+  panel.innerHTML = '<div class="ride-main">Warte auf GPS …</div><div class="ride-row"><label><input type="checkbox" data-r="follow" checked> Karte folgt</label><label><input type="checkbox" data-r="wake"> Bildschirm an</label><button type="button" class="btn sm" data-r="stop">Beenden</button></div>';
+  document.body.appendChild(panel);
+  panel.addEventListener('change', async (e) => {
+    if (e.target.dataset.r === 'follow') ride.follow = e.target.checked;
+    if (e.target.dataset.r === 'wake') {
+      // Bildschirm wach halten kostet Akku – nur auf Wunsch
+      if (e.target.checked) ride.wake = await navigator.wakeLock?.request('screen').catch(() => null);
+      else ride.wake?.release().catch(() => {}), (ride.wake = null);
+    }
+  });
+  panel.addEventListener('click', (e) => e.target.dataset.r === 'stop' && stopRide());
+  ride.watch = navigator.geolocation.watchPosition(onRidePosition, onRideError, { enableHighAccuracy: true, maximumAge: 5000, timeout: 30000 });
+  ctx.setSheetPeek?.(true);
+  render();
+}
+
+function stopRide(silent) {
+  if (!ride) return;
+  navigator.geolocation.clearWatch(ride.watch);
+  ride.wake?.release().catch(() => {});
+  ride.marker?.remove();
+  document.getElementById('ride-panel')?.remove();
+  ride = null;
+  if (!silent) render();
+}
+
+function onRideError(err) {
+  // Kurze Aussetzer (Tunnel, Wald) sind normal: nur Dauerprobleme melden
+  if (err.code === 1) ctx.toast('Ortung nicht erlaubt – iPhone: Einstellungen › Datenschutz › Ortungsdienste › Safari-Websites', { error: true, ttl: 9000 });
+  else if (err.code === 2) document.querySelector('#ride-panel .ride-main')?.insertAdjacentHTML('beforeend', '<br><span class="ride-warn">Kein GPS-Signal</span>');
+}
+
+function onRidePosition(pos) {
+  if (!ride) return;
+  const { longitude, latitude, accuracy } = pos.coords;
+  const ll = [longitude, latitude];
+  ride.marker ||= new maplibregl.Marker({ color: '#0a6cff', scale: 0.8 });
+  ride.marker.setLngLat(ll).addTo(ctx.map);
+  if (ride.follow) ctx.map.easeTo({ center: ll, duration: 800 });
+  const el = document.querySelector('#ride-panel .ride-main');
+  if (accuracy > 100) {
+    el.textContent = `GPS ungenau (±${Math.round(accuracy)} m) – warte …`;
+    return;
+  }
+  const p = progressOnTour(ride.stats.profile, ride.stationDist, ll, ride.lastDist);
+  if (!p) return;
+  ride.lastDist = p.dist;
+  const t = ride.tour;
+  const km = (m) => (m / 1000).toLocaleString('de-DE', { maximumFractionDigits: 1 });
+  const lines = [`<b>km ${km(p.dist)}</b> von ${km(p.dist + p.remaining)} · noch ${km(p.remaining)} km · ↑ ${Math.round(p.upRemaining)} Hm`];
+  if (p.next) lines.push(`Nächste: ${p.next.index + 1} ${ctx.esc(t.stations[p.next.index].name)} in ${km(p.next.inM)} km`);
+  else lines.push('Ziel erreicht – oder fast');
+  if (t.activity === 'ebike') {
+    const wh = batteryWh(p.remaining, p.upRemaining) * batteryScale(t).scale;
+    lines.push(`Akku für den Rest ≈ ${Math.round(wh / 10) * 10} Wh (${(wh / (t.batteryCapacityWh || 625)).toLocaleString('de-DE', { maximumFractionDigits: 1 })} Akkus)`);
+  }
+  // Abweichung erst ab 120 m melden (GPS-Streuung, parallele Wege)
+  if (p.offM > 120) lines.push(`<span class="ride-warn">⚠ ${Math.round(p.offM)} m abseits der Route</span>`);
+  el.innerHTML = lines.join('<br>');
+}
+
 // ---------- Höhenprofil + Akkuverlauf ----------
 const PW = 300;
 const PH = 120;
@@ -876,6 +950,7 @@ function render() {
       <label class="muted">ohne Ort/Zeit an <select data-t="fallback">${t.stations.map((s, i) => `<option value="${i}" ${i === t.stations.length - 1 ? 'selected' : ''}>${i + 1}. ${esc(s.name)}</option>`).join('')}</select></label>
     </div>
     <p class="muted">Automatisch: Station nach Aufnahmeort (GPS) oder Aufnahmezeit; der 3D-Blick schaut vom Aufnahmeort in Fotorichtung. Am iPhone beim Auswählen unter „Optionen“ den Ort mitsenden. Einzelnes Foto über „📷 Foto“ an der Station: speichert den aktuell eingestellten Blick.</p>
+    <button type="button" class="btn primary wide" data-t="ride" ${!stats ? 'disabled' : ''}>${ride?.tour.id === t.id ? '■ Unterwegs beenden' : '▶ Unterwegs: Tour fahren'}</button>
     <button type="button" class="btn wide" data-t="offline" ${t.stations.length < 1 ? 'disabled' : ''}>Tour offline speichern</button>
     <div class="row"><button type="button" class="btn" data-t="gpx" ${t.stations.length < 2 ? 'disabled' : ''}>GPX</button>
       <button type="button" class="btn" data-t="backup">Sicherung</button>
@@ -989,6 +1064,7 @@ function wire(pane) {
       const line = tourLine(current.stations, current.segments);
       download(new Blob([tourGpx(current, line, await ctx.sampler.elevations(line))], { type: 'application/gpx+xml' }), `tour-${slug(current.name)}.gpx`);
     }
+    if (t === 'ride') return ride?.tour.id === current.id ? stopRide() : startRide(current, stats);
     if (t === 'backup') exportBackup(current);
     if (t === 'variantcopy') {
       // Kopie ohne Fotos, gleiche Gruppe, neue Farbe – danach z. B. den Rückweg ersetzen.

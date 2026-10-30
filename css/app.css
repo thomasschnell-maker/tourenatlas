@@ -342,3 +342,12 @@ button.link { border: 0; background: none; color: var(--accent); padding: 0; cur
 @media (prefers-reduced-motion: reduce) {
   #sheet, .btn { transition: none; }
 }
+
+/* ---------- Unterwegs ---------- */
+#ride-panel { position: absolute; z-index: 5; left: 10px; right: 10px; bottom: calc(var(--tabbar-h) + var(--safe-b) + 66px); background: var(--bg); color: var(--fg); border-radius: 14px; box-shadow: var(--shadow); padding: 10px 14px; font-size: 0.95rem; line-height: 1.5; }
+#ride-panel b { font-size: 1.15rem; }
+.ride-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 6px; font-size: 0.85rem; }
+.ride-row label { display: flex; align-items: center; gap: 5px; }
+.ride-row .btn { margin-left: auto; }
+.ride-warn { color: var(--warn); font-weight: 700; }
+@media (min-width: 900px) { #ride-panel { left: auto; right: 70px; width: 26rem; bottom: 110px; } }

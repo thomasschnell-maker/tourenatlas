@@ -407,3 +407,42 @@ export function captureView(map) {
   const c = map.getCenter();
   return { center: [c.lng, c.lat], zoom: map.getZoom(), pitch: map.getPitch(), bearing: map.getBearing() };
 }
+
+/**
+ * Unterwegs: GPS-Position auf das Tourprofil ({dist, ele, coord}[]) legen.
+ * Sucht bevorzugt vorwärts ab der letzten Position (Hin- und Rückweg auf derselben Strasse sollen nicht
+ * springen); ist dort nichts in der Nähe, wird die ganze Tour durchsucht (Abkürzung, Neustart).
+ * Liefert gefahrene/übrige Strecke, übrige Höhenmeter, Abstand zur Route und die nächste Station.
+ */
+export function progressOnTour(profile, stationDist, pos, prevDist = 0) {
+  if (!profile?.length) return null;
+  const nearest = (from) => {
+    let best = -1;
+    let bestD = Infinity;
+    for (let i = from; i < profile.length; i++) {
+      const d = haversine(pos, profile[i].coord);
+      if (d < bestD) {
+        bestD = d;
+        best = i;
+      }
+    }
+    return { i: best, d: bestD };
+  };
+  const start = Math.max(0, profile.findIndex((p) => p.dist >= prevDist - 300));
+  let hit = nearest(start);
+  if (hit.d > 150) {
+    const all = nearest(0);
+    if (all.d < hit.d) hit = all;
+  }
+  const total = profile.at(-1).dist;
+  const dist = profile[hit.i].dist;
+  const { up } = ascentDescent(profile.slice(hit.i).map((p) => p.ele), 5);
+  const nextIdx = stationDist.findIndex((d) => d > dist + 30);
+  return {
+    dist,
+    remaining: total - dist,
+    upRemaining: up,
+    offM: hit.d,
+    next: nextIdx < 0 ? null : { index: nextIdx, inM: stationDist[nextIdx] - dist }
+  };
+}
