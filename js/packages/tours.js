@@ -2,7 +2,7 @@
 // Touren-Paket: Touren mit mehreren Stationen, Routing entlang echter Wege,
 // Fotos je Station mit gespeichertem 3D-Blick. Daten bleiben lokal auf dem Gerät.
 
-import { ACTIVITIES, ASSIST, ROUTER, TOUR_COLORS, assignPhotos, calibrateEbike, implausibleClimb, batteryCurve, brouterUrl, brouterUrlMulti, splitRoute, captureView, formatDuration, newStation, newTour, nextColor, parseBrouter, parseGpx, stationDistances, stationsFromTrack, tourGpx, tourLine, tourStats, viewFromPhoto } from './tours-core.js';
+import { ACTIVITIES, ASSIST, ROUTER, TOUR_COLORS, assignPhotos, calibrateEbike, implausibleClimb, batteryCurve, brouterUrl, brouterUrlMulti, splitRoute, nearestSegment, captureView, formatDuration, newStation, newTour, nextColor, parseBrouter, parseGpx, stationDistances, stationsFromTrack, tourGpx, tourLine, tourStats, viewFromPhoto } from './tours-core.js';
 import { readExif } from './exif.js';
 import { haversine } from '../geo.js';
 import { blobToDataUrl, compressImage, dataUrlToBlob, requestPersistence, store } from './tours-store.js';
@@ -252,6 +252,78 @@ async function addStation(lngLat, name) {
   refreshMap();
   if (current.stations.length > 1) await rebuildSegments([current.stations.length - 2]);
   else await persist();
+}
+
+/** Zwischenstation in Abschnitt i einfügen (zwischen Station i und i+1) – lenkt die Route z. B. über den Illerdamm. */
+async function insertStation(i, ll) {
+  const s = newStation(ll, i + 2);
+  s.name = `Zwischenpunkt ${i + 1}–${i + 2}`;
+  s.ele = await ctx.sampler.elevation(ll);
+  current.stations.splice(i + 1, 0, s);
+  current.segments.splice(i, 1, null, null);
+  if (current.templateId) current.edited = true;
+  refreshMap();
+  await rebuildSegments([i, i + 1]);
+}
+
+/** Station verschoben: beide angrenzenden Abschnitte neu berechnen. */
+async function moveStation(id, ll) {
+  const i = current.stations.findIndex((s) => s.id === id);
+  if (i < 0) return;
+  const s = current.stations[i];
+  s.lngLat = ll;
+  s.ele = await ctx.sampler.elevation(ll);
+  if (current.templateId) current.edited = true;
+  await rebuildSegments([i - 1, i].filter((k) => k >= 0 && k < current.stations.length - 1));
+}
+
+// Station ziehen (nur im Bearbeiten-Modus): Karte steht still, die Station folgt dem Finger.
+let dragging = null;
+let suppressClick = false;
+function wireDrag(map) {
+  const start = (e) => {
+    if (!adding || !current || (e.points && e.points.length !== 1)) return;
+    const id = e.features?.[0]?.properties.id;
+    if (!id) return;
+    e.preventDefault();
+    dragging = { id, ll: null };
+    map.getCanvas().style.cursor = 'grabbing';
+    const move = (ev) => {
+      dragging.ll = [ev.lngLat.lng, ev.lngLat.lat];
+      const s = current.stations.find((x) => x.id === id);
+      if (s) {
+        s.lngLat = dragging.ll;
+        refreshMap();
+      }
+    };
+    const end = () => {
+      map.off('mousemove', move);
+      map.off('touchmove', move);
+      map.getCanvas().style.cursor = 'crosshair';
+      const d = dragging;
+      dragging = null;
+      if (!d?.ll) return;
+      suppressClick = true; // der folgende Klick ist das Loslassen, keine neue Station
+      setTimeout(() => (suppressClick = false), 400);
+      moveStation(d.id, d.ll);
+    };
+    map.on('mousemove', move);
+    map.on('touchmove', move);
+    map.once('mouseup', end);
+    map.once('touchend', end);
+  };
+  map.on('mousedown', 'tour-stations', start);
+  map.on('touchstart', 'tour-stations', start);
+}
+
+/** Tipp im Bearbeiten-Modus: nahe der Linie → Zwischenpunkt, sonst Station anhängen. */
+function editTap(lngLat) {
+  const ll = Array.isArray(lngLat) ? lngLat : [lngLat.lng, lngLat.lat];
+  const near = nearestSegment(current.stations, current.segments, ll);
+  // 28 Pixel Fingerbreite in Meter umrechnen (512er-Kacheln)
+  const mPerPx = (78271.517 * Math.cos((ll[1] * Math.PI) / 180)) / 2 ** ctx.map.getZoom();
+  if (near && near.distM <= 28 * mPerPx) return insertStation(near.index, ll);
+  return addStation(ll);
 }
 
 /** "Sonthofen, Burgberg, Immenstadt" → je Ort der beste Treffer (Region zuerst) als Station. */
@@ -718,7 +790,7 @@ function setAdding(on) {
   ctx.map.getCanvas().style.cursor = on ? 'crosshair' : '';
   // Beim Setzen Blatt einklappen, damit die Karte frei ist.
   ctx.setSheetPeek?.(on);
-  if (on) ctx.toast('Auf die Karte tippen = Station setzen', { ttl: 5000 });
+  if (on) ctx.toast('Tippen = Station anhängen · auf die Linie tippen = Zwischenpunkt · Station ziehen = verschieben', { ttl: 7000 });
   else ctx.toast('');
 }
 
@@ -753,7 +825,7 @@ function render() {
       <label><input type="radio" name="tmode" value="line" ${t.mode === 'line' ? 'checked' : ''}><span>Luftlinie</span></label>
     </div>
     <form class="row" data-t="places-form"><input data-t="places" placeholder="Orte: Sonthofen, Burgberg, Immenstadt" aria-label="Orte als Stationen" enterkeyhint="done"><button type="submit" class="btn">Setzen</button></form>
-    <button type="button" class="btn primary wide ${adding ? 'on' : ''}" data-t="add">${adding ? 'Fertig mit Setzen' : '+ Station auf Karte setzen'}</button>
+    <button type="button" class="btn primary wide ${adding ? 'on' : ''}" data-t="add">${adding ? 'Fertig mit Bearbeiten' : '+ Stationen setzen / verschieben'}</button>
     ${
       stats
         ? `<dl class="stats"><dt>Länge</dt><dd>${(stats.length / 1000).toLocaleString('de-DE', { maximumFractionDigits: 2 })} km</dd>
@@ -1027,6 +1099,7 @@ export default {
   async mount(c) {
     ctx = c;
     wire(c.pane);
+    wireDrag(c.map);
     window.addEventListener('ta:pin', (e) => pinStation(e.detail));
     // Aufnahmeort antippen → Foto öffnen
     c.map.on('click', 'tour-photos', (e) => {
@@ -1074,7 +1147,8 @@ export default {
 
   onMapClick(lngLat) {
     if (!adding || !current) return false;
-    addStation(lngLat);
+    if (suppressClick) return true;
+    editTap(lngLat);
     return true;
   }
 };

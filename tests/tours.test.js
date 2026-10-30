@@ -162,3 +162,17 @@ test('splitRoute: dicht beieinander liegende Stationen und Route, die sich erst 
   assert.deepEqual(parts[0].at(-1), line[6]);
   assert.ok(parts.every((p) => p.length >= 2));
 });
+
+test('nearestSegment: Tipp nahe der Linie findet den richtigen Abschnitt', async () => {
+  const { nearestSegment } = await import('../js/packages/tours-core.js');
+  const st = [{ lngLat: [10, 47.5] }, { lngLat: [10.02, 47.5] }, { lngLat: [10.02, 47.52] }];
+  // Abschnitt 0 gerouted mit Umweg nach Süden, Abschnitt 1 Luftlinie
+  const segs = [{ coords: [[10, 47.5], [10.01, 47.49], [10.02, 47.5]] }, null];
+  const a = nearestSegment(st, segs, [10.01, 47.4905]);
+  assert.equal(a.index, 0);
+  assert.ok(a.distM < 60);
+  const b = nearestSegment(st, segs, [10.0205, 47.51]);
+  assert.equal(b.index, 1);
+  assert.ok(b.distM < 50);
+  assert.equal(nearestSegment([st[0]], [], [10, 47.5]), null);
+});

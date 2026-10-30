@@ -60,6 +60,35 @@ export function splitRoute(line, points, toleranceM = 500) {
   return cuts.slice(1).map((c, k) => line.slice(cuts[k], c + 1));
 }
 
+/**
+ * Welcher Abschnitt der Tour liegt einem Punkt am nächsten? Für „Zwischenpunkt einfügen“:
+ * Tipp nahe der Linie zwischen Station i und i+1 → neue Station an Position i+1.
+ * Liefert { index, distM } (index = Abschnitt) oder null bei weniger als zwei Stationen.
+ */
+export function nearestSegment(stations, segments, p) {
+  if (stations.length < 2) return null;
+  const k = Math.cos((p[1] * Math.PI) / 180);
+  const M = 111320; // Meter je Grad Breite
+  // Abstand Punkt–Strecke in einer lokalen, flachen Projektion (für einige km genau genug)
+  const segDist = (a, b) => {
+    const ax = (a[0] - p[0]) * k * M, ay = (a[1] - p[1]) * M;
+    const bx = (b[0] - p[0]) * k * M, by = (b[1] - p[1]) * M;
+    const dx = bx - ax, dy = by - ay;
+    const L = dx * dx + dy * dy;
+    const t = L ? Math.max(0, Math.min(1, -(ax * dx + ay * dy) / L)) : 0;
+    return Math.hypot(ax + t * dx, ay + t * dy);
+  };
+  let best = null;
+  for (let i = 0; i < stations.length - 1; i++) {
+    const c = segments[i]?.coords?.length >= 2 ? segments[i].coords : [stations[i].lngLat, stations[i + 1].lngLat];
+    for (let j = 1; j < c.length; j++) {
+      const d = segDist(c[j - 1], c[j]);
+      if (!best || d < best.distM) best = { index: i, distM: d };
+    }
+  }
+  return best;
+}
+
 /** BRouter-GeoJSON → [[lon, lat], …]. Prüft, dass die Route an den Stationen beginnt/endet. */
 // 500 m: Orte, Seen und Gipfel werden als Mittelpunkt gefunden, der nächste Weg liegt oft einige hundert Meter daneben.
 export function parseBrouter(json, a, b, toleranceM = 500) {
