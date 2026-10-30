@@ -73,10 +73,13 @@ self.addEventListener('activate', (e) => {
  */
 async function networkFirst(req, cacheName, waitMs = 0) {
   const cache = await caches.open(cacheName);
-  const net = fetch(req).then((res) => {
+  // Server-Aussetzer (5xx) wie Netzfehler behandeln: gespeicherte Fassung nehmen, sonst einmal wiederholen
+  const get = () => fetch(req).then((res) => {
+    if (res.status >= 500) throw new Error(`HTTP ${res.status}`);
     if (res.ok) cache.put(req, res.clone());
     return res;
   });
+  const net = get().catch(() => new Promise((r) => setTimeout(r, 800)).then(get));
   const hit = await cache.match(req, { ignoreSearch: cacheName === APP });
   if (!hit) return net;
   if (!waitMs) return net.catch(() => hit);
