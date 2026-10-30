@@ -6,7 +6,7 @@ import { cellBbox, cellsForView } from './cells.js';
 import { profileWay, qualitySummary, validatePeaks } from './validate.js';
 import { aerialStyle, openFreeMapStyle, protomapsStyle } from './styles.js';
 import { openPmtiles } from './offline.js';
-import { PACKAGES } from './packages/index.js';
+import { MISSING, PACKAGES } from './packages/index.js';
 import { initSearch } from './search.js';
 import { padBbox, prefetch, tileUrl, tilesForBbox } from './offline-area.js';
 import { cellInBbox, cellInHole, loadRegionIndex } from './region.js';
@@ -390,6 +390,8 @@ for (const p of PACKAGES) {
 }
 
 initSearch({ map, toast, esc });
+window.__taReady = true; // Start geglückt (Startwächter in index.html)
+if (MISSING.length) toast(`Teil der App nicht geladen (${MISSING.join(', ')}) – Seite neu laden`, { error: true, ttl: 10000 });
 
 $('tabbar').addEventListener('click', (e) => {
   const btn = e.target.closest('button[data-tab]');
