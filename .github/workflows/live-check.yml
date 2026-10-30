@@ -1,5 +1,5 @@
 # Prüft die veröffentlichte App wie auf einem iPhone (Ladezeit, Touren) und legt Bericht + Screenshots
-# auf den Branch live-check. Läuft nach jeder Veröffentlichung, bei Push auf Claude-Branches und manuell.
+# auf den Branch live-check. Läuft nach jeder Veröffentlichung und manuell (prüft immer die veröffentlichte Seite).
 name: Live-Check
 
 on:
@@ -7,8 +7,6 @@ on:
   workflow_run:
     workflows: ['Deploy Pages']
     types: [completed]
-  push:
-    branches: ['claude/**']
 
 permissions:
   contents: write

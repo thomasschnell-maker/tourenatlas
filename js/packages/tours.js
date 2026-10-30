@@ -181,7 +181,10 @@ async function routeWhole(t) {
   if (t.mode !== 'route' || st.length < 3 || t.segments.some((s) => s?.recorded)) return false;
   const profile = ACTIVITIES[t.activity || 'hike'].profile;
   const res = await fetch(brouterUrlMulti(st.map((s) => s.lngLat), profile));
-  if (!res.ok) throw new Error(`BRouter: HTTP ${res.status}`);
+  // Überlastet: nicht mit Einzelanfragen nachlegen. Andere Fehler (z. B. eine Station ausserhalb der
+  // Routingdaten): Abschnitt für Abschnitt, dann wird nur der betroffene Abschnitt zur Luftlinie.
+  if (res.status === 429 || res.status === 503) throw new Error(`BRouter überlastet (HTTP ${res.status})`);
+  if (!res.ok) return false;
   let line;
   try {
     line = parseBrouter(await res.json(), st[0].lngLat, st.at(-1).lngLat);
@@ -194,23 +197,47 @@ async function routeWhole(t) {
   return true;
 }
 
+// Generationen gegen veraltete Antworten: Wird ein Abschnitt erneut angefragt oder verschieben sich die
+// Abschnitte (Station eingefügt/gelöscht), verfallen ältere, noch laufende Antworten.
+const segGen = new Map();
+const epoch = new Map();
+const bump = (m, k) => {
+  const g = (m.get(k) || 0) + 1;
+  m.set(k, g);
+  return g;
+};
+const shiftSegments = (t) => bump(epoch, t.id);
+
 /** Abschnitte einer Tour neu berechnen (alle oder nur indices). Liefert die Zahl der Luftlinien-Abschnitte. */
 async function routeTour(t, indices) {
   const st = t.stations;
   if (!indices) {
+    const g = shiftSegments(t);
     try {
-      if (await routeWhole(t)) return 0;
+      const ok = await routeWhole(t);
+      if (epoch.get(t.id) !== g) return 0; // inzwischen neu begonnen
+      if (ok) return 0;
     } catch (err) {
+      if (epoch.get(t.id) !== g) return 0;
       t.segments = st.slice(1).map((_, i) => (t.segments[i]?.recorded ? t.segments[i] : { coords: null, error: err.message }));
       return t.segments.filter((s) => s.error).length;
     }
   }
   t.segments.length = Math.max(0, st.length - 1);
-  for (const i of indices ?? st.slice(1).map((_, k) => k)) {
-    if (i < 0 || i >= st.length - 1) continue;
-    if (t.segments[i]?.recorded) continue; // aufgezeichnete GPX-Spur nie überschreiben
-    t.segments[i] = await routeSegment(t, st[i], st[i + 1]);
-  }
+  // Auch Abschnitte ohne Ergebnis mitnehmen (z. B. durch eine verfallene Anfrage offen geblieben)
+  const todo = new Set([...(indices ?? st.slice(1).map((_, k) => k)), ...t.segments.map((s, k) => (s ? -1 : k))]);
+  const epNow = epoch.get(t.id) || 0;
+  const queue = [...todo].filter((i) => i >= 0 && i < st.length - 1 && !t.segments[i]?.recorded); // GPX-Spur nie überschreiben
+  const gens = new Map(queue.map((i) => [i, bump(segGen, `${t.id}:${i}`)]));
+  // Höchstens 3 gleichzeitig – öffentlicher Server
+  const worker = async () => {
+    while (queue.length) {
+      const i = queue.shift();
+      const r = await routeSegment(t, st[i], st[i + 1]);
+      if (segGen.get(`${t.id}:${i}`) === gens.get(i) && (epoch.get(t.id) || 0) === epNow) t.segments[i] = r;
+    }
+  };
+  await Promise.all([worker(), worker(), worker()]);
   return t.segments.filter((s) => s?.error).length;
 }
 
@@ -223,16 +250,31 @@ async function rebuildSegments(indices) {
   else ctx.toast('');
   if (current === t) return persist();
   // Inzwischen andere Tour geöffnet: die berechnete trotzdem speichern
-  t.summary = summarize(await tourStats(tourLine(t.stations, t.segments), ctx.sampler, 25, t.activity || 'hike'));
+  t.summary = summarize(await computeStats(t));
   await store.putTour(t);
 }
 
 const summarize = (st) => (st ? { length: st.length, up: st.up, timeH: st.timeH } : null);
+const computeStats = (t) => tourStats(tourLine(t.stations, t.segments), ctx.sampler, 25, t.activity || 'hike');
+
+// Eine Tour = ein Objekt, solange die App läuft: Neu-Laden aus dem Speicher liefert dieselben Objekte.
+// Sonst rechnet eine laufende Routenberechnung an einer Kopie weiter, während der Nutzer eine andere bearbeitet.
+const live = new Map();
+async function loadTours() {
+  const fresh = await store.allTours();
+  const ids = new Set(fresh.map((x) => x.id));
+  for (const id of live.keys()) if (!ids.has(id)) live.delete(id);
+  return fresh.map((x) => live.get(x.id) || (live.set(x.id, x), x));
+}
+function adopt(t) {
+  live.set(t.id, t); // neue Fassung (z. B. Vorlagen-Update) ersetzt die alte
+  return t;
+}
 
 async function persist() {
   const t = current;
   await store.putTour(t);
-  const st = await tourStats(tourLine(t.stations, t.segments), ctx.sampler, 25, t.activity || 'hike');
+  const st = await computeStats(t);
   t.summary = summarize(st);
   await store.putTour(t);
   if (current !== t) return; // während der Berechnung andere Tour geöffnet
@@ -260,6 +302,7 @@ async function insertStation(i, ll) {
   s.name = `Zwischenpunkt ${i + 1}–${i + 2}`;
   s.ele = await ctx.sampler.elevation(ll);
   current.stations.splice(i + 1, 0, s);
+  shiftSegments(current);
   current.segments.splice(i, 1, null, null);
   if (current.templateId) current.edited = true;
   refreshMap();
@@ -299,18 +342,20 @@ function wireDrag(map) {
     const end = () => {
       map.off('mousemove', move);
       map.off('touchmove', move);
-      map.getCanvas().style.cursor = 'crosshair';
+      map.off('mouseup', end);
+      map.off('touchend', end);
+      if (adding) map.getCanvas().style.cursor = 'crosshair';
       const d = dragging;
       dragging = null;
-      if (!d?.ll) return;
-      suppressClick = true; // der folgende Klick ist das Loslassen, keine neue Station
+      // Der folgende Klick ist das Loslassen – auch ohne Bewegung keine neue Station / kein Zwischenpunkt
+      suppressClick = true;
       setTimeout(() => (suppressClick = false), 400);
-      moveStation(d.id, d.ll);
+      if (d?.ll) moveStation(d.id, d.ll);
     };
     map.on('mousemove', move);
     map.on('touchmove', move);
-    map.once('mouseup', end);
-    map.once('touchend', end);
+    map.on('mouseup', end);
+    map.on('touchend', end);
   };
   map.on('mousedown', 'tour-stations', start);
   map.on('touchstart', 'tour-stations', start);
@@ -322,7 +367,10 @@ function editTap(lngLat) {
   const near = nearestSegment(current.stations, current.segments, ll);
   // 28 Pixel Fingerbreite in Meter umrechnen (512er-Kacheln)
   const mPerPx = (78271.517 * Math.cos((ll[1] * Math.PI) / 180)) / 2 ** ctx.map.getZoom();
-  if (near && near.distM <= 28 * mPerPx) return insertStation(near.index, ll);
+  if (near && near.distM <= 28 * mPerPx) {
+    if (current.segments[near.index]?.recorded) return ctx.toast('Aufgezeichnete GPX-Spur – dort keine Zwischenpunkte', { ttl: 4000 });
+    return insertStation(near.index, ll);
+  }
   return addStation(ll);
 }
 
@@ -388,7 +436,7 @@ async function pinStation({ name, lngLat }) {
   if (!current) {
     current = { ...newTour(`Tour ${new Date().toLocaleDateString('de-DE')}`), activity: lastActivity(), color: nextColor(tours) };
     await store.putTour(current);
-    tours = await store.allTours();
+    tours = await loadTours();
     current = tours.find((x) => x.id === current.id);
     requestPersistence();
   }
@@ -404,6 +452,7 @@ async function removeStation(id) {
   if (i < 0) return;
   for (const pid of current.stations[i].photos) await store.deletePhoto(pid);
   current.stations.splice(i, 1);
+  shiftSegments(current);
   // Nachbarn neu verbinden: Abschnitt vor und nach der Station entfallen, einer wird neu berechnet.
   if (i > 0 && i < current.stations.length) {
     current.segments.splice(i - 1, 2, null);
@@ -553,7 +602,8 @@ function startRide(t, st) {
     if (e.target.dataset.r === 'follow') ride.follow = e.target.checked;
     if (e.target.dataset.r === 'wake') {
       // Bildschirm wach halten kostet Akku – nur auf Wunsch
-      if (e.target.checked) ride.wake = await navigator.wakeLock?.request('screen').catch(() => null);
+      ride.wantWake = e.target.checked;
+      if (ride.wantWake) requestWake();
       else ride.wake?.release().catch(() => {}), (ride.wake = null);
     }
   });
@@ -562,6 +612,17 @@ function startRide(t, st) {
   ctx.setSheetPeek?.(true);
   render();
 }
+
+// Der Browser gibt die Sperre beim Wechsel in eine andere App frei → beim Zurückkommen neu anfordern.
+async function requestWake() {
+  const r = ride;
+  const lock = await navigator.wakeLock?.request('screen').catch(() => null);
+  if (ride !== r || !r?.wantWake) return lock?.release().catch(() => {}); // inzwischen beendet/abgewählt
+  r.wake = lock;
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && ride?.wantWake) requestWake();
+});
 
 function stopRide(silent) {
   if (!ride) return;
@@ -676,7 +737,7 @@ async function removeTemplateTours() {
   const old = tours.filter((t) => OLD_TEMPLATE_IDS.has(t.templateId));
   for (const t of old) await store.deleteTour(t.id);
   if (old.length) {
-    tours = await store.allTours();
+    tours = await loadTours();
     ctx.toast(`${old.length} alte vorgegebene Tour(en) entfernt – eigene Touren bleiben`, { ttl: 6000 });
   }
 }
@@ -748,15 +809,19 @@ async function importTemplates() {
     } catch {}
     // Ohne `current`: der Nutzer kann währenddessen frei andere Touren öffnen und bearbeiten
     await routeTour(t);
-    t.summary = summarize(await tourStats(tourLine(t.stations, t.segments), ctx.sampler, 25, t.activity));
-    await store.putTour(t);
-    tours = await store.allTours();
-    if (current?.id === t.id) current = tours.find((x) => x.id === t.id);
+    t.summary = summarize(await computeStats(t));
+    // Während der Berechnung bearbeitet? Dann bleibt die Fassung des Nutzers.
+    if (old?.edited) {
+      kept.push(old.variant || old.name);
+      continue;
+    }
+    await store.putTour(adopt(t));
+    tours = await loadTours();
     done++;
     refreshMap();
     if (!current) render();
+    else if (current.id === t.id) await openTour(t.id); // gerade offen: neue Fassung zeigen
   }
-  if (current) await openTour(current.id);
   const msg = [done ? `${done} Tour(en) eingetragen` : '', kept.length ? `selbst bearbeitet, bleibt: ${kept.join(', ')}` : ''].filter(Boolean).join(' · ');
   if (msg) ctx.toast(msg, { ttl: 8000 });
 }
@@ -777,20 +842,23 @@ function carryOver(old, t) {
     ...(old.batteryCapacityWh ? { batteryCapacityWh: old.batteryCapacityWh } : {}),
     ...(old.assist ? { assist: old.assist } : {})
   });
-  const adopted = new Set();
+  // 1. Durchgang: gleichnamige Stationen übernehmen die alte ID (Aufnahmeorte bleiben verknüpft)
+  const match = new Map();
+  for (const os of old.stations) {
+    const ns = t.stations.find((s) => s.name === os.name && ![...match.values()].includes(s));
+    if (ns) {
+      match.set(os, ns);
+      ns.id = os.id;
+    }
+  }
+  // 2. Durchgang: Beiträge übertragen; ohne Namensgleiche an die nächstgelegene Station (IDs stehen jetzt fest)
   for (const os of old.stations) {
     if (!os.photos?.length && !os.view && !os.note) continue;
-    const byName = t.stations.find((s) => s.name === os.name && !adopted.has(s));
-    const target = byName || t.stations.reduce((b, s) => (haversine(s.lngLat, os.lngLat) < haversine(b.lngLat, os.lngLat) ? s : b));
+    const target = match.get(os) || t.stations.reduce((b, s) => (haversine(s.lngLat, os.lngLat) < haversine(b.lngLat, os.lngLat) ? s : b));
     target.photos.push(...(os.photos || []));
     target.view ||= os.view;
     if (os.note) target.note = [target.note, os.note].filter(Boolean).join(' · ');
-    if (byName) {
-      target.id = os.id; // gleiche Station: alte ID behalten, Aufnahmeorte bleiben verknüpft
-      adopted.add(target);
-    } else {
-      for (const p of t.photoPins) if (p.stationId === os.id) p.stationId = target.id;
-    }
+    if (!match.has(os)) for (const p of t.photoPins) if (p.stationId === os.id) p.stationId = target.id;
   }
 }
 
@@ -807,7 +875,7 @@ async function importGpx(file) {
     const eles = await ctx.sampler.elevations(t.stations.map((s) => s.lngLat));
     t.stations.forEach((s, k) => (s.ele = eles[k]));
     await store.putTour(t);
-    tours = await store.allTours();
+    tours = await loadTours();
     await openTour(t.id);
     await persist();
     ctx.toast(`„${name}“ übernommen (${coords.length} Punkte) – Aktivität wählen`);
@@ -839,7 +907,7 @@ async function importBackup(file) {
       await store.putPhoto({ ...meta, blob: await dataUrlToBlob(d), thumb: await dataUrlToBlob(thumbData) });
     }
     await store.putTour(data.tour);
-    tours = await store.allTours();
+    tours = await loadTours();
     ctx.toast(`„${data.tour.name}“ wiederhergestellt (${(data.photos || []).length} Fotos)`);
     render();
   } catch (err) {
@@ -1041,7 +1109,7 @@ function wire(pane) {
     if (t === 'new') {
       current = { ...newTour(`Tour ${new Date().toLocaleDateString('de-DE')}`), activity: lastActivity(), color: nextColor(tours) };
       await store.putTour(current);
-      tours = await store.allTours();
+      tours = await loadTours();
       current = tours.find((x) => x.id === current.id);
       stats = null;
       // Nicht automatisch in den Tipp-Modus: Orte eintippen oder auf Karte setzen – beides sichtbar.
@@ -1053,7 +1121,7 @@ function wire(pane) {
       setAdding(false);
       current = null;
       refreshMap();
-      tours = await store.allTours();
+      tours = await loadTours();
       render();
     }
     if (t === 'add') {
@@ -1081,7 +1149,7 @@ function wire(pane) {
       if (!current.group) current.group = copy.group;
       await store.putTour(current);
       await store.putTour(copy);
-      tours = await store.allTours();
+      tours = await loadTours();
       await openTour(copy.id);
       ctx.toast('Variante angelegt – Stationen des Rückwegs löschen und neue setzen');
     }
@@ -1096,7 +1164,7 @@ function wire(pane) {
       if (current.templateId) dismiss(current.templateId); // vorgegebene Tour kommt nicht wieder
       await store.deleteTour(current.id);
       current = null;
-      tours = await store.allTours();
+      tours = await loadTours();
       refreshMap();
       render();
     }
@@ -1203,7 +1271,7 @@ export default {
       c.pane.querySelector(`li[data-sid="${CSS.escape(id)}"]`)?.scrollIntoView({ block: 'center', behavior: 'smooth' });
     });
     try {
-      tours = await store.allTours();
+      tours = await loadTours();
       await removeTemplateTours();
       importTemplates(); // im Hintergrund – die App ist sofort bedienbar
     } catch (err) {

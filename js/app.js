@@ -805,7 +805,7 @@ async function autoSaveRegion() {
   if (!map.areTilesLoaded()) await new Promise((r) => map.once('idle', r));
   // In der Wartezeit kann der Nutzer abgeschaltet, selbst gespeichert oder das Netz gewechselt haben
   const c2 = navigator.connection;
-  if (!autoOfflineOn() || offlineGen() === region.gen || c2?.saveData || c2?.type === 'cellular') return;
+  if (!autoOfflineOn() || offlineGen() === region.gen || c2?.saveData || c2?.type === 'cellular' || /2g/.test(c2?.effectiveType || '')) return;
   saveRegionOffline({ auto: true });
 }
 $('auto-offline').checked = autoOfflineOn();
