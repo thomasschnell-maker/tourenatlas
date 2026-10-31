@@ -1,8 +1,8 @@
 {
   "_hinweis": "Quelle der vorgegebenen Touren. Koordinaten ermittelt tools/resolve-tours.mjs beim Veröffentlichen (Nominatim, nur Oberallgäu, Abstandsprüfung) → data/touren.json. Mehrere Suchbegriffe je Station werden der Reihe nach probiert. prefer: bevorzugte Nominatim-Kategorie (z. B. place = Ortsmitte statt Gemeindefläche). landmark: nur zur Orientierung auflösen und protokollieren, keine Station.",
   "viewbox": [
-    10.05,
-    47.4,
+    9.85,
+    47.38,
     10.55,
     47.66
   ],
@@ -321,6 +321,128 @@
         ],
         "prefer": "place"
       }
+    ],
+    "balderschwang-hin": [
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Fischen",
+        "q": [
+          "Fischen im Allgäu"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Obermaiselstein",
+        "q": [
+          "Obermaiselstein"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Hirschsprung",
+        "q": [
+          "Hirschsprung, Obermaiselstein",
+          "Hirschsprung, Tiefenbach",
+          "Hirschsprung"
+        ]
+      },
+      {
+        "name": "Lochbachtal",
+        "q": [
+          "Lochbachtal",
+          "Lochbach, Obermaiselstein",
+          "Lochbach"
+        ],
+        "optional": true
+      },
+      {
+        "name": "Schelpenalpe",
+        "q": [
+          "Schelpenalpe",
+          "Alpe Schelpen",
+          "Schelpen, Balderschwang"
+        ]
+      },
+      {
+        "name": "Balderschwang",
+        "q": [
+          "Balderschwang"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Sibratsgfäll",
+        "q": [
+          "Sibratsgfäll"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Hirschgund",
+        "q": [
+          "Hirschgund",
+          "Hirschgund, Sibratsgfäll"
+        ]
+      },
+      {
+        "name": "Rohrmoos",
+        "q": [
+          "Rohrmoos, Oberstdorf",
+          "Rohrmoos"
+        ]
+      },
+      {
+        "name": "Tiefenbach",
+        "q": [
+          "Tiefenbach, Oberstdorf",
+          "Tiefenbach bei Oberstdorf"
+        ]
+      }
+    ],
+    "balderschwang-rueck1": [
+      {
+        "name": "Oberstdorf",
+        "q": [
+          "Oberstdorf"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      }
+    ],
+    "balderschwang-rueck2": [
+      {
+        "name": "Obermaiselstein",
+        "q": [
+          "Obermaiselstein"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Fischen",
+        "q": [
+          "Fischen im Allgäu"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      }
     ]
   },
   "tours": [
@@ -391,6 +513,34 @@
         "joch-wertach-immenstadt"
       ],
       "note": "Aus der Google-Maps-Fahrradroute (3 h 21): Start Standort (angenommen Sonthofen) – Bad Hindelang – Schnitzelalm (Jochstraße 37) – Oberjoch – Unterjoch – Wertach – Königssträßle (Burgberg) – Burgberg im Allgäu – Häuser – Immenstadt im Allgäu (Ziel)."
+    },
+    {
+      "id": "balderschwang-sibratsgfaell-rueck1",
+      "version": 1,
+      "group": "Balderschwang / Sibratsgfäll",
+      "variant": "Rückweg ① über Oberstdorf und Illerradweg",
+      "name": "Lochbachtal – Balderschwang – Sibratsgfäll – Rückweg ①",
+      "activity": "ebike",
+      "color": "#e4002b",
+      "segments": [
+        "balderschwang-hin",
+        "balderschwang-rueck1"
+      ],
+      "note": "Laut Zettel: SF – Fischen (Ort) – Berg (Ampel) im Ort R. Obermaiselstein (Radweg) – O'stein – R. Tiefenbach – Hirschsprung – nach Parkplatz rechts Teerstraße (Schranke) – Lochbachtal – Alpe (Name unleserlich) – Abzweigung rechts – Wald-/Wiesenweg zur Schelpenalpe – Balderschwang – R. Hittisau – Sibratsgfäll (Abzw. ca. 4 km rechts) – im Ort (Kirche) links Hirschgund, Rohrmoos (Teerstraße) – Rohrmoos – Tiefenbach. Rückweg ①: Oberstdorf (McDonald's) – Illerradweg – SF/Breitach."
+    },
+    {
+      "id": "balderschwang-sibratsgfaell-rueck2",
+      "version": 1,
+      "group": "Balderschwang / Sibratsgfäll",
+      "variant": "Rückweg ② über Obermaiselstein, Fischen, Illerdamm",
+      "name": "Lochbachtal – Balderschwang – Sibratsgfäll – Rückweg ②",
+      "activity": "ebike",
+      "color": "#00a3b5",
+      "segments": [
+        "balderschwang-hin",
+        "balderschwang-rueck2"
+      ],
+      "note": "Laut Zettel: SF – Fischen (Ort) – Berg (Ampel) im Ort R. Obermaiselstein (Radweg) – O'stein – R. Tiefenbach – Hirschsprung – nach Parkplatz rechts Teerstraße (Schranke) – Lochbachtal – Alpe (Name unleserlich) – Abzweigung rechts – Wald-/Wiesenweg zur Schelpenalpe – Balderschwang – R. Hittisau – Sibratsgfäll (Abzw. ca. 4 km rechts) – im Ort (Kirche) links Hirschgund, Rohrmoos (Teerstraße) – Rohrmoos – Tiefenbach. Rückweg ②: Tiefenbach links R. Obermaiselstein – Fischen – Illerdamm – SF."
     }
   ]
 }
