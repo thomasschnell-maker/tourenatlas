@@ -93,6 +93,13 @@ test('build-region: viertelt überlastete Teilabfragen, meldet Lücken, setzt au
     await run([join(dir, 'cells'), join(dir, 'chunks')], env);
     assert.ok(Date.now() - Date.parse(JSON.parse(readFileSync(p0, 'utf8')).meta.osmBase) < 60000);
     assert.equal(mock.count() - before5, 1 + 3); // das veraltete Stück + das Loch
+    // Veralteter Server beim Auffrischen: neuere vorhandene Daten werden nicht durch ältere ersetzt
+    const fresh = JSON.parse(readFileSync(p0, 'utf8'));
+    writeFileSync(p0, JSON.stringify({ ...fresh, fetched: '2026-01-01T00:00:00Z' }));
+    mock.state.osmBase = '2026-01-01T00:00:00Z';
+    await run([join(dir, 'cells'), join(dir, 'chunks')], env);
+    assert.equal(JSON.parse(readFileSync(p0, 'utf8')).meta.osmBase, fresh.meta.osmBase);
+    mock.state.osmBase = null;
   } finally {
     mock.server.close();
   }

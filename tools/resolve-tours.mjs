@@ -37,9 +37,11 @@ async function resolve(st, prev) {
   for (const q of st.q) {
     // Bevorzugte Kategorie zuerst (z. B. place: Ortsmitte statt Mittelpunkt der Gemeindefläche)
     const hits = (await search(q)).slice().sort((a, b) => (st.prefer ? !a.type.startsWith(st.prefer) - !b.type.startsWith(st.prefer) : 0));
-    const ok = hits.find((h) => !prev || km(prev, h.lngLat) <= (cfg.maxStepKm || 10));
+    // maxKm je Station: engere Grenze für Ortsnamen, die es mehrfach gibt (z. B. Ettensberg)
+    const max = st.maxKm || cfg.maxStepKm || 10;
+    const ok = hits.find((h) => !prev || km(prev, h.lngLat) <= max);
     if (ok) return { ...ok, query: q };
-    tried.push(`${q}: ${hits.length ? `${hits.length} Treffer, alle > ${cfg.maxStepKm} km` : 'kein Treffer'}`);
+    tried.push(`${q}: ${hits.length ? `${hits.length} Treffer, alle > ${max} km` : 'kein Treffer'}`);
   }
   return { error: tried.join('; ') };
 }
