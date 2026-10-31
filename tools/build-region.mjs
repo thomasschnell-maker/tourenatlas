@@ -67,7 +67,14 @@ async function query(bbox) {
       const parsed = parseOverpass(json);
       // Server mit veraltetem Datenstand nur noch, wenn kein anderer frei ist
       sv.stale = Date.now() - (Date.parse(parsed.meta?.osmBase) || Date.now()) > MAX_AGE_MS;
-      if (sv.stale) console.warn(`    ${host}: Datenstand ${parsed.meta.osmBase} veraltet → nachrangig, wird aufgefrischt`);
+      if (sv.stale) {
+        console.warn(`    ${host}: Datenstand ${parsed.meta.osmBase} veraltet → nachrangig`);
+        // Lieber bei einem aktuellen Server nachfragen, solange es einen gibt und Versuche übrig sind
+        if (attempt < TRIES - 1 && servers.some((o) => !o.stale && o.fails < TRIES)) {
+          avoid = sv;
+          continue;
+        }
+      }
       return { ...parsed, host };
     } catch (err) {
       last = new Error(`${host}: ${err.message}`);
@@ -104,6 +111,11 @@ async function load(bbox, depth, results, holes) {
     if (overBudget || age < MAX_AGE_MS) return results.push(old);
     try {
       const { host, ...r } = await query(bbox);
+      // Nie neuere Daten durch ältere ersetzen (veralteter Spiegelserver)
+      if (old.meta?.osmBase && !(r.meta?.osmBase > old.meta.osmBase)) {
+        console.warn(`  ${bboxName(bbox)}: Antwort von ${host} (${r.meta?.osmBase}) nicht neuer → alter Stand ${old.meta.osmBase} bleibt`);
+        return results.push(old);
+      }
       writeFileSync(file, JSON.stringify({ ...r, fetched: new Date().toISOString() }));
       done++;
       console.log(`  ${bboxName(bbox)}: aufgefrischt (${host})`);
