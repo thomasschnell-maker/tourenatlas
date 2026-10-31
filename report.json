@@ -1,0 +1,686 @@
+{
+ "url": "https://thomasschnell-maker.github.io/tourenatlas/",
+ "started": "2026-10-31T20:26:53.033Z",
+ "runs": [
+  {
+   "visit": "erster Besuch",
+   "ms": {
+    "domcontentloaded": 795,
+    "mapCanvas": 1330,
+    "toursDone": 50516
+   },
+   "requests": 135,
+   "byHost": {
+    "thomasschnell-maker.github.io": {
+     "n": 37,
+     "kb": 383,
+     "failed": 0,
+     "ausSW": 9
+    },
+    "": {
+     "n": 2,
+     "kb": 0,
+     "failed": 0,
+     "ausSW": 0
+    },
+    "tiles.openfreemap.org": {
+     "n": 14,
+     "kb": 175,
+     "failed": 0,
+     "ausSW": 8
+    },
+    "s3.amazonaws.com": {
+     "n": 75,
+     "kb": 1644,
+     "failed": 2,
+     "ausSW": 58
+    },
+    "brouter.de": {
+     "n": 7,
+     "kb": 234,
+     "failed": 0,
+     "ausSW": 0
+    }
+   },
+   "slowest": [
+    "3572 ms https://s3.amazonaws.com/elevation-tiles-prod/terrarium/13/4331/2865.png",
+    "2973 ms https://s3.amazonaws.com/elevation-tiles-prod/terrarium/12/2166/1435.png",
+    "2917 ms https://thomasschnell-maker.github.io/tourenatlas/data/cells/934ee37b3056/257_1581.json",
+    "2085 ms https://s3.amazonaws.com/elevation-tiles-prod/terrarium/13/4332/2867.png",
+    "1809 ms https://s3.amazonaws.com/elevation-tiles-prod/terrarium/13/4332/2868.png",
+    "1798 ms https://s3.amazonaws.com/elevation-tiles-prod/terrarium/13/4331/2869.png",
+    "1782 ms https://thomasschnell-maker.github.io/tourenatlas/data/cells/934ee37b3056/258_1581.json",
+    "1778 ms https://s3.amazonaws.com/elevation-tiles-prod/terrarium/13/4330/2869.png",
+    "1773 ms https://s3.amazonaws.com/elevation-tiles-prod/terrarium/13/4330/2868.png",
+    "1706 ms https://s3.amazonaws.com/elevation-tiles-prod/terrarium/13/4329/2865.png",
+    "1690 ms https://s3.amazonaws.com/elevation-tiles-prod/terrarium/10/541/358.png",
+    "1642 ms https://s3.amazonaws.com/elevation-tiles-prod/terrarium/12/2165/1435.png"
+   ],
+   "failed": [
+    {
+     "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/13/4332/2869.png",
+     "failed": "net::ERR_ABORTED"
+    },
+    {
+     "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/12/2165/1435.png",
+     "failed": "net::ERR_ABORTED"
+    }
+   ],
+   "tours": [
+    {
+     "name": "Lochbachtal – Balderschwang – Sibratsgfäll – Rückweg ①",
+     "templateId": "balderschwang-sibratsgfaell-rueck1",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Fischen [10.2722,47.4600]",
+      "Obermaiselstein [10.2375,47.4479]",
+      "Hirschsprung [10.2429,47.4350]",
+      "Lochbachtal [10.2179,47.4253]",
+      "Schelpenalpe [10.1039,47.4363]",
+      "Balderschwang [10.1043,47.4657]",
+      "Sibratsgfäll [10.0380,47.4268]",
+      "Hirschgund [10.0849,47.4027]",
+      "Rohrmoos [10.1673,47.4075]",
+      "Tiefenbach [10.2414,47.4200]",
+      "Oberstdorf [10.2774,47.4104]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "300 Pkt",
+      "110 Pkt",
+      "97 Pkt",
+      "242 Pkt",
+      "552 Pkt",
+      "261 Pkt",
+      "335 Pkt",
+      "275 Pkt",
+      "198 Pkt",
+      "227 Pkt",
+      "273 Pkt",
+      "478 Pkt"
+     ],
+     "summary": {
+      "length": 86798.56238925783,
+      "up": 1874.2482513996113,
+      "timeH": 6.422426176573571
+     }
+    },
+    {
+     "name": "Ofterschwanger Horn – Route 1",
+     "templateId": "ofterschwanger-horn-route-1",
+     "templateVersion": 4,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Immenstadt [10.2190,47.5598]",
+      "Altmummen [10.2399,47.5495]",
+      "Ettensberg [10.2476,47.5438]",
+      "Gunzesried [10.2285,47.5229]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Bergstation Sesselbahn [10.2141,47.4987]",
+      "Ofterschwanger Horn [10.2126,47.4937]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Ofterschwang (Talstation Sessellift) [10.2348,47.4979]",
+      "Bolsterlang [10.2339,47.4602]",
+      "Tiefenberg [10.2644,47.4882]",
+      "Sigishofen [10.2664,47.5038]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "346 Pkt",
+      "100 Pkt",
+      "59 Pkt",
+      "142 Pkt",
+      "215 Pkt",
+      "67 Pkt",
+      "63 Pkt",
+      "125 Pkt",
+      "168 Pkt",
+      "144 Pkt",
+      "148 Pkt",
+      "62 Pkt",
+      "90 Pkt"
+     ],
+     "summary": {
+      "length": 40457.370998244995,
+      "up": 910.197077281822,
+      "timeH": 3.0341986357809407
+     }
+    },
+    {
+     "name": "Ofterschwanger Horn – Route 2",
+     "templateId": "ofterschwanger-horn-route-2",
+     "templateVersion": 4,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Immenstadt [10.2190,47.5598]",
+      "Altmummen [10.2399,47.5495]",
+      "Ettensberg [10.2476,47.5438]",
+      "Gunzesried [10.2285,47.5229]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Bergstation Sesselbahn [10.2141,47.4987]",
+      "Ofterschwanger Horn [10.2126,47.4937]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Ofterschwang (Talstation Sessellift) [10.2348,47.4979]",
+      "Hüttenberg (Käse) [10.2463,47.5132]",
+      "Westerhofen [10.2543,47.5110]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "346 Pkt",
+      "100 Pkt",
+      "59 Pkt",
+      "142 Pkt",
+      "215 Pkt",
+      "67 Pkt",
+      "63 Pkt",
+      "125 Pkt",
+      "168 Pkt",
+      "130 Pkt",
+      "51 Pkt",
+      "112 Pkt"
+     ],
+     "summary": {
+      "length": 33963.41852304694,
+      "up": 818.0710459798718,
+      "timeH": 2.6071387550188714
+     }
+    },
+    {
+     "name": "Sonthofen – Schnitzelalm – Sonthofen",
+     "templateId": "hindelang-jochstrasse-schnitzelalm",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Waltener Straße [10.3030,47.5139]",
+      "Reckenberg [10.3344,47.5057]",
+      "Breiten [10.3279,47.5159]",
+      "Vorderhindelang [10.3500,47.5055]",
+      "Zillenbachstraße [10.3595,47.5061]",
+      "Schnitzelalm [10.3817,47.5075]",
+      "Alte Jochstraße [10.3920,47.5098]",
+      "Richard-Wagner-Straße [10.2837,47.5146]"
+     ],
+     "segments": [
+      "62 Pkt",
+      "100 Pkt",
+      "131 Pkt",
+      "196 Pkt",
+      "41 Pkt",
+      "71 Pkt",
+      "85 Pkt",
+      "310 Pkt"
+     ],
+     "summary": {
+      "length": 25543.991833828873,
+      "up": 666.1425559080784,
+      "timeH": 2.017357987144864
+     }
+    },
+    {
+     "name": "Lochbachtal – Balderschwang – Sibratsgfäll – Rückweg ②",
+     "templateId": "balderschwang-sibratsgfaell-rueck2",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Fischen [10.2722,47.4600]",
+      "Obermaiselstein [10.2375,47.4479]",
+      "Hirschsprung [10.2429,47.4350]",
+      "Lochbachtal [10.2179,47.4253]",
+      "Schelpenalpe [10.1039,47.4363]",
+      "Balderschwang [10.1043,47.4657]",
+      "Sibratsgfäll [10.0380,47.4268]",
+      "Hirschgund [10.0849,47.4027]",
+      "Rohrmoos [10.1673,47.4075]",
+      "Tiefenbach [10.2414,47.4200]",
+      "Obermaiselstein [10.2375,47.4479]",
+      "Fischen [10.2722,47.4600]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "300 Pkt",
+      "110 Pkt",
+      "97 Pkt",
+      "242 Pkt",
+      "552 Pkt",
+      "261 Pkt",
+      "335 Pkt",
+      "275 Pkt",
+      "198 Pkt",
+      "227 Pkt",
+      "160 Pkt",
+      "110 Pkt",
+      "290 Pkt"
+     ],
+     "summary": {
+      "length": 82741.06083239494,
+      "up": 1924.4194381941218,
+      "timeH": 6.275296861835438
+     }
+    },
+    {
+     "name": "Sonthofen – Oberjoch – Wertach – Immenstadt",
+     "templateId": "oberjoch-wertach-koenigsstraessle-immenstadt",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Bad Hindelang [10.3699,47.5063]",
+      "Schnitzelalm [10.3817,47.5075]",
+      "Oberjoch [10.4064,47.5164]",
+      "Unterjoch [10.4253,47.5445]",
+      "Wertach [10.4125,47.6031]",
+      "Königssträßle [10.3311,47.5406]",
+      "Burgberg im Allgäu [10.3036,47.5434]",
+      "Häuser [10.2688,47.5468]",
+      "Immenstadt [10.2190,47.5598]"
+     ],
+     "segments": [
+      "230 Pkt",
+      "42 Pkt",
+      "141 Pkt",
+      "197 Pkt",
+      "407 Pkt",
+      "345 Pkt",
+      "220 Pkt",
+      "241 Pkt",
+      "199 Pkt"
+     ],
+     "summary": {
+      "length": 49382.88266203875,
+      "up": 1093.414875777276,
+      "timeH": 3.684049550632244
+     }
+    },
+    {
+     "name": "Ofterschwanger Horn – Route 3",
+     "templateId": "ofterschwanger-horn-route-3",
+     "templateVersion": 4,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Immenstadt [10.2190,47.5598]",
+      "Altmummen [10.2399,47.5495]",
+      "Ettensberg [10.2476,47.5438]",
+      "Gunzesried [10.2285,47.5229]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Bergstation Sesselbahn [10.2141,47.4987]",
+      "Ofterschwanger Horn [10.2126,47.4937]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Ofterschwang (Talstation Sessellift) [10.2348,47.4979]",
+      "Bolsterlang [10.2339,47.4602]",
+      "Tiefenberg [10.2644,47.4882]",
+      "Schweineberg [10.2573,47.4953]",
+      "Sonnenalp [10.2568,47.4901]",
+      "Sigishofen [10.2664,47.5038]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "346 Pkt",
+      "100 Pkt",
+      "59 Pkt",
+      "142 Pkt",
+      "215 Pkt",
+      "67 Pkt",
+      "63 Pkt",
+      "125 Pkt",
+      "168 Pkt",
+      "144 Pkt",
+      "148 Pkt",
+      "57 Pkt",
+      "27 Pkt",
+      "106 Pkt",
+      "90 Pkt"
+     ],
+     "summary": {
+      "length": 43564.86937003679,
+      "up": 980.6934683571479,
+      "timeH": 3.2679028777875594
+     }
+    }
+   ]
+  },
+  {
+   "visit": "zweiter Besuch",
+   "ms": {
+    "domcontentloaded": 1558,
+    "mapCanvas": 3411,
+    "toursDone": 24259
+   },
+   "requests": 86,
+   "byHost": {
+    "thomasschnell-maker.github.io": {
+     "n": 37,
+     "kb": 0,
+     "failed": 0,
+     "ausSW": 37
+    },
+    "": {
+     "n": 2,
+     "kb": 0,
+     "failed": 0,
+     "ausSW": 0
+    },
+    "tiles.openfreemap.org": {
+     "n": 13,
+     "kb": 0,
+     "failed": 0,
+     "ausSW": 13
+    },
+    "s3.amazonaws.com": {
+     "n": 34,
+     "kb": 0,
+     "failed": 0,
+     "ausSW": 34
+    }
+   },
+   "slowest": [
+    "1513 ms https://s3.amazonaws.com/elevation-tiles-prod/terrarium/12/2165/1434.png",
+    "1510 ms https://s3.amazonaws.com/elevation-tiles-prod/terrarium/11/1083/717.png",
+    "1476 ms https://s3.amazonaws.com/elevation-tiles-prod/terrarium/12/2165/1433.png",
+    "1475 ms https://s3.amazonaws.com/elevation-tiles-prod/terrarium/5/16/11.png",
+    "1475 ms https://s3.amazonaws.com/elevation-tiles-prod/terrarium/10/541/358.png",
+    "1474 ms https://s3.amazonaws.com/elevation-tiles-prod/terrarium/11/1082/717.png",
+    "759 ms https://tiles.openfreemap.org/sprites/ofm_f384/ofm@2x.png",
+    "87 ms https://thomasschnell-maker.github.io/tourenatlas/",
+    "79 ms https://thomasschnell-maker.github.io/tourenatlas/data/cells/index.json",
+    "68 ms https://thomasschnell-maker.github.io/tourenatlas/data/touren.json",
+    "35 ms https://thomasschnell-maker.github.io/tourenatlas/js/packages/poster-core.js",
+    "35 ms https://thomasschnell-maker.github.io/tourenatlas/js/packages/poster.js"
+   ],
+   "failed": [],
+   "tours": [
+    {
+     "name": "Lochbachtal – Balderschwang – Sibratsgfäll – Rückweg ①",
+     "templateId": "balderschwang-sibratsgfaell-rueck1",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Fischen [10.2722,47.4600]",
+      "Obermaiselstein [10.2375,47.4479]",
+      "Hirschsprung [10.2429,47.4350]",
+      "Lochbachtal [10.2179,47.4253]",
+      "Schelpenalpe [10.1039,47.4363]",
+      "Balderschwang [10.1043,47.4657]",
+      "Sibratsgfäll [10.0380,47.4268]",
+      "Hirschgund [10.0849,47.4027]",
+      "Rohrmoos [10.1673,47.4075]",
+      "Tiefenbach [10.2414,47.4200]",
+      "Oberstdorf [10.2774,47.4104]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "300 Pkt",
+      "110 Pkt",
+      "97 Pkt",
+      "242 Pkt",
+      "552 Pkt",
+      "261 Pkt",
+      "335 Pkt",
+      "275 Pkt",
+      "198 Pkt",
+      "227 Pkt",
+      "273 Pkt",
+      "478 Pkt"
+     ],
+     "summary": {
+      "length": 86798.56238925783,
+      "up": 1874.2482513996113,
+      "timeH": 6.422426176573571
+     }
+    },
+    {
+     "name": "Ofterschwanger Horn – Route 1",
+     "templateId": "ofterschwanger-horn-route-1",
+     "templateVersion": 4,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Immenstadt [10.2190,47.5598]",
+      "Altmummen [10.2399,47.5495]",
+      "Ettensberg [10.2476,47.5438]",
+      "Gunzesried [10.2285,47.5229]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Bergstation Sesselbahn [10.2141,47.4987]",
+      "Ofterschwanger Horn [10.2126,47.4937]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Ofterschwang (Talstation Sessellift) [10.2348,47.4979]",
+      "Bolsterlang [10.2339,47.4602]",
+      "Tiefenberg [10.2644,47.4882]",
+      "Sigishofen [10.2664,47.5038]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "346 Pkt",
+      "100 Pkt",
+      "59 Pkt",
+      "142 Pkt",
+      "215 Pkt",
+      "67 Pkt",
+      "63 Pkt",
+      "125 Pkt",
+      "168 Pkt",
+      "144 Pkt",
+      "148 Pkt",
+      "62 Pkt",
+      "90 Pkt"
+     ],
+     "summary": {
+      "length": 40457.370998244995,
+      "up": 910.197077281822,
+      "timeH": 3.0341986357809407
+     }
+    },
+    {
+     "name": "Ofterschwanger Horn – Route 2",
+     "templateId": "ofterschwanger-horn-route-2",
+     "templateVersion": 4,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Immenstadt [10.2190,47.5598]",
+      "Altmummen [10.2399,47.5495]",
+      "Ettensberg [10.2476,47.5438]",
+      "Gunzesried [10.2285,47.5229]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Bergstation Sesselbahn [10.2141,47.4987]",
+      "Ofterschwanger Horn [10.2126,47.4937]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Ofterschwang (Talstation Sessellift) [10.2348,47.4979]",
+      "Hüttenberg (Käse) [10.2463,47.5132]",
+      "Westerhofen [10.2543,47.5110]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "346 Pkt",
+      "100 Pkt",
+      "59 Pkt",
+      "142 Pkt",
+      "215 Pkt",
+      "67 Pkt",
+      "63 Pkt",
+      "125 Pkt",
+      "168 Pkt",
+      "130 Pkt",
+      "51 Pkt",
+      "112 Pkt"
+     ],
+     "summary": {
+      "length": 33963.41852304694,
+      "up": 818.0710459798718,
+      "timeH": 2.6071387550188714
+     }
+    },
+    {
+     "name": "Sonthofen – Schnitzelalm – Sonthofen",
+     "templateId": "hindelang-jochstrasse-schnitzelalm",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Waltener Straße [10.3030,47.5139]",
+      "Reckenberg [10.3344,47.5057]",
+      "Breiten [10.3279,47.5159]",
+      "Vorderhindelang [10.3500,47.5055]",
+      "Zillenbachstraße [10.3595,47.5061]",
+      "Schnitzelalm [10.3817,47.5075]",
+      "Alte Jochstraße [10.3920,47.5098]",
+      "Richard-Wagner-Straße [10.2837,47.5146]"
+     ],
+     "segments": [
+      "62 Pkt",
+      "100 Pkt",
+      "131 Pkt",
+      "196 Pkt",
+      "41 Pkt",
+      "71 Pkt",
+      "85 Pkt",
+      "310 Pkt"
+     ],
+     "summary": {
+      "length": 25543.991833828873,
+      "up": 666.1425559080784,
+      "timeH": 2.017357987144864
+     }
+    },
+    {
+     "name": "Lochbachtal – Balderschwang – Sibratsgfäll – Rückweg ②",
+     "templateId": "balderschwang-sibratsgfaell-rueck2",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Fischen [10.2722,47.4600]",
+      "Obermaiselstein [10.2375,47.4479]",
+      "Hirschsprung [10.2429,47.4350]",
+      "Lochbachtal [10.2179,47.4253]",
+      "Schelpenalpe [10.1039,47.4363]",
+      "Balderschwang [10.1043,47.4657]",
+      "Sibratsgfäll [10.0380,47.4268]",
+      "Hirschgund [10.0849,47.4027]",
+      "Rohrmoos [10.1673,47.4075]",
+      "Tiefenbach [10.2414,47.4200]",
+      "Obermaiselstein [10.2375,47.4479]",
+      "Fischen [10.2722,47.4600]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "300 Pkt",
+      "110 Pkt",
+      "97 Pkt",
+      "242 Pkt",
+      "552 Pkt",
+      "261 Pkt",
+      "335 Pkt",
+      "275 Pkt",
+      "198 Pkt",
+      "227 Pkt",
+      "160 Pkt",
+      "110 Pkt",
+      "290 Pkt"
+     ],
+     "summary": {
+      "length": 82741.06083239494,
+      "up": 1924.4194381941218,
+      "timeH": 6.275296861835438
+     }
+    },
+    {
+     "name": "Sonthofen – Oberjoch – Wertach – Immenstadt",
+     "templateId": "oberjoch-wertach-koenigsstraessle-immenstadt",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Bad Hindelang [10.3699,47.5063]",
+      "Schnitzelalm [10.3817,47.5075]",
+      "Oberjoch [10.4064,47.5164]",
+      "Unterjoch [10.4253,47.5445]",
+      "Wertach [10.4125,47.6031]",
+      "Königssträßle [10.3311,47.5406]",
+      "Burgberg im Allgäu [10.3036,47.5434]",
+      "Häuser [10.2688,47.5468]",
+      "Immenstadt [10.2190,47.5598]"
+     ],
+     "segments": [
+      "230 Pkt",
+      "42 Pkt",
+      "141 Pkt",
+      "197 Pkt",
+      "407 Pkt",
+      "345 Pkt",
+      "220 Pkt",
+      "241 Pkt",
+      "199 Pkt"
+     ],
+     "summary": {
+      "length": 49382.88266203875,
+      "up": 1093.414875777276,
+      "timeH": 3.684049550632244
+     }
+    },
+    {
+     "name": "Ofterschwanger Horn – Route 3",
+     "templateId": "ofterschwanger-horn-route-3",
+     "templateVersion": 4,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Immenstadt [10.2190,47.5598]",
+      "Altmummen [10.2399,47.5495]",
+      "Ettensberg [10.2476,47.5438]",
+      "Gunzesried [10.2285,47.5229]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Bergstation Sesselbahn [10.2141,47.4987]",
+      "Ofterschwanger Horn [10.2126,47.4937]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Ofterschwang (Talstation Sessellift) [10.2348,47.4979]",
+      "Bolsterlang [10.2339,47.4602]",
+      "Tiefenberg [10.2644,47.4882]",
+      "Schweineberg [10.2573,47.4953]",
+      "Sonnenalp [10.2568,47.4901]",
+      "Sigishofen [10.2664,47.5038]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "346 Pkt",
+      "100 Pkt",
+      "59 Pkt",
+      "142 Pkt",
+      "215 Pkt",
+      "67 Pkt",
+      "63 Pkt",
+      "125 Pkt",
+      "168 Pkt",
+      "144 Pkt",
+      "148 Pkt",
+      "57 Pkt",
+      "27 Pkt",
+      "106 Pkt",
+      "90 Pkt"
+     ],
+     "summary": {
+      "length": 43564.86937003679,
+      "up": 980.6934683571479,
+      "timeH": 3.2679028777875594
+     }
+    }
+   ]
+  }
+ ],
+ "toasts": [
+  "erster Besuch 3s: Trage „Ofterschwanger Horn – Route 1“ ein (1/7) …",
+  "erster Besuch 8s: Trage „Ofterschwanger Horn – Route 1“ ein (1/7) …",
+  "erster Besuch 15s: Trage „Ofterschwanger Horn – Route 3“ ein (3/7) …",
+  "erster Besuch 35s: Trage „Sonthofen – Schnitzelalm – Sonthofen“ ein (4/7) …",
+  "erster Besuch 41s: Trage „Sonthofen – Oberjoch – Wertach – Immenstadt“ ein (5/7) …",
+  "erster Besuch 49s: 7 Tour(en) eingetragen",
+  "zweiter Besuch 3s: ",
+  "zweiter Besuch 8s: ",
+  "zweiter Besuch 15s: ",
+  "zweiter Besuch 24s: "
+ ],
+ "console": [],
+ "errors": [],
+ "expectedTemplates": 7,
+ "regionIndex": {
+  "gen": "934ee37b3056",
+  "cells": 1022,
+  "holes": 0,
+  "osmBase": "2026-10-24T14:27:06Z",
+  "osmLatest": "2026-10-31T20:21:06Z",
+  "sample": 200
+ }
+}
