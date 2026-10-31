@@ -1,0 +1,1284 @@
+[
+ {
+  "id": "ofterschwanger-horn-route-1",
+  "version": 4,
+  "group": "Ofterschwanger Horn",
+  "variant": "Route 1 – über Bolsterlang, Tiefenberg, Sigishofen",
+  "name": "Ofterschwanger Horn – Route 1",
+  "activity": "ebike",
+  "color": "#d6007e",
+  "note": "Laut Zettel: SF – Illerdamm – (Blaichach) Immenstadt – Kreisel links (Umfahrung) – Kreisel links – R. Blaichach – nach ca. 600 m rechts Straße Altmummen – Ettensberg – Ortsmitte rechts Gunzesried – nach Brotzeitstelle (rechts) – Abz. Alpe Derb – Gunzesried (Kirche) rechts – R. Blaichach/Bihlerdorf – Anhöhe rechts Abz. Allgäuer Berghof – Teerstraße bis Bergstation Sesselbahn – Teerstraße links folgen – nach Hütte – Aufstieg Ofterschwanger Horn – Rückweg Straße folgen – Abzw. rechts – Gabelung rechts – Bergstation – Allgäuer Berghof – rechts – Schotterweg Ofterschwang – Talstation Sessellift. Route 1: Ofterschwang – Bolsterlang – Abzw. R. D… (unleserlich, bei Sport Speiser) – Straße folgen – n. Abz. Tiefenberg – Straße folgen – rechts halten (*) – Bushaltestelle links – R. Sigishofen – B19 – SF.",
+  "stations": [
+   {
+    "name": "Sonthofen",
+    "lngLat": [
+     10.28193,
+     47.51354
+    ],
+    "source": {
+     "query": "Sonthofen",
+     "osm": "node/26315938",
+     "type": "place/town",
+     "display": "Sonthofen, Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Immenstadt",
+    "lngLat": [
+     10.21905,
+     47.55979
+    ],
+    "source": {
+     "query": "Immenstadt im Allgäu",
+     "osm": "node/58800249",
+     "type": "place/town",
+     "display": "Immenstadt im Allgäu, Landkreis Oberallgäu, Bayern, 87509, Deutschland"
+    }
+   },
+   {
+    "name": "Altmummen",
+    "lngLat": [
+     10.23991,
+     47.54946
+    ],
+    "source": {
+     "query": "Altmummen",
+     "osm": "node/248058183",
+     "type": "place/hamlet",
+     "display": "Altmummen, Blaichach, Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+    }
+   },
+   {
+    "name": "Ettensberg",
+    "lngLat": [
+     10.24761,
+     47.54381
+    ],
+    "source": {
+     "query": "Ettensberg, Blaichach",
+     "osm": "node/58800246",
+     "type": "place/suburb",
+     "display": "Ettensberg, Blaichach, Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+    }
+   },
+   {
+    "name": "Gunzesried",
+    "lngLat": [
+     10.22845,
+     47.52292
+    ],
+    "source": {
+     "query": "Gunzesried",
+     "osm": "node/242567021",
+     "type": "place/village",
+     "display": "Gunzesried, Blaichach, Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+    }
+   },
+   {
+    "name": "Allgäuer Berghof",
+    "lngLat": [
+     10.22145,
+     47.50745
+    ],
+    "source": {
+     "query": "Allgäuer Berghof",
+     "osm": "node/381139750",
+     "type": "tourism/hotel",
+     "display": "Allgäuer Berghof, 2, Alpe Eck, Gunzesried, Blaichach, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+    }
+   },
+   {
+    "name": "Bergstation Sesselbahn",
+    "lngLat": [
+     10.21408,
+     47.49867
+    ],
+    "source": {
+     "query": "Bergstation Weltcup-Express",
+     "osm": "way/180145368",
+     "type": "aerialway/station",
+     "display": "Weltcup-Express Bergstation, Alpe Eck, Ofterschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+    }
+   },
+   {
+    "name": "Ofterschwanger Horn",
+    "lngLat": [
+     10.21257,
+     47.49369
+    ],
+    "source": {
+     "query": "Ofterschwanger Horn",
+     "osm": "node/11475916813",
+     "type": "natural/peak",
+     "display": "Ofterschwanger Horn, Ofterschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Allgäuer Berghof",
+    "lngLat": [
+     10.22145,
+     47.50745
+    ],
+    "source": {
+     "query": "Allgäuer Berghof",
+     "osm": "node/381139750",
+     "type": "tourism/hotel",
+     "display": "Allgäuer Berghof, 2, Alpe Eck, Gunzesried, Blaichach, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+    }
+   },
+   {
+    "name": "Ofterschwang (Talstation Sessellift)",
+    "lngLat": [
+     10.23477,
+     47.49787
+    ],
+    "source": {
+     "query": "Talstation Weltcup-Express",
+     "osm": "way/280667252",
+     "type": "amenity/parking",
+     "display": "Parkplatz Talstation Weltcup-Express - Ofterschwang, Panoramaweg, Muderbolz, Ofterschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Bolsterlang",
+    "lngLat": [
+     10.23385,
+     47.46022
+    ],
+    "source": {
+     "query": "Bolsterlang",
+     "osm": "node/58800133",
+     "type": "place/village",
+     "display": "Bolsterlang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87538, Deutschland"
+    }
+   },
+   {
+    "name": "Tiefenberg",
+    "lngLat": [
+     10.26441,
+     47.4882
+    ],
+    "source": {
+     "query": "Tiefenberg",
+     "osm": "node/308787996",
+     "type": "place/village",
+     "display": "Tiefenberg, Ofterschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Sigishofen",
+    "lngLat": [
+     10.26639,
+     47.50384
+    ],
+    "source": {
+     "query": "Sigishofen",
+     "osm": "node/9909031302",
+     "type": "place/village",
+     "display": "Sigishofen, Ofterschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Sonthofen",
+    "lngLat": [
+     10.28193,
+     47.51354
+    ],
+    "source": {
+     "query": "Sonthofen",
+     "osm": "node/26315938",
+     "type": "place/town",
+     "display": "Sonthofen, Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   }
+  ],
+  "missing": [],
+  "landmarks": [
+   {
+    "name": "Abzw. Alpe Derb",
+    "lngLat": [
+     10.2372436,
+     47.5362286
+    ],
+    "display": "Sennalpe Derb, Schwanden, Blaichach, Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+   }
+  ]
+ },
+ {
+  "id": "ofterschwanger-horn-route-2",
+  "version": 4,
+  "group": "Ofterschwanger Horn",
+  "variant": "Route 2 (kürzer) – über Hüttenberg, Westerhofen",
+  "name": "Ofterschwanger Horn – Route 2",
+  "activity": "ebike",
+  "color": "#0a6cff",
+  "note": "Hinweg wie Route 1. Route 2 (kürzer): Ofterschwang – R. Westerhofen links – Kabelweg(?) Hüttenberg – Käse – Bergabfahrt, Westerhofen rechts – Hauptstraße links – Bauernhof (Feldweg links) – Illersiedlung – SF.",
+  "stations": [
+   {
+    "name": "Sonthofen",
+    "lngLat": [
+     10.28193,
+     47.51354
+    ],
+    "source": {
+     "query": "Sonthofen",
+     "osm": "node/26315938",
+     "type": "place/town",
+     "display": "Sonthofen, Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Immenstadt",
+    "lngLat": [
+     10.21905,
+     47.55979
+    ],
+    "source": {
+     "query": "Immenstadt im Allgäu",
+     "osm": "node/58800249",
+     "type": "place/town",
+     "display": "Immenstadt im Allgäu, Landkreis Oberallgäu, Bayern, 87509, Deutschland"
+    }
+   },
+   {
+    "name": "Altmummen",
+    "lngLat": [
+     10.23991,
+     47.54946
+    ],
+    "source": {
+     "query": "Altmummen",
+     "osm": "node/248058183",
+     "type": "place/hamlet",
+     "display": "Altmummen, Blaichach, Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+    }
+   },
+   {
+    "name": "Ettensberg",
+    "lngLat": [
+     10.24761,
+     47.54381
+    ],
+    "source": {
+     "query": "Ettensberg, Blaichach",
+     "osm": "node/58800246",
+     "type": "place/suburb",
+     "display": "Ettensberg, Blaichach, Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+    }
+   },
+   {
+    "name": "Gunzesried",
+    "lngLat": [
+     10.22845,
+     47.52292
+    ],
+    "source": {
+     "query": "Gunzesried",
+     "osm": "node/242567021",
+     "type": "place/village",
+     "display": "Gunzesried, Blaichach, Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+    }
+   },
+   {
+    "name": "Allgäuer Berghof",
+    "lngLat": [
+     10.22145,
+     47.50745
+    ],
+    "source": {
+     "query": "Allgäuer Berghof",
+     "osm": "node/381139750",
+     "type": "tourism/hotel",
+     "display": "Allgäuer Berghof, 2, Alpe Eck, Gunzesried, Blaichach, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+    }
+   },
+   {
+    "name": "Bergstation Sesselbahn",
+    "lngLat": [
+     10.21408,
+     47.49867
+    ],
+    "source": {
+     "query": "Bergstation Weltcup-Express",
+     "osm": "way/180145368",
+     "type": "aerialway/station",
+     "display": "Weltcup-Express Bergstation, Alpe Eck, Ofterschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+    }
+   },
+   {
+    "name": "Ofterschwanger Horn",
+    "lngLat": [
+     10.21257,
+     47.49369
+    ],
+    "source": {
+     "query": "Ofterschwanger Horn",
+     "osm": "node/11475916813",
+     "type": "natural/peak",
+     "display": "Ofterschwanger Horn, Ofterschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Allgäuer Berghof",
+    "lngLat": [
+     10.22145,
+     47.50745
+    ],
+    "source": {
+     "query": "Allgäuer Berghof",
+     "osm": "node/381139750",
+     "type": "tourism/hotel",
+     "display": "Allgäuer Berghof, 2, Alpe Eck, Gunzesried, Blaichach, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+    }
+   },
+   {
+    "name": "Ofterschwang (Talstation Sessellift)",
+    "lngLat": [
+     10.23477,
+     47.49787
+    ],
+    "source": {
+     "query": "Talstation Weltcup-Express",
+     "osm": "way/280667252",
+     "type": "amenity/parking",
+     "display": "Parkplatz Talstation Weltcup-Express - Ofterschwang, Panoramaweg, Muderbolz, Ofterschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Hüttenberg (Käse)",
+    "lngLat": [
+     10.24627,
+     47.51316
+    ],
+    "source": {
+     "query": "Hüttenberg, Ofterschwang",
+     "osm": "node/303919042",
+     "type": "place/hamlet",
+     "display": "Hüttenberg, Westerhofen, Ofterschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Westerhofen",
+    "lngLat": [
+     10.25427,
+     47.511
+    ],
+    "source": {
+     "query": "Westerhofen, Ofterschwang",
+     "osm": "node/210856371",
+     "type": "place/village",
+     "display": "Westerhofen, Ofterschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Sonthofen",
+    "lngLat": [
+     10.28193,
+     47.51354
+    ],
+    "source": {
+     "query": "Sonthofen",
+     "osm": "node/26315938",
+     "type": "place/town",
+     "display": "Sonthofen, Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   }
+  ],
+  "missing": [],
+  "landmarks": [
+   {
+    "name": "Abzw. Alpe Derb",
+    "lngLat": [
+     10.2372436,
+     47.5362286
+    ],
+    "display": "Sennalpe Derb, Schwanden, Blaichach, Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+   }
+  ]
+ },
+ {
+  "id": "ofterschwanger-horn-route-3",
+  "version": 4,
+  "group": "Ofterschwanger Horn",
+  "variant": "Route 3 – ab Route 1 (*) über Schweineberg, Sonnenalp",
+  "name": "Ofterschwanger Horn – Route 3",
+  "activity": "ebike",
+  "color": "#ff7a00",
+  "note": "Hinweg wie Route 1, Rückweg wie Route 1 bis zum * (nach Tiefenberg). Route 3: * geradeaus – links – links (Berg) – rechts Straße nach Schweineberg – Sonnenalp – Sennerei – Einmündung zurück – geradeaus Hotel Freistil – Sigishofen (rechts B19) – SF.",
+  "stations": [
+   {
+    "name": "Sonthofen",
+    "lngLat": [
+     10.28193,
+     47.51354
+    ],
+    "source": {
+     "query": "Sonthofen",
+     "osm": "node/26315938",
+     "type": "place/town",
+     "display": "Sonthofen, Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Immenstadt",
+    "lngLat": [
+     10.21905,
+     47.55979
+    ],
+    "source": {
+     "query": "Immenstadt im Allgäu",
+     "osm": "node/58800249",
+     "type": "place/town",
+     "display": "Immenstadt im Allgäu, Landkreis Oberallgäu, Bayern, 87509, Deutschland"
+    }
+   },
+   {
+    "name": "Altmummen",
+    "lngLat": [
+     10.23991,
+     47.54946
+    ],
+    "source": {
+     "query": "Altmummen",
+     "osm": "node/248058183",
+     "type": "place/hamlet",
+     "display": "Altmummen, Blaichach, Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+    }
+   },
+   {
+    "name": "Ettensberg",
+    "lngLat": [
+     10.24761,
+     47.54381
+    ],
+    "source": {
+     "query": "Ettensberg, Blaichach",
+     "osm": "node/58800246",
+     "type": "place/suburb",
+     "display": "Ettensberg, Blaichach, Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+    }
+   },
+   {
+    "name": "Gunzesried",
+    "lngLat": [
+     10.22845,
+     47.52292
+    ],
+    "source": {
+     "query": "Gunzesried",
+     "osm": "node/242567021",
+     "type": "place/village",
+     "display": "Gunzesried, Blaichach, Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+    }
+   },
+   {
+    "name": "Allgäuer Berghof",
+    "lngLat": [
+     10.22145,
+     47.50745
+    ],
+    "source": {
+     "query": "Allgäuer Berghof",
+     "osm": "node/381139750",
+     "type": "tourism/hotel",
+     "display": "Allgäuer Berghof, 2, Alpe Eck, Gunzesried, Blaichach, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+    }
+   },
+   {
+    "name": "Bergstation Sesselbahn",
+    "lngLat": [
+     10.21408,
+     47.49867
+    ],
+    "source": {
+     "query": "Bergstation Weltcup-Express",
+     "osm": "way/180145368",
+     "type": "aerialway/station",
+     "display": "Weltcup-Express Bergstation, Alpe Eck, Ofterschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+    }
+   },
+   {
+    "name": "Ofterschwanger Horn",
+    "lngLat": [
+     10.21257,
+     47.49369
+    ],
+    "source": {
+     "query": "Ofterschwanger Horn",
+     "osm": "node/11475916813",
+     "type": "natural/peak",
+     "display": "Ofterschwanger Horn, Ofterschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Allgäuer Berghof",
+    "lngLat": [
+     10.22145,
+     47.50745
+    ],
+    "source": {
+     "query": "Allgäuer Berghof",
+     "osm": "node/381139750",
+     "type": "tourism/hotel",
+     "display": "Allgäuer Berghof, 2, Alpe Eck, Gunzesried, Blaichach, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+    }
+   },
+   {
+    "name": "Ofterschwang (Talstation Sessellift)",
+    "lngLat": [
+     10.23477,
+     47.49787
+    ],
+    "source": {
+     "query": "Talstation Weltcup-Express",
+     "osm": "way/280667252",
+     "type": "amenity/parking",
+     "display": "Parkplatz Talstation Weltcup-Express - Ofterschwang, Panoramaweg, Muderbolz, Ofterschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Bolsterlang",
+    "lngLat": [
+     10.23385,
+     47.46022
+    ],
+    "source": {
+     "query": "Bolsterlang",
+     "osm": "node/58800133",
+     "type": "place/village",
+     "display": "Bolsterlang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87538, Deutschland"
+    }
+   },
+   {
+    "name": "Tiefenberg",
+    "lngLat": [
+     10.26441,
+     47.4882
+    ],
+    "source": {
+     "query": "Tiefenberg",
+     "osm": "node/308787996",
+     "type": "place/village",
+     "display": "Tiefenberg, Ofterschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Schweineberg",
+    "lngLat": [
+     10.25734,
+     47.4953
+    ],
+    "source": {
+     "query": "Schweineberg, Ofterschwang",
+     "osm": "node/308787938",
+     "type": "place/hamlet",
+     "display": "Schweineberg, Tiefenberg, Ofterschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Sonnenalp",
+    "lngLat": [
+     10.25682,
+     47.49009
+    ],
+    "source": {
+     "query": "Hotel Sonnenalp",
+     "osm": "node/308874558",
+     "type": "tourism/hotel",
+     "display": "Sonnenalp, Schweineberg, Tiefenberg, Ofterschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Sigishofen",
+    "lngLat": [
+     10.26639,
+     47.50384
+    ],
+    "source": {
+     "query": "Sigishofen",
+     "osm": "node/9909031302",
+     "type": "place/village",
+     "display": "Sigishofen, Ofterschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Sonthofen",
+    "lngLat": [
+     10.28193,
+     47.51354
+    ],
+    "source": {
+     "query": "Sonthofen",
+     "osm": "node/26315938",
+     "type": "place/town",
+     "display": "Sonthofen, Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   }
+  ],
+  "missing": [],
+  "landmarks": [
+   {
+    "name": "Abzw. Alpe Derb",
+    "lngLat": [
+     10.2372436,
+     47.5362286
+    ],
+    "display": "Sennalpe Derb, Schwanden, Blaichach, Landkreis Oberallgäu, Bayern, 87544, Deutschland"
+   }
+  ]
+ },
+ {
+  "id": "hindelang-jochstrasse-schnitzelalm",
+  "version": 1,
+  "group": "Bad Hindelang / Jochstraße",
+  "variant": "Schnitzelalm über Reckenberg, Breiten, Vorderhindelang",
+  "name": "Sonthofen – Schnitzelalm – Sonthofen",
+  "activity": "ebike",
+  "color": "#00a86b",
+  "note": "Aus der Google-Maps-Fahrradroute (2 h 43): Start Standort (Sonthofen) – Waltener Straße – Reckenberg – Breiten – Vorderhindelang – Zillenbachstraße – Schnitzelalm (Jochstraße 37) – Alte Jochstraße – Richard-Wagner-Straße (Sonthofen). Strassen sind als Strassenmitte eingetragen.",
+  "stations": [
+   {
+    "name": "Sonthofen",
+    "lngLat": [
+     10.28193,
+     47.51354
+    ],
+    "source": {
+     "query": "Sonthofen",
+     "osm": "node/26315938",
+     "type": "place/town",
+     "display": "Sonthofen, Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Waltener Straße",
+    "lngLat": [
+     10.30297,
+     47.51393
+    ],
+    "source": {
+     "query": "Waltener Straße, Sonthofen",
+     "osm": "way/148526818",
+     "type": "highway/tertiary",
+     "display": "Waltener Straße, Walten, Staig, Sonthofen, Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Reckenberg",
+    "lngLat": [
+     10.33436,
+     47.50571
+    ],
+    "source": {
+     "query": "Reckenberg, Bad Hindelang",
+     "osm": "node/364083869",
+     "type": "place/hamlet",
+     "display": "Reckenberg, Vorderhindelang, Bad Hindelang, Landkreis Oberallgäu, Bayern, 87541, Deutschland"
+    }
+   },
+   {
+    "name": "Breiten",
+    "lngLat": [
+     10.32795,
+     47.51585
+    ],
+    "source": {
+     "query": "Breiten, Sonthofen",
+     "osm": "node/420134293",
+     "type": "place/hamlet",
+     "display": "Breiten, Tiefenbach, Sonthofen, Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Vorderhindelang",
+    "lngLat": [
+     10.35002,
+     47.50548
+    ],
+    "source": {
+     "query": "Vorderhindelang",
+     "osm": "node/60197957",
+     "type": "place/village",
+     "display": "Vorderhindelang, Bad Hindelang, Landkreis Oberallgäu, Bayern, 87541, Deutschland"
+    }
+   },
+   {
+    "name": "Zillenbachstraße",
+    "lngLat": [
+     10.35946,
+     47.50611
+    ],
+    "source": {
+     "query": "Zillenbachstraße, Bad Hindelang",
+     "osm": "way/120861464",
+     "type": "highway/residential",
+     "display": "Zillenbachstraße, Gailenberg, Vorderhindelang, Bad Hindelang, Landkreis Oberallgäu, Bayern, 87541, Deutschland"
+    }
+   },
+   {
+    "name": "Schnitzelalm",
+    "lngLat": [
+     10.38169,
+     47.50751
+    ],
+    "source": {
+     "query": "Jochstraße 37, Bad Hindelang",
+     "osm": "way/136872701",
+     "type": "amenity/restaurant",
+     "display": "Schnitzel Alm, 37, Jochstraße, Bad Hindelang, Landkreis Oberallgäu, Bayern, 87541, Deutschland"
+    }
+   },
+   {
+    "name": "Alte Jochstraße",
+    "lngLat": [
+     10.39196,
+     47.50981
+    ],
+    "source": {
+     "query": "Alte Jochstraße, Bad Hindelang",
+     "osm": "way/788298630",
+     "type": "highway/track",
+     "display": "Alte Jochstraße, Bad Oberdorf, Bad Hindelang, Landkreis Oberallgäu, Bayern, 87541, Deutschland"
+    }
+   },
+   {
+    "name": "Richard-Wagner-Straße",
+    "lngLat": [
+     10.28366,
+     47.51459
+    ],
+    "source": {
+     "query": "Richard-Wagner-Straße, Sonthofen",
+     "osm": "way/38864397",
+     "type": "highway/tertiary",
+     "display": "Richard-Wagner-Straße, Illersiedlung, Sonthofen, Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   }
+  ],
+  "missing": [],
+  "landmarks": []
+ },
+ {
+  "id": "oberjoch-wertach-koenigsstraessle-immenstadt",
+  "version": 1,
+  "group": "Oberjoch / Wertach",
+  "variant": "Schnitzelalm – Oberjoch – Unterjoch – Wertach – Königssträßle – Immenstadt",
+  "name": "Sonthofen – Oberjoch – Wertach – Immenstadt",
+  "activity": "ebike",
+  "color": "#8e44ff",
+  "note": "Aus der Google-Maps-Fahrradroute (3 h 21): Start Standort (angenommen Sonthofen) – Bad Hindelang – Schnitzelalm (Jochstraße 37) – Oberjoch – Unterjoch – Wertach – Königssträßle (Burgberg) – Burgberg im Allgäu – Häuser – Immenstadt im Allgäu (Ziel).",
+  "stations": [
+   {
+    "name": "Sonthofen",
+    "lngLat": [
+     10.28193,
+     47.51354
+    ],
+    "source": {
+     "query": "Sonthofen",
+     "osm": "node/26315938",
+     "type": "place/town",
+     "display": "Sonthofen, Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Bad Hindelang",
+    "lngLat": [
+     10.36993,
+     47.50629
+    ],
+    "source": {
+     "query": "Bad Hindelang",
+     "osm": "node/21635999",
+     "type": "place/town",
+     "display": "Bad Hindelang, Landkreis Oberallgäu, Bayern, 87541, Deutschland"
+    }
+   },
+   {
+    "name": "Schnitzelalm",
+    "lngLat": [
+     10.38169,
+     47.50751
+    ],
+    "source": {
+     "query": "Jochstraße 37, Bad Hindelang",
+     "osm": "way/136872701",
+     "type": "amenity/restaurant",
+     "display": "Schnitzel Alm, 37, Jochstraße, Bad Hindelang, Landkreis Oberallgäu, Bayern, 87541, Deutschland"
+    }
+   },
+   {
+    "name": "Oberjoch",
+    "lngLat": [
+     10.40638,
+     47.51636
+    ],
+    "source": {
+     "query": "Oberjoch",
+     "osm": "node/60199021",
+     "type": "place/village",
+     "display": "Oberjoch, Bad Hindelang, Landkreis Oberallgäu, Bayern, 87541, Deutschland"
+    }
+   },
+   {
+    "name": "Unterjoch",
+    "lngLat": [
+     10.42527,
+     47.54451
+    ],
+    "source": {
+     "query": "Unterjoch",
+     "osm": "node/5446635461",
+     "type": "place/village",
+     "display": "Unterjoch, Bad Hindelang, Landkreis Oberallgäu, Bayern, 87541, Deutschland"
+    }
+   },
+   {
+    "name": "Wertach",
+    "lngLat": [
+     10.4125,
+     47.60312
+    ],
+    "source": {
+     "query": "Wertach",
+     "osm": "relation/958081",
+     "type": "boundary/administrative",
+     "display": "Wertach, Landkreis Oberallgäu, Bayern, 87497, Deutschland"
+    }
+   },
+   {
+    "name": "Königssträßle",
+    "lngLat": [
+     10.3311,
+     47.54064
+    ],
+    "source": {
+     "query": "Königssträßle, Burgberg im Allgäu",
+     "osm": "way/122929133",
+     "type": "highway/track",
+     "display": "Königssträßle, Burgberg im Allgäu, Landkreis Oberallgäu, Bayern, 87545, Deutschland"
+    }
+   },
+   {
+    "name": "Burgberg im Allgäu",
+    "lngLat": [
+     10.3036,
+     47.5434
+    ],
+    "source": {
+     "query": "Burgberg im Allgäu",
+     "osm": "relation/957861",
+     "type": "boundary/administrative",
+     "display": "Burgberg im Allgäu, Landkreis Oberallgäu, Bayern, 87545, Deutschland"
+    }
+   },
+   {
+    "name": "Häuser",
+    "lngLat": [
+     10.26878,
+     47.54684
+    ],
+    "source": {
+     "query": "Häuser, Burgberg im Allgäu",
+     "osm": "node/65374691",
+     "type": "place/hamlet",
+     "display": "Häuser, Burgberg, Burgberg im Allgäu, Landkreis Oberallgäu, Bayern, 87545, Deutschland"
+    }
+   },
+   {
+    "name": "Immenstadt",
+    "lngLat": [
+     10.21905,
+     47.55979
+    ],
+    "source": {
+     "query": "Immenstadt im Allgäu",
+     "osm": "node/58800249",
+     "type": "place/town",
+     "display": "Immenstadt im Allgäu, Landkreis Oberallgäu, Bayern, 87509, Deutschland"
+    }
+   }
+  ],
+  "missing": [],
+  "landmarks": []
+ },
+ {
+  "id": "balderschwang-sibratsgfaell-rueck1",
+  "version": 1,
+  "group": "Balderschwang / Sibratsgfäll",
+  "variant": "Rückweg ① über Oberstdorf und Illerradweg",
+  "name": "Lochbachtal – Balderschwang – Sibratsgfäll – Rückweg ①",
+  "activity": "ebike",
+  "color": "#e4002b",
+  "note": "Laut Zettel: SF – Fischen (Ort) – Berg (Ampel) im Ort R. Obermaiselstein (Radweg) – O'stein – R. Tiefenbach – Hirschsprung – nach Parkplatz rechts Teerstraße (Schranke) – Lochbachtal – Alpe (Name unleserlich) – Abzweigung rechts – Wald-/Wiesenweg zur Schelpenalpe – Balderschwang – R. Hittisau – Sibratsgfäll (Abzw. ca. 4 km rechts) – im Ort (Kirche) links Hirschgund, Rohrmoos (Teerstraße) – Rohrmoos – Tiefenbach. Rückweg ①: Oberstdorf (McDonald's) – Illerradweg – SF/Breitach.",
+  "stations": [
+   {
+    "name": "Sonthofen",
+    "lngLat": [
+     10.28193,
+     47.51354
+    ],
+    "source": {
+     "query": "Sonthofen",
+     "osm": "node/26315938",
+     "type": "place/town",
+     "display": "Sonthofen, Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Fischen",
+    "lngLat": [
+     10.27221,
+     47.46004
+    ],
+    "source": {
+     "query": "Fischen im Allgäu",
+     "osm": "node/58800134",
+     "type": "place/village",
+     "display": "Fischen im Allgäu, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87538, Deutschland"
+    }
+   },
+   {
+    "name": "Obermaiselstein",
+    "lngLat": [
+     10.23751,
+     47.44789
+    ],
+    "source": {
+     "query": "Obermaiselstein",
+     "osm": "node/58800131",
+     "type": "place/village",
+     "display": "Obermaiselstein, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87538, Deutschland"
+    }
+   },
+   {
+    "name": "Hirschsprung",
+    "lngLat": [
+     10.24288,
+     47.43503
+    ],
+    "source": {
+     "query": "Hirschsprung, Obermaiselstein",
+     "osm": "way/1343431181",
+     "type": "natural/gorge",
+     "display": "Hirschsprung, Ried, Obermaiselstein, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87538, Deutschland"
+    }
+   },
+   {
+    "name": "Lochbachtal",
+    "lngLat": [
+     10.21789,
+     47.42532
+    ],
+    "source": {
+     "query": "Lochbachtal",
+     "osm": "way/1249123794",
+     "type": "natural/valley",
+     "display": "Lochbachtal, Obermaiselstein, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, Deutschland"
+    }
+   },
+   {
+    "name": "Schelpenalpe",
+    "lngLat": [
+     10.10393,
+     47.43633
+    ],
+    "source": {
+     "query": "Schelpenalpe",
+     "osm": "way/903915642",
+     "type": "boundary/protected_area",
+     "display": "Wald-Wild-Schongebiet Unterschelpenalpe, Balderschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, Deutschland"
+    }
+   },
+   {
+    "name": "Balderschwang",
+    "lngLat": [
+     10.10425,
+     47.46575
+    ],
+    "source": {
+     "query": "Balderschwang",
+     "osm": "node/240103788",
+     "type": "place/village",
+     "display": "Balderschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87538, Deutschland"
+    }
+   },
+   {
+    "name": "Sibratsgfäll",
+    "lngLat": [
+     10.038,
+     47.42679
+    ],
+    "source": {
+     "query": "Sibratsgfäll",
+     "osm": "node/240110598",
+     "type": "place/village",
+     "display": "Sibratsgfäll, Bezirk Bregenz, Vorarlberg, 6952, Österreich"
+    }
+   },
+   {
+    "name": "Hirschgund",
+    "lngLat": [
+     10.08489,
+     47.40273
+    ],
+    "source": {
+     "query": "Hirschgund",
+     "osm": "node/3118524555",
+     "type": "place/isolated_dwelling",
+     "display": "Hirschgund, Balderschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87538, Deutschland"
+    }
+   },
+   {
+    "name": "Rohrmoos",
+    "lngLat": [
+     10.16729,
+     47.40751
+    ],
+    "source": {
+     "query": "Rohrmoos, Oberstdorf",
+     "osm": "node/472997686",
+     "type": "place/hamlet",
+     "display": "Rohrmoos, Oberstdorf, Landkreis Oberallgäu, Bayern, 87561, Deutschland"
+    }
+   },
+   {
+    "name": "Tiefenbach",
+    "lngLat": [
+     10.24135,
+     47.41999
+    ],
+    "source": {
+     "query": "Tiefenbach, Oberstdorf",
+     "osm": "node/270443608",
+     "type": "place/village",
+     "display": "Tiefenbach, Oberstdorf, Landkreis Oberallgäu, Bayern, 87561, Deutschland"
+    }
+   },
+   {
+    "name": "Oberstdorf",
+    "lngLat": [
+     10.27744,
+     47.41043
+    ],
+    "source": {
+     "query": "Oberstdorf",
+     "osm": "node/1580312096",
+     "type": "place/town",
+     "display": "Oberstdorf, Landkreis Oberallgäu, Bayern, 87561, Deutschland"
+    }
+   },
+   {
+    "name": "Sonthofen",
+    "lngLat": [
+     10.28193,
+     47.51354
+    ],
+    "source": {
+     "query": "Sonthofen",
+     "osm": "node/26315938",
+     "type": "place/town",
+     "display": "Sonthofen, Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   }
+  ],
+  "missing": [],
+  "landmarks": []
+ },
+ {
+  "id": "balderschwang-sibratsgfaell-rueck2",
+  "version": 1,
+  "group": "Balderschwang / Sibratsgfäll",
+  "variant": "Rückweg ② über Obermaiselstein, Fischen, Illerdamm",
+  "name": "Lochbachtal – Balderschwang – Sibratsgfäll – Rückweg ②",
+  "activity": "ebike",
+  "color": "#00a3b5",
+  "note": "Laut Zettel: SF – Fischen (Ort) – Berg (Ampel) im Ort R. Obermaiselstein (Radweg) – O'stein – R. Tiefenbach – Hirschsprung – nach Parkplatz rechts Teerstraße (Schranke) – Lochbachtal – Alpe (Name unleserlich) – Abzweigung rechts – Wald-/Wiesenweg zur Schelpenalpe – Balderschwang – R. Hittisau – Sibratsgfäll (Abzw. ca. 4 km rechts) – im Ort (Kirche) links Hirschgund, Rohrmoos (Teerstraße) – Rohrmoos – Tiefenbach. Rückweg ②: Tiefenbach links R. Obermaiselstein – Fischen – Illerdamm – SF.",
+  "stations": [
+   {
+    "name": "Sonthofen",
+    "lngLat": [
+     10.28193,
+     47.51354
+    ],
+    "source": {
+     "query": "Sonthofen",
+     "osm": "node/26315938",
+     "type": "place/town",
+     "display": "Sonthofen, Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   },
+   {
+    "name": "Fischen",
+    "lngLat": [
+     10.27221,
+     47.46004
+    ],
+    "source": {
+     "query": "Fischen im Allgäu",
+     "osm": "node/58800134",
+     "type": "place/village",
+     "display": "Fischen im Allgäu, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87538, Deutschland"
+    }
+   },
+   {
+    "name": "Obermaiselstein",
+    "lngLat": [
+     10.23751,
+     47.44789
+    ],
+    "source": {
+     "query": "Obermaiselstein",
+     "osm": "node/58800131",
+     "type": "place/village",
+     "display": "Obermaiselstein, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87538, Deutschland"
+    }
+   },
+   {
+    "name": "Hirschsprung",
+    "lngLat": [
+     10.24288,
+     47.43503
+    ],
+    "source": {
+     "query": "Hirschsprung, Obermaiselstein",
+     "osm": "way/1343431181",
+     "type": "natural/gorge",
+     "display": "Hirschsprung, Ried, Obermaiselstein, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87538, Deutschland"
+    }
+   },
+   {
+    "name": "Lochbachtal",
+    "lngLat": [
+     10.21789,
+     47.42532
+    ],
+    "source": {
+     "query": "Lochbachtal",
+     "osm": "way/1249123794",
+     "type": "natural/valley",
+     "display": "Lochbachtal, Obermaiselstein, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, Deutschland"
+    }
+   },
+   {
+    "name": "Schelpenalpe",
+    "lngLat": [
+     10.10393,
+     47.43633
+    ],
+    "source": {
+     "query": "Schelpenalpe",
+     "osm": "way/903915642",
+     "type": "boundary/protected_area",
+     "display": "Wald-Wild-Schongebiet Unterschelpenalpe, Balderschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, Deutschland"
+    }
+   },
+   {
+    "name": "Balderschwang",
+    "lngLat": [
+     10.10425,
+     47.46575
+    ],
+    "source": {
+     "query": "Balderschwang",
+     "osm": "node/240103788",
+     "type": "place/village",
+     "display": "Balderschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87538, Deutschland"
+    }
+   },
+   {
+    "name": "Sibratsgfäll",
+    "lngLat": [
+     10.038,
+     47.42679
+    ],
+    "source": {
+     "query": "Sibratsgfäll",
+     "osm": "node/240110598",
+     "type": "place/village",
+     "display": "Sibratsgfäll, Bezirk Bregenz, Vorarlberg, 6952, Österreich"
+    }
+   },
+   {
+    "name": "Hirschgund",
+    "lngLat": [
+     10.08489,
+     47.40273
+    ],
+    "source": {
+     "query": "Hirschgund",
+     "osm": "node/3118524555",
+     "type": "place/isolated_dwelling",
+     "display": "Hirschgund, Balderschwang, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87538, Deutschland"
+    }
+   },
+   {
+    "name": "Rohrmoos",
+    "lngLat": [
+     10.16729,
+     47.40751
+    ],
+    "source": {
+     "query": "Rohrmoos, Oberstdorf",
+     "osm": "node/472997686",
+     "type": "place/hamlet",
+     "display": "Rohrmoos, Oberstdorf, Landkreis Oberallgäu, Bayern, 87561, Deutschland"
+    }
+   },
+   {
+    "name": "Tiefenbach",
+    "lngLat": [
+     10.24135,
+     47.41999
+    ],
+    "source": {
+     "query": "Tiefenbach, Oberstdorf",
+     "osm": "node/270443608",
+     "type": "place/village",
+     "display": "Tiefenbach, Oberstdorf, Landkreis Oberallgäu, Bayern, 87561, Deutschland"
+    }
+   },
+   {
+    "name": "Obermaiselstein",
+    "lngLat": [
+     10.23751,
+     47.44789
+    ],
+    "source": {
+     "query": "Obermaiselstein",
+     "osm": "node/58800131",
+     "type": "place/village",
+     "display": "Obermaiselstein, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87538, Deutschland"
+    }
+   },
+   {
+    "name": "Fischen",
+    "lngLat": [
+     10.27221,
+     47.46004
+    ],
+    "source": {
+     "query": "Fischen im Allgäu",
+     "osm": "node/58800134",
+     "type": "place/village",
+     "display": "Fischen im Allgäu, Hörnergruppe (VGem), Landkreis Oberallgäu, Bayern, 87538, Deutschland"
+    }
+   },
+   {
+    "name": "Sonthofen",
+    "lngLat": [
+     10.28193,
+     47.51354
+    ],
+    "source": {
+     "query": "Sonthofen",
+     "osm": "node/26315938",
+     "type": "place/town",
+     "display": "Sonthofen, Landkreis Oberallgäu, Bayern, 87527, Deutschland"
+    }
+   }
+  ],
+  "missing": [],
+  "landmarks": []
+ }
+]
