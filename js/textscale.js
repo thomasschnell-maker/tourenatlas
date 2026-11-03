@@ -38,3 +38,23 @@ export function boostLabels(layers, f, minHalo = 1.5) {
   }
   return layers;
 }
+
+// Ortsnamen der OpenFreeMap-Grundkarte: Original bleibt ab Zoom 11 klein (Weiler nur 10 px).
+// Eigene Stufen, die beim Hineinzoomen weiter wachsen – je [Zoom, px, …].
+export const PLACE_SIZES = {
+  label_city: [4, 11, 8, 14, 11, 18, 14, 22],
+  label_city_capital: [4, 12, 8, 15, 11, 20, 14, 24],
+  label_town: [6, 11, 9, 13, 11, 15, 14, 19, 16, 21],
+  label_village: [9, 11, 12, 14, 14, 17, 16, 19],
+  label_other: [8, 9.5, 12, 12, 14, 15, 16, 17],
+  water_name_point_label: [0, 10, 8, 13, 12, 15, 15, 18]
+};
+
+/** Setzt für bekannte Orts-Ebenen eine mit dem Zoom wachsende Schriftgrösse (verändert die Ebenen). */
+export function growPlaceLabels(layers) {
+  for (const l of layers) {
+    const stops = PLACE_SIZES[l.id];
+    if (l.type === 'symbol' && stops && l.layout) l.layout = { ...l.layout, 'text-size': ['interpolate', ['linear'], ['zoom'], ...stops] };
+  }
+  return layers;
+}

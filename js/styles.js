@@ -4,7 +4,7 @@
 // Overlays liegen unter den Beschriftungen der Grundkarte, damit Ortsnamen lesbar bleiben.
 
 import { SOURCES, SAC_SCALE } from './config.js';
-import { boostLabels } from './textscale.js';
+import { boostLabels, growPlaceLabels } from './textscale.js';
 
 const SKY = {
   'sky-color': '#7fb2e5',
@@ -44,7 +44,9 @@ function overlaySources(data) {
     ways: { type: 'geojson', data: data.ways, attribution: SOURCES.trails.attribution },
     bikeroutes: { type: 'geojson', data: data.bikeroutes },
     points: { type: 'geojson', data: data.points },
-    selected: { type: 'geojson', data: data.selected }
+    selected: { type: 'geojson', data: data.selected },
+    // Seen-Beschriftung (beim Veröffentlichen erzeugt, tools/build-lakes.mjs); fehlt die Datei, bleibt die Ebene leer
+    lakes: { type: 'geojson', data: new URL('data/seen.json', globalThis.location?.href ?? 'http://localhost/').href }
   };
 }
 
@@ -226,6 +228,36 @@ function peakLabels(base, { visibility, dark = false }) {
   ];
 }
 
+/** Seenamen: blau-kursiv, grosse Seen früh, kleine Bergseen ab Zoom 13 – wachsen beim Hineinzoomen. */
+function lakeLabels({ visibility, dark = false }) {
+  const vis = { visibility: visibility.lakes === false ? 'none' : 'visible' };
+  const paint = dark
+    ? { 'text-color': '#cfe8ff', 'text-halo-color': 'rgba(0,0,0,0.8)', 'text-halo-width': 1.5 }
+    : { 'text-color': '#1d5f99', 'text-halo-color': 'rgba(255,255,255,0.9)', 'text-halo-width': 1.5 };
+  const size = (...stops) => ['interpolate', ['linear'], ['zoom'], ...stops];
+  const tiers = [
+    { id: 'lake-labels-large', minzoom: 8, filter: ['>=', ['get', 'km2'], 1], size: size(8, 12, 12, 16, 15, 19) },
+    { id: 'lake-labels-medium', minzoom: 11, filter: ['all', ['<', ['get', 'km2'], 1], ['>=', ['get', 'km2'], 0.03]], size: size(11, 12, 15, 16) },
+    { id: 'lake-labels-small', minzoom: 13, filter: ['<', ['get', 'km2'], 0.03], size: size(13, 12, 16, 15) }
+  ];
+  return tiers.map((t) => ({
+    id: t.id,
+    type: 'symbol',
+    source: 'lakes',
+    minzoom: t.minzoom,
+    filter: t.filter,
+    layout: {
+      'text-field': ['get', 'name'],
+      'text-font': ['Noto Sans Italic'],
+      'text-size': t.size,
+      'text-max-width': 7,
+      'symbol-sort-key': ['-', 0, ['get', 'km2']],
+      ...vis
+    },
+    paint
+  }));
+}
+
 /** Fügt Overlays vor der ersten Beschriftungsebene ein. */
 function insertBeforeLabels(layers, extra) {
   const i = layers.findIndex((l) => l.type === 'symbol');
@@ -237,6 +269,8 @@ function finish(style, data, opts) {
   // Robustheit: Ebenen ohne vorhandene Quelle entfernen – sonst verwirft MapLibre den ganzen Stil
   // (z. B. wenn ein Anbieter eine Quelle umbenennt).
   style.layers = style.layers.filter((l) => !l.source || style.sources[l.source]);
+  // Ortsnamen wachsen beim Hineinzoomen (Grundkarte lässt sie ab Zoom 11 klein stehen)
+  growPlaceLabels(style.layers);
   // Grössere Beschriftungen am Smartphone, kräftiger Schriftrand überall.
   boostLabels(style.layers, opts.labelScale ?? 1);
   if (opts.terrain) style.terrain = { source: 'terrain', exaggeration: opts.exaggeration };
@@ -249,6 +283,7 @@ export async function openFreeMapStyle(data, opts) {
   const style = await loadOfmStyle();
   style.layers = [
     ...insertBeforeLabels(style.layers, overlayLayers({ hillshade: true, visibility: opts.visibility })),
+    ...lakeLabels(opts),
     ...peakLabels('openfreemap', opts)
   ];
   return finish(style, data, opts);
@@ -281,6 +316,7 @@ export async function aerialStyle(data, opts) {
       ...rasterLayers,
       ...overlayLayers({ hillshade: false, visibility: opts.visibility }),
       ...labels,
+      ...lakeLabels({ ...opts, dark: true }),
       ...peakLabels('aerial', { ...opts, dark: true })
     ]
   };
@@ -301,7 +337,7 @@ export function protomapsStyle(pmtilesUrl, data, opts) {
         attribution: `${SOURCES.protomaps.attribution} · ${SOURCES.trails.attribution}`
       }
     },
-    layers: [...insertBeforeLabels(base, overlayLayers({ hillshade: true, visibility: opts.visibility })), ...peakLabels('protomaps', opts)]
+    layers: [...insertBeforeLabels(base, overlayLayers({ hillshade: true, visibility: opts.visibility })), ...lakeLabels(opts), ...peakLabels('protomaps', opts)]
   };
   return finish(style, data, opts);
 }

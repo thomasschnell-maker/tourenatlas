@@ -32,3 +32,43 @@ test('boostLabels: nur Text-Ebenen, Halo mindestens 1.5', () => {
   assert.equal(layers[3].layout['text-size'], 20.8);
   assert.equal(layers[3].paint['text-halo-width'], 2);
 });
+
+test('growPlaceLabels: Ortsnamen wachsen mit dem Zoom weiter, fremde Ebenen unverändert', async () => {
+  const { growPlaceLabels, PLACE_SIZES } = await import('../js/textscale.js');
+  const layers = [
+    { id: 'label_village', type: 'symbol', layout: { 'text-field': '{name}', 'text-size': ['interpolate', ['exponential', 1.2], ['zoom'], 7, 10, 11, 12] } },
+    { id: 'label_other', type: 'symbol', layout: { 'text-field': '{name}' } },
+    { id: 'road', type: 'line', layout: {} }
+  ];
+  growPlaceLabels(layers);
+  for (const l of layers.slice(0, 2)) {
+    const size = l.layout['text-size'];
+    assert.equal(size[0], 'interpolate');
+    const out = size.slice(3).filter((_, i) => i % 2 === 1);
+    assert.ok(out.every((v, i) => i === 0 || v > out[i - 1]), `${l.id} wächst`);
+    assert.ok(out.at(-1) >= 15, `${l.id} gross genug`);
+  }
+  assert.deepEqual(layers[2].layout, {});
+  assert.ok(PLACE_SIZES.label_town.at(-1) > PLACE_SIZES.label_village.at(-1));
+});
+
+test('parseLakes: Seen mit Namen, Fläche aus der Umrandung, Doppelte zusammengefasst', async () => {
+  const { parseLakes, lakeQuery } = await import('../tools/build-lakes.mjs');
+  assert.match(lakeQuery([10, 47, 10.5, 47.5]), /\[bbox:47\.00000,10\.00000,47\.50000,10\.50000\]/);
+  const json = {
+    osm3s: { timestamp_osm_base: '2026-11-01T00:00:00Z' },
+    elements: [
+      { type: 'relation', id: 1, tags: { name: 'Großer Alpsee' }, bounds: { minlat: 47.555, minlon: 10.14, maxlat: 47.57, maxlon: 10.19 } },
+      { type: 'way', id: 2, tags: { name: 'Großer Alpsee' }, bounds: { minlat: 47.555, minlon: 10.14, maxlat: 47.56, maxlon: 10.15 } },
+      { type: 'way', id: 3, tags: { name: 'Schrecksee' }, bounds: { minlat: 47.4085, minlon: 10.4565, maxlat: 47.411, maxlon: 10.4605 } },
+      { type: 'way', id: 4, tags: {}, bounds: { minlat: 47, minlon: 10, maxlat: 47.1, maxlon: 10.1 } }
+    ]
+  };
+  const r = parseLakes(json);
+  assert.equal(r.osmBase, '2026-11-01T00:00:00Z');
+  assert.deepEqual(r.features.map((f) => f.properties.name), ['Großer Alpsee', 'Schrecksee']);
+  assert.equal(r.features[0].properties.osm, 'relation/1');
+  assert.ok(r.features[0].properties.km2 > 1 && r.features[0].properties.km2 < 5);
+  assert.ok(r.features[1].properties.km2 < 0.1);
+  assert.throws(() => parseLakes({ remark: 'runtime error: timed out', elements: [] }));
+});
