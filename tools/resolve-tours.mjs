@@ -19,24 +19,25 @@ const km = (a, b) => {
 };
 
 const cache = new Map();
-async function search(q) {
-  if (cache.has(q)) return cache.get(q);
-  const [w, s, e, n] = cfg.viewbox;
+async function search(q, viewbox = cfg.viewbox) {
+  const ck = `${viewbox}|${q}`;
+  if (cache.has(ck)) return cache.get(ck);
+  const [w, s, e, n] = viewbox;
   const p = new URLSearchParams({ q, format: 'jsonv2', limit: '5', 'accept-language': 'de', countrycodes: 'de,at', viewbox: `${w},${n},${e},${s}`, bounded: '1' });
   await sleep(PAUSE);
   const res = await fetch(`${SEARCH}?${p}`, { headers: { 'User-Agent': 'tourenatlas-build (github.com/thomasschnell-maker/tourenatlas)' } });
   if (!res.ok) throw new Error(`Nominatim HTTP ${res.status}`);
   const hits = (await res.json()).map((h) => ({ lngLat: [Number(h.lon), Number(h.lat)], display: h.display_name, type: `${h.category}/${h.type}`, osm: `${h.osm_type}/${h.osm_id}` }));
-  cache.set(q, hits);
+  cache.set(ck, hits);
   return hits;
 }
 
 /** Station auflösen: Suchbegriffe der Reihe nach, erster Treffer nah genug an der vorherigen Station. */
-async function resolve(st, prev) {
+async function resolve(st, prev, viewbox) {
   const tried = [];
   for (const q of st.q) {
     // Bevorzugte Kategorie zuerst (z. B. place: Ortsmitte statt Mittelpunkt der Gemeindefläche)
-    const hits = (await search(q)).slice().sort((a, b) => (st.prefer ? !a.type.startsWith(st.prefer) - !b.type.startsWith(st.prefer) : 0));
+    const hits = (await search(q, viewbox)).slice().sort((a, b) => (st.prefer ? !a.type.startsWith(st.prefer) - !b.type.startsWith(st.prefer) : 0));
     // maxKm je Station: engere Grenze für Ortsnamen, die es mehrfach gibt (z. B. Ettensberg)
     const max = st.maxKm || cfg.maxStepKm || 10;
     const ok = hits.find((h) => !prev || km(prev, h.lngLat) <= max);
@@ -57,7 +58,7 @@ for (const t of cfg.tours) {
     for (const [i, st] of cfg.segments[seg].entries()) {
       const prev = stations.at(-1)?.lngLat;
       const key = `${seg}/${i}/${prev?.join(',')}`;
-      const r = resolved.get(key) || (await resolve(st, prev));
+      const r = resolved.get(key) || (await resolve(st, prev, t.viewbox));
       resolved.set(key, r);
       if (r.error) {
         missing.push(`${st.name} (${r.error})`);
@@ -77,7 +78,7 @@ for (const t of cfg.tours) {
       console.log(`  ✓ ${t.id} · ${st.name} ← „${r.query}“ ${r.type} ${r.lngLat.map((v) => v.toFixed(4)).join(', ')}${prev ? ` (${km(prev, r.lngLat).toFixed(1)} km)` : ''} · ${r.display}`);
     }
   }
-  const { segments, ...meta } = t;
+  const { segments, viewbox, ...meta } = t;
   result.push({ ...meta, stations, missing, landmarks });
 }
 mkdirSync(dirname(out), { recursive: true });

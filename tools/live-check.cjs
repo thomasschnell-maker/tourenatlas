@@ -84,9 +84,9 @@ async function main() {
         await page.screenshot({ path: `${out}/${visit.replace(' ', '-')}-${s}s.png` });
         report.toasts.push(`${visit} ${s}s: ${await toastText(page)}`);
       }
-      // Auf das Eintragen der Touren warten (max. 3 min)
+      // Auf das Eintragen der Touren warten (max. 6 min)
       let tours = [];
-      for (let i = 0; i < 36; i++) {
+      for (let i = 0; i < 72; i++) {
         tours = await dumpTours(page).catch(() => []);
         const tpl = tours.filter((t) => t.templateId);
         report.toasts.push(`${visit} ${Math.round((Date.now() - t0) / 1000)}s: ${await toastText(page)}`);
