@@ -798,6 +798,8 @@ async function importTemplates() {
       group: v.group || '',
       variant: v.variant || '',
       activity: v.activity || 'hike',
+      // Vorlage mit Datum (z. B. „2025“ für Touren aus dem Vorjahr) → erscheint unter diesem Jahr
+      ...(v.date ? { date: v.date } : {}),
       note: `${v.note || ''}${missing}`,
       color: v.color || nextColor(tours)
     };
