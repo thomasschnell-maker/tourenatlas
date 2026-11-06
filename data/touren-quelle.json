@@ -892,6 +892,7 @@
       {
         "name": "Oberstdorf",
         "q": [
+          "Marktplatz, Oberstdorf",
           "Oberstdorf"
         ],
         "prefer": "place"
@@ -966,6 +967,7 @@
       {
         "name": "Oberstdorf",
         "q": [
+          "Marktplatz, Oberstdorf",
           "Oberstdorf"
         ],
         "prefer": "place"
@@ -1280,7 +1282,13 @@
       "segments": [
         "freibergsee"
       ],
-      "note": "Laut Zettel „Straßentour“: Sonthofen – Wonnemar – über Bahngleis gleich links, Feldweg Richtung Süden – über Bahngleis links, Straße rechts (Brücke) – Unterthalhofen, erster Feldweg rechts, vor Bahngleis links – Illerdamm links – Fischen – Dammweg folgen bis Oberstdorf – Tennisplatz, OA4 überqueren, Straße folgen – Nebelhornbahn, Brücke rechts, beim Minigolf links, nächster Feldweg rechts, Weg folgen Süden – Lorettokapellen – Straße Fellhorn oder Stillachradweg – Skiflugschanze – Asphaltstraße Schwand, vor Ort gleich rechts – Freibergsee (Badeanstalt) – zurück – Höhenweg Bergkristall – Kornau – Reute, Jauchen – Oberstdorf – Einmündung B19/Odf: Kiesweg neben Straße, Wander-/Radweg folgen, Häuser rechts – Parkplatz links McDonald's – Breitach überqueren (Fluss), linkes Ufer Richtung Norden – Illerursprung – Radweg SF (Iller) – Wonnemar."
+      "note": "Laut Zettel „Straßentour“: Sonthofen – Wonnemar – über Bahngleis gleich links, Feldweg Richtung Süden – über Bahngleis links, Straße rechts (Brücke) – Unterthalhofen, erster Feldweg rechts, vor Bahngleis links – Illerdamm links – Fischen – Dammweg folgen bis Oberstdorf – Tennisplatz, OA4 überqueren, Straße folgen – Nebelhornbahn, Brücke rechts, beim Minigolf links, nächster Feldweg rechts, Weg folgen Süden – Lorettokapellen – Straße Fellhorn oder Stillachradweg – Skiflugschanze – Asphaltstraße Schwand, vor Ort gleich rechts – Freibergsee (Badeanstalt) – zurück – Höhenweg Bergkristall – Kornau – Reute, Jauchen – Oberstdorf – Einmündung B19/Odf: Kiesweg neben Straße, Wander-/Radweg folgen, Häuser rechts – Parkplatz links McDonald's – Breitach überqueren (Fluss), linkes Ufer Richtung Norden – Illerursprung – Radweg SF (Iller) – Wonnemar.",
+      "viewbox": [
+        9.85,
+        47.33,
+        10.55,
+        47.66
+      ]
     },
     {
       "id": "2025-strassentour-rottachsee",
