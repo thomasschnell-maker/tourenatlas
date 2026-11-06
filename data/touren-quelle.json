@@ -735,7 +735,8 @@
         "q": [
           "Immenstadt im Allgäu"
         ],
-        "prefer": "place"
+        "prefer": "place",
+        "maxKm": 20
       },
       {
         "name": "Blaichach",
@@ -820,21 +821,11 @@
         "maxKm": 10
       },
       {
-        "name": "Ellhofen",
-        "q": [
-          "Ellhofen, Weiler-Simmerberg",
-          "Ellhofen"
-        ],
-        "prefer": "place",
-        "maxKm": 4,
-        "optional": true
-      },
-      {
         "name": "Böserscheidegg",
         "q": [
           "Böserscheidegg"
         ],
-        "maxKm": 6,
+        "maxKm": 10,
         "optional": true
       },
       {
@@ -843,7 +834,7 @@
           "Scheidegg"
         ],
         "prefer": "place",
-        "maxKm": 8
+        "maxKm": 12
       },
       {
         "name": "Hohenweiler",
@@ -851,7 +842,7 @@
           "Hohenweiler"
         ],
         "prefer": "place",
-        "maxKm": 8,
+        "maxKm": 12,
         "optional": true
       },
       {
@@ -860,7 +851,7 @@
           "Hörbranz"
         ],
         "prefer": "place",
-        "maxKm": 10
+        "maxKm": 12
       },
       {
         "name": "Lindau",
@@ -869,7 +860,7 @@
           "Lindau"
         ],
         "prefer": "place",
-        "maxKm": 10
+        "maxKm": 12
       }
     ],
     "freibergsee": [
@@ -911,14 +902,15 @@
           "Nebelhornbahn Talstation",
           "Nebelhornbahn, Oberstdorf"
         ],
-        "maxKm": 3
+        "maxKm": 4
       },
       {
         "name": "Lorettokapellen",
         "q": [
-          "Lorettokapellen, Oberstdorf",
-          "Loretto-Kapellen",
-          "Lorettokapelle, Oberstdorf"
+          "Lorettokapelle, Oberstdorf",
+          "Loretto, Oberstdorf",
+          "Lorettokapellen",
+          "Lorettokapelle"
         ],
         "maxKm": 4
       },
@@ -985,7 +977,7 @@
           "Ursprung der Iller",
           "Illerursprung, Oberstdorf"
         ],
-        "maxKm": 5
+        "maxKm": 6
       },
       {
         "name": "Wonnemar Sonthofen",
@@ -994,7 +986,7 @@
           "Wonnemar",
           "Sonthofen"
         ],
-        "maxKm": 5
+        "maxKm": 14
       }
     ],
     "rottachsee": [
@@ -1048,17 +1040,6 @@
         ],
         "prefer": "place",
         "maxKm": 8
-      },
-      {
-        "name": "Rottach",
-        "q": [
-          "Rottach, Rettenberg",
-          "Rottach, Sulzberg",
-          "Rottach"
-        ],
-        "prefer": "place",
-        "maxKm": 5,
-        "optional": true
       },
       {
         "name": "Rottachsee",
@@ -1239,7 +1220,7 @@
     },
     {
       "id": "2025-alpsee-oberstaufen-tour-1",
-      "version": 1,
+      "version": 2,
       "date": "2025",
       "group": "2025 · Alpsee – Oberstaufen",
       "variant": "Tour 1 (bergig) – über Gunzesried, Ettensberg, Schwanden",
@@ -1254,7 +1235,7 @@
     },
     {
       "id": "2025-alpsee-oberstaufen-tour-2",
-      "version": 1,
+      "version": 2,
       "date": "2025",
       "group": "2025 · Alpsee – Oberstaufen",
       "variant": "Tour 2 (flacher) – Illerdamm, Bihlerdorf, Blaichach",
@@ -1269,7 +1250,7 @@
     },
     {
       "id": "2025-strassentour-lindau",
-      "version": 1,
+      "version": 2,
       "date": "2025",
       "viewbox": [
         9.6,
@@ -1289,14 +1270,8 @@
     },
     {
       "id": "2025-strassentour-freibergsee",
-      "version": 1,
+      "version": 2,
       "date": "2025",
-      "viewbox": [
-        9.6,
-        47.35,
-        10.6,
-        47.75
-      ],
       "group": "2025 · Straßentouren",
       "variant": "Wonnemar – Illerdamm – Oberstdorf – Freibergsee – Kornau – Illerursprung",
       "name": "Straßentour Oberstdorf – Freibergsee",
@@ -1309,14 +1284,8 @@
     },
     {
       "id": "2025-strassentour-rottachsee",
-      "version": 1,
+      "version": 2,
       "date": "2025",
-      "viewbox": [
-        9.6,
-        47.35,
-        10.6,
-        47.75
-      ],
       "group": "2025 · Straßentouren",
       "variant": "Burgberg – Untermaiselstein – Rottachsee – Kranzegg – Rettenberg",
       "name": "Straßentour Rottachsee",
