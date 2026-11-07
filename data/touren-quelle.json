@@ -1091,6 +1091,82 @@
         ],
         "prefer": "place"
       }
+    ],
+    "pfaender-ueberlingen": [
+      {
+        "name": "Pfänder (Gipfel)",
+        "q": [
+          "Pfänder, Lochau",
+          "Pfänder",
+          "Pfänderbahn Bergstation"
+        ]
+      },
+      {
+        "name": "Bregenz",
+        "q": [
+          "Bregenz"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Lindau",
+        "q": [
+          "Lindau (Bodensee)",
+          "Lindau"
+        ],
+        "prefer": "place",
+        "maxKm": 12
+      },
+      {
+        "name": "Wasserburg",
+        "q": [
+          "Wasserburg (Bodensee)",
+          "Wasserburg"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Kressbronn",
+        "q": [
+          "Kressbronn am Bodensee"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      },
+      {
+        "name": "Langenargen",
+        "q": [
+          "Langenargen"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Friedrichshafen",
+        "q": [
+          "Friedrichshafen"
+        ],
+        "prefer": "place",
+        "maxKm": 12
+      },
+      {
+        "name": "Markdorf",
+        "q": [
+          "Markdorf"
+        ],
+        "prefer": "place",
+        "maxKm": 15
+      },
+      {
+        "name": "Überlingen",
+        "q": [
+          "Überlingen"
+        ],
+        "prefer": "place",
+        "maxKm": 25
+      }
     ]
   },
   "tours": [
@@ -1303,6 +1379,26 @@
         "rottachsee"
       ],
       "note": "Laut Zettel „Straßentour“: SF Richtung Burgberg – bei Gärtnerei (Name unleserlich) links abbiegen – Ortwang – Häuser – Untermaiselstein – Freidorf – Ottacker, rechts hoch nach Rottach – Rottachsee/-speicher – Vorderburg – Kranzegg – Rettenberg – Burgberg – SF."
+    },
+    {
+      "id": "2025-pfaender-ueberlingen-markdorf",
+      "version": 1,
+      "date": "2025",
+      "viewbox": [
+        9.1,
+        47.45,
+        9.95,
+        47.85
+      ],
+      "group": "2025 · Bodensee",
+      "variant": "Pfändergipfel – Bregenz – Bodensee-Radweg – Friedrichshafen – Markdorf – Überlingen",
+      "name": "Pfändergipfel – Markdorf – Überlingen",
+      "activity": "ebike",
+      "color": "#1565c0",
+      "segments": [
+        "pfaender-ueberlingen"
+      ],
+      "note": "Auf Zuruf eingetragen (kein Zettel): Pfändergipfel – Abfahrt nach Bregenz – Bodensee-Radweg über Lindau, Wasserburg, Kressbronn, Langenargen – Friedrichshafen – Markdorf – Überlingen. Zwischenorte am See angenommen; einfache Strecke."
     }
   ]
 }
