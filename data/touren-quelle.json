@@ -1167,6 +1167,95 @@
         "prefer": "place",
         "maxKm": 25
       }
+    ],
+    "vier-seen": [
+      {
+        "name": "Füssen",
+        "q": [
+          "Füssen"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Bad Faulenbach",
+        "q": [
+          "Bad Faulenbach, Füssen",
+          "Faulenbach, Füssen"
+        ],
+        "maxKm": 4
+      },
+      {
+        "name": "Alatsee",
+        "q": [
+          "Alatsee"
+        ],
+        "maxKm": 5
+      },
+      {
+        "name": "Weißensee",
+        "q": [
+          "Weißensee, Füssen"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Hopfensee",
+        "q": [
+          "Hopfen am See"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Forggensee (Festspielhaus)",
+        "q": [
+          "Festspielhaus Neuschwanstein",
+          "Musical Theater Neuschwanstein",
+          "Forggensee"
+        ],
+        "maxKm": 8
+      },
+      {
+        "name": "Füssen",
+        "q": [
+          "Füssen"
+        ],
+        "prefer": "place"
+      }
+    ],
+    "breitenberg": [
+      {
+        "name": "Grän (Tannheimer Tal)",
+        "q": [
+          "Grän"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Ostlerhütte (Breitenberg)",
+        "q": [
+          "Ostlerhütte",
+          "Breitenberg, Pfronten"
+        ],
+        "maxKm": 10
+      },
+      {
+        "name": "Hochalpe",
+        "q": [
+          "Hochalpe, Pfronten",
+          "Breitenbergbahn Bergstation"
+        ],
+        "maxKm": 5
+      },
+      {
+        "name": "Pfronten-Steinach",
+        "q": [
+          "Steinach, Pfronten"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      }
     ]
   },
   "tours": [
@@ -1399,6 +1488,46 @@
         "pfaender-ueberlingen"
       ],
       "note": "Auf Zuruf eingetragen (kein Zettel): Pfändergipfel – Abfahrt nach Bregenz – Bodensee-Radweg über Lindau, Wasserburg, Kressbronn, Langenargen – Friedrichshafen – Markdorf – Überlingen. Zwischenorte am See angenommen; einfache Strecke."
+    },
+    {
+      "id": "2025-vier-seen-fuessen",
+      "version": 1,
+      "date": "2025",
+      "viewbox": [
+        10.3,
+        47.45,
+        10.85,
+        47.66
+      ],
+      "group": "2025 · Füssen",
+      "variant": "4-Seen-Tour: Alatsee – Weißensee – Hopfensee – Forggensee",
+      "name": "4-Seen-Tour Füssen",
+      "activity": "ebike",
+      "color": "#00838f",
+      "segments": [
+        "vier-seen"
+      ],
+      "note": "Auf Zuruf eingetragen: Runde ab Füssen über Bad Faulenbach zum Alatsee, weiter zum Weißensee, Hopfensee (Hopfen am See) und am Forggensee (Festspielhaus) zurück nach Füssen. Vierter See und Reihenfolge angenommen."
+    },
+    {
+      "id": "2025-breitenberg-ostlerhuette",
+      "version": 1,
+      "date": "2025",
+      "viewbox": [
+        10.3,
+        47.45,
+        10.85,
+        47.66
+      ],
+      "group": "2025 · Füssen",
+      "variant": "Breitenberg: von Grän (Österreich) zur Ostlerhütte, Abstieg über Hochalpe nach Pfronten",
+      "name": "Breitenberg – Ostlerhütte (AT hoch, DE runter)",
+      "activity": "hike",
+      "color": "#8d6e63",
+      "segments": [
+        "breitenberg"
+      ],
+      "note": "Auf Zuruf eingetragen: Aufstieg von österreichischer Seite (Start Grän im Tannheimer Tal angenommen) zur Ostlerhütte auf dem Breitenberg, Abstieg auf deutscher Seite über die Hochalpe nach Pfronten-Steinach."
     }
   ]
 }
