@@ -1,0 +1,1404 @@
+{
+  "_hinweis": "Quelle der vorgegebenen Touren. Koordinaten ermittelt tools/resolve-tours.mjs beim Veröffentlichen (Nominatim, nur Oberallgäu, Abstandsprüfung) → data/touren.json. Mehrere Suchbegriffe je Station werden der Reihe nach probiert. prefer: bevorzugte Nominatim-Kategorie (z. B. place = Ortsmitte statt Gemeindefläche). landmark: nur zur Orientierung auflösen und protokollieren, keine Station.",
+  "viewbox": [
+    9.85,
+    47.38,
+    10.55,
+    47.66
+  ],
+  "maxStepKm": 14,
+  "segments": {
+    "hinweg": [
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Immenstadt",
+        "q": [
+          "Immenstadt im Allgäu"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Altmummen",
+        "q": [
+          "Altmummen",
+          "Alt Mummen",
+          "Mummen"
+        ]
+      },
+      {
+        "name": "Ettensberg",
+        "q": [
+          "Ettensberg, Blaichach",
+          "Ettensberg"
+        ],
+        "prefer": "place",
+        "maxKm": 4
+      },
+      {
+        "name": "Abzw. Alpe Derb",
+        "q": [
+          "Alpe Derb",
+          "Derb"
+        ],
+        "landmark": true,
+        "optional": true
+      },
+      {
+        "name": "Gunzesried",
+        "q": [
+          "Gunzesried"
+        ]
+      },
+      {
+        "name": "Allgäuer Berghof",
+        "q": [
+          "Allgäuer Berghof",
+          "Alpe Eck"
+        ]
+      },
+      {
+        "name": "Bergstation Sesselbahn",
+        "q": [
+          "Bergstation Weltcup-Express",
+          "Weltcup-Express Bergstation",
+          "Weltcup Express"
+        ],
+        "optional": true
+      },
+      {
+        "name": "Ofterschwanger Horn",
+        "q": [
+          "Ofterschwanger Horn"
+        ]
+      },
+      {
+        "name": "Allgäuer Berghof",
+        "q": [
+          "Allgäuer Berghof",
+          "Alpe Eck"
+        ]
+      },
+      {
+        "name": "Ofterschwang (Talstation Sessellift)",
+        "q": [
+          "Talstation Weltcup-Express",
+          "Ofterschwang"
+        ]
+      }
+    ],
+    "route1": [
+      {
+        "name": "Bolsterlang",
+        "q": [
+          "Bolsterlang"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Tiefenberg",
+        "q": [
+          "Tiefenberg, Bolsterlang",
+          "Tiefenberg"
+        ]
+      },
+      {
+        "name": "Sigishofen",
+        "q": [
+          "Sigishofen"
+        ]
+      },
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      }
+    ],
+    "route2": [
+      {
+        "name": "Hüttenberg (Käse)",
+        "q": [
+          "Hüttenberg, Ofterschwang",
+          "Hüttenberg"
+        ]
+      },
+      {
+        "name": "Westerhofen",
+        "q": [
+          "Westerhofen, Ofterschwang",
+          "Westerhofen"
+        ]
+      },
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      }
+    ],
+    "route3": [
+      {
+        "name": "Bolsterlang",
+        "q": [
+          "Bolsterlang"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Tiefenberg",
+        "q": [
+          "Tiefenberg, Bolsterlang",
+          "Tiefenberg"
+        ]
+      },
+      {
+        "name": "Schweineberg",
+        "q": [
+          "Schweineberg, Ofterschwang",
+          "Schweineberg"
+        ]
+      },
+      {
+        "name": "Sonnenalp",
+        "q": [
+          "Hotel Sonnenalp",
+          "Sonnenalp, Ofterschwang",
+          "Sonnenalp"
+        ],
+        "prefer": "tourism"
+      },
+      {
+        "name": "Sigishofen",
+        "q": [
+          "Sigishofen"
+        ]
+      },
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      }
+    ],
+    "hindelang-joch": [
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Waltener Straße",
+        "q": [
+          "Waltener Straße, Sonthofen"
+        ]
+      },
+      {
+        "name": "Reckenberg",
+        "q": [
+          "Reckenberg, Bad Hindelang",
+          "Reckenberg"
+        ]
+      },
+      {
+        "name": "Breiten",
+        "q": [
+          "Breiten, Sonthofen",
+          "Breiten"
+        ]
+      },
+      {
+        "name": "Vorderhindelang",
+        "q": [
+          "Vorderhindelang",
+          "Vorderhindelang, Bad Hindelang"
+        ]
+      },
+      {
+        "name": "Zillenbachstraße",
+        "q": [
+          "Zillenbachstraße, Bad Hindelang"
+        ]
+      },
+      {
+        "name": "Schnitzelalm",
+        "q": [
+          "Schnitzelalm, Bad Hindelang",
+          "Schnitzelalm",
+          "Jochstraße 37, Bad Hindelang"
+        ]
+      },
+      {
+        "name": "Alte Jochstraße",
+        "q": [
+          "Alte Jochstraße, Bad Hindelang"
+        ]
+      },
+      {
+        "name": "Richard-Wagner-Straße",
+        "q": [
+          "Richard-Wagner-Straße, Sonthofen"
+        ]
+      }
+    ],
+    "joch-wertach-immenstadt": [
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Bad Hindelang",
+        "q": [
+          "Bad Hindelang"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Schnitzelalm",
+        "q": [
+          "Schnitzelalm, Bad Hindelang",
+          "Schnitzelalm",
+          "Jochstraße 37, Bad Hindelang"
+        ]
+      },
+      {
+        "name": "Oberjoch",
+        "q": [
+          "Oberjoch"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Unterjoch",
+        "q": [
+          "Unterjoch"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Wertach",
+        "q": [
+          "Wertach"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Königssträßle",
+        "q": [
+          "Königsträßle, Burgberg im Allgäu",
+          "Königssträßle, Burgberg im Allgäu",
+          "Königsträßle"
+        ]
+      },
+      {
+        "name": "Burgberg im Allgäu",
+        "q": [
+          "Burgberg im Allgäu"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Häuser",
+        "q": [
+          "Häuser, Burgberg im Allgäu",
+          "Häuser, Burgberg"
+        ]
+      },
+      {
+        "name": "Immenstadt",
+        "q": [
+          "Immenstadt im Allgäu"
+        ],
+        "prefer": "place"
+      }
+    ],
+    "balderschwang-hin": [
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Fischen",
+        "q": [
+          "Fischen im Allgäu"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Obermaiselstein",
+        "q": [
+          "Obermaiselstein"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Hirschsprung",
+        "q": [
+          "Hirschsprung, Obermaiselstein",
+          "Hirschsprung, Tiefenbach",
+          "Hirschsprung"
+        ]
+      },
+      {
+        "name": "Lochbachtal",
+        "q": [
+          "Lochbachtal",
+          "Lochbach, Obermaiselstein",
+          "Lochbach"
+        ],
+        "optional": true
+      },
+      {
+        "name": "Schelpenalpe",
+        "q": [
+          "Schelpenalpe",
+          "Alpe Schelpen",
+          "Schelpen, Balderschwang"
+        ]
+      },
+      {
+        "name": "Balderschwang",
+        "q": [
+          "Balderschwang"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Sibratsgfäll",
+        "q": [
+          "Sibratsgfäll"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Hirschgund",
+        "q": [
+          "Hirschgund",
+          "Hirschgund, Sibratsgfäll"
+        ]
+      },
+      {
+        "name": "Rohrmoos",
+        "q": [
+          "Rohrmoos, Oberstdorf",
+          "Rohrmoos"
+        ]
+      },
+      {
+        "name": "Tiefenbach",
+        "q": [
+          "Tiefenbach, Oberstdorf",
+          "Tiefenbach bei Oberstdorf"
+        ]
+      }
+    ],
+    "balderschwang-rueck1": [
+      {
+        "name": "Oberstdorf",
+        "q": [
+          "Oberstdorf"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      }
+    ],
+    "balderschwang-rueck2": [
+      {
+        "name": "Obermaiselstein",
+        "q": [
+          "Obermaiselstein"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Fischen",
+        "q": [
+          "Fischen im Allgäu"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      }
+    ],
+    "gebirg-hin": [
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Binswangen",
+        "q": [
+          "Binswangen, Sonthofen"
+        ],
+        "prefer": "place",
+        "maxKm": 5
+      },
+      {
+        "name": "Vorderhindelang",
+        "q": [
+          "Vorderhindelang"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Bad Hindelang",
+        "q": [
+          "Bad Hindelang"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Hornbahn Talstation",
+        "q": [
+          "Hornbahn Talstation, Bad Hindelang",
+          "Hornbahn, Bad Hindelang",
+          "Hornbahn Hindelang"
+        ],
+        "maxKm": 4
+      },
+      {
+        "name": "Hornbahn Bergstation",
+        "q": [
+          "Hornbahn Bergstation, Bad Hindelang",
+          "Hornbahn Bergstation",
+          "Hornalpe, Bad Hindelang"
+        ],
+        "maxKm": 4,
+        "optional": true
+      },
+      {
+        "name": "Straußbergalpe",
+        "q": [
+          "Straußbergalpe",
+          "Alpe Straußberg",
+          "Straussbergalpe"
+        ],
+        "maxKm": 8
+      },
+      {
+        "name": "Sonthofer Hof",
+        "q": [
+          "Sonthofer Hof",
+          "Alpe Sonthofer Hof"
+        ],
+        "maxKm": 6
+      },
+      {
+        "name": "Altstädten",
+        "q": [
+          "Altstädten, Sonthofen"
+        ],
+        "prefer": "place",
+        "maxKm": 6
+      }
+    ],
+    "gebirg-v1": [
+      {
+        "name": "Beilenberg",
+        "q": [
+          "Beilenberg, Sonthofen"
+        ],
+        "prefer": "place",
+        "maxKm": 5
+      },
+      {
+        "name": "Binswangen",
+        "q": [
+          "Binswangen, Sonthofen"
+        ],
+        "prefer": "place",
+        "maxKm": 6
+      },
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      }
+    ],
+    "gebirg-v2": [
+      {
+        "name": "Unterthalhofen",
+        "q": [
+          "Unterthalhofen, Fischen im Allgäu",
+          "Unterthalhofen"
+        ],
+        "prefer": "place",
+        "maxKm": 6
+      },
+      {
+        "name": "Oberthalhofen",
+        "q": [
+          "Oberthalhofen, Fischen im Allgäu",
+          "Oberthalhofen"
+        ],
+        "prefer": "place",
+        "maxKm": 4
+      },
+      {
+        "name": "Fischen",
+        "q": [
+          "Fischen im Allgäu"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Obermaiselstein",
+        "q": [
+          "Obermaiselstein"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Bolsterlang",
+        "q": [
+          "Bolsterlang"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Kierwang",
+        "q": [
+          "Kierwang, Bolsterlang",
+          "Kierwang"
+        ],
+        "prefer": "place",
+        "maxKm": 4
+      },
+      {
+        "name": "Ofterschwang",
+        "q": [
+          "Ofterschwang"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      }
+    ],
+    "alpsee-bergig": [
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Bihlerdorf",
+        "q": [
+          "Bihlerdorf, Blaichach",
+          "Bihlerdorf"
+        ],
+        "prefer": "place",
+        "maxKm": 6
+      },
+      {
+        "name": "Gunzesried",
+        "q": [
+          "Gunzesried"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Ettensberg",
+        "q": [
+          "Ettensberg, Blaichach",
+          "Ettensberg"
+        ],
+        "prefer": "place",
+        "maxKm": 5
+      },
+      {
+        "name": "Schwanden",
+        "q": [
+          "Schwanden, Blaichach",
+          "Schwanden, Immenstadt im Allgäu"
+        ],
+        "prefer": "place",
+        "maxKm": 5
+      },
+      {
+        "name": "Immenstadt",
+        "q": [
+          "Immenstadt im Allgäu"
+        ],
+        "prefer": "place"
+      }
+    ],
+    "alpsee-flach": [
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Bihlerdorf",
+        "q": [
+          "Bihlerdorf, Blaichach",
+          "Bihlerdorf"
+        ],
+        "prefer": "place",
+        "maxKm": 6
+      },
+      {
+        "name": "Blaichach",
+        "q": [
+          "Blaichach"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Immenstadt",
+        "q": [
+          "Immenstadt im Allgäu"
+        ],
+        "prefer": "place"
+      }
+    ],
+    "alpsee-oberstaufen": [
+      {
+        "name": "Bühl am Alpsee",
+        "q": [
+          "Bühl am Alpsee",
+          "Bühl, Immenstadt im Allgäu"
+        ],
+        "prefer": "place",
+        "maxKm": 5
+      },
+      {
+        "name": "Trieblings",
+        "q": [
+          "Trieblings, Immenstadt im Allgäu",
+          "Trieblings"
+        ],
+        "maxKm": 6,
+        "optional": true
+      },
+      {
+        "name": "Ratholz",
+        "q": [
+          "Ratholz, Immenstadt im Allgäu",
+          "Ratholz"
+        ],
+        "prefer": "place",
+        "maxKm": 6
+      },
+      {
+        "name": "Oberstaufen – Aquaria",
+        "q": [
+          "Aquaria, Oberstaufen",
+          "Erlebnisbad Aquaria",
+          "Oberstaufen"
+        ],
+        "maxKm": 10
+      },
+      {
+        "name": "Immenstadt",
+        "q": [
+          "Immenstadt im Allgäu"
+        ],
+        "prefer": "place",
+        "maxKm": 20
+      },
+      {
+        "name": "Blaichach",
+        "q": [
+          "Blaichach"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      }
+    ],
+    "lindau": [
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Blaichach",
+        "q": [
+          "Blaichach"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Immenstadt",
+        "q": [
+          "Immenstadt im Allgäu"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Missen",
+        "q": [
+          "Missen, Missen-Wilhams",
+          "Missen-Wilhams"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      },
+      {
+        "name": "Wiederhofen",
+        "q": [
+          "Wiederhofen, Missen-Wilhams",
+          "Wiederhofen"
+        ],
+        "prefer": "place",
+        "maxKm": 5
+      },
+      {
+        "name": "Harbatshofen",
+        "q": [
+          "Harbatshofen, Stiefenhofen",
+          "Harbatshofen"
+        ],
+        "prefer": "place",
+        "maxKm": 8,
+        "optional": true
+      },
+      {
+        "name": "Stiefenhofen",
+        "q": [
+          "Stiefenhofen"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      },
+      {
+        "name": "Weiler im Allgäu",
+        "q": [
+          "Weiler im Allgäu",
+          "Weiler-Simmerberg"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      },
+      {
+        "name": "Böserscheidegg",
+        "q": [
+          "Böserscheidegg"
+        ],
+        "maxKm": 10,
+        "optional": true
+      },
+      {
+        "name": "Scheidegg",
+        "q": [
+          "Scheidegg"
+        ],
+        "prefer": "place",
+        "maxKm": 12
+      },
+      {
+        "name": "Hohenweiler",
+        "q": [
+          "Hohenweiler"
+        ],
+        "prefer": "place",
+        "maxKm": 12,
+        "optional": true
+      },
+      {
+        "name": "Hörbranz",
+        "q": [
+          "Hörbranz"
+        ],
+        "prefer": "place",
+        "maxKm": 12
+      },
+      {
+        "name": "Lindau",
+        "q": [
+          "Lindau (Bodensee)",
+          "Lindau"
+        ],
+        "prefer": "place",
+        "maxKm": 12
+      }
+    ],
+    "freibergsee": [
+      {
+        "name": "Wonnemar Sonthofen",
+        "q": [
+          "Wonnemar Sonthofen",
+          "Wonnemar",
+          "Sonthofen"
+        ],
+        "maxKm": 5
+      },
+      {
+        "name": "Unterthalhofen",
+        "q": [
+          "Unterthalhofen, Fischen im Allgäu",
+          "Unterthalhofen"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Fischen",
+        "q": [
+          "Fischen im Allgäu"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Oberstdorf",
+        "q": [
+          "Marktplatz, Oberstdorf",
+          "Oberstdorf"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Nebelhornbahn",
+        "q": [
+          "Nebelhornbahn Talstation",
+          "Nebelhornbahn, Oberstdorf"
+        ],
+        "maxKm": 4
+      },
+      {
+        "name": "Lorettokapellen",
+        "q": [
+          "Lorettokapelle, Oberstdorf",
+          "Loretto, Oberstdorf",
+          "Lorettokapellen",
+          "Lorettokapelle"
+        ],
+        "maxKm": 4
+      },
+      {
+        "name": "Skiflugschanze",
+        "q": [
+          "Heini-Klopfer-Skiflugschanze",
+          "Skiflugschanze Oberstdorf"
+        ],
+        "maxKm": 5
+      },
+      {
+        "name": "Schwand",
+        "q": [
+          "Schwand, Oberstdorf"
+        ],
+        "prefer": "place",
+        "maxKm": 4
+      },
+      {
+        "name": "Freibergsee",
+        "q": [
+          "Freibergsee"
+        ],
+        "maxKm": 4
+      },
+      {
+        "name": "Kornau",
+        "q": [
+          "Kornau, Oberstdorf"
+        ],
+        "prefer": "place",
+        "maxKm": 5
+      },
+      {
+        "name": "Reute",
+        "q": [
+          "Reute, Oberstdorf"
+        ],
+        "prefer": "place",
+        "maxKm": 4,
+        "optional": true
+      },
+      {
+        "name": "Jauchen",
+        "q": [
+          "Jauchen, Oberstdorf"
+        ],
+        "prefer": "place",
+        "maxKm": 4,
+        "optional": true
+      },
+      {
+        "name": "Oberstdorf",
+        "q": [
+          "Marktplatz, Oberstdorf",
+          "Oberstdorf"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Illerursprung",
+        "q": [
+          "Illerursprung",
+          "Ursprung der Iller",
+          "Illerursprung, Oberstdorf"
+        ],
+        "maxKm": 6
+      },
+      {
+        "name": "Wonnemar Sonthofen",
+        "q": [
+          "Wonnemar Sonthofen",
+          "Wonnemar",
+          "Sonthofen"
+        ],
+        "maxKm": 14
+      }
+    ],
+    "rottachsee": [
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Ortwang",
+        "q": [
+          "Ortwang, Burgberg im Allgäu",
+          "Ortwang"
+        ],
+        "prefer": "place",
+        "maxKm": 6
+      },
+      {
+        "name": "Häuser",
+        "q": [
+          "Häuser, Burgberg im Allgäu"
+        ],
+        "prefer": "place",
+        "maxKm": 5
+      },
+      {
+        "name": "Untermaiselstein",
+        "q": [
+          "Untermaiselstein, Rettenberg",
+          "Untermaiselstein"
+        ],
+        "prefer": "place",
+        "maxKm": 6
+      },
+      {
+        "name": "Freidorf",
+        "q": [
+          "Freidorf, Rettenberg",
+          "Freidorf"
+        ],
+        "prefer": "place",
+        "maxKm": 5
+      },
+      {
+        "name": "Ottacker",
+        "q": [
+          "Ottacker, Sulzberg",
+          "Ottacker"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Rottachsee",
+        "q": [
+          "Rottachsee",
+          "Rottachspeicher"
+        ],
+        "maxKm": 6
+      },
+      {
+        "name": "Vorderburg",
+        "q": [
+          "Vorderburg, Rettenberg",
+          "Vorderburg"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Kranzegg",
+        "q": [
+          "Kranzegg, Rettenberg",
+          "Kranzegg"
+        ],
+        "prefer": "place",
+        "maxKm": 5
+      },
+      {
+        "name": "Rettenberg",
+        "q": [
+          "Rettenberg"
+        ],
+        "prefer": "place",
+        "maxKm": 6
+      },
+      {
+        "name": "Burgberg im Allgäu",
+        "q": [
+          "Burgberg im Allgäu"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Sonthofen",
+        "q": [
+          "Sonthofen"
+        ],
+        "prefer": "place"
+      }
+    ],
+    "pfaender-ueberlingen": [
+      {
+        "name": "Pfänder (Gipfel)",
+        "q": [
+          "Pfänder, Lochau",
+          "Pfänder",
+          "Pfänderbahn Bergstation"
+        ]
+      },
+      {
+        "name": "Bregenz",
+        "q": [
+          "Bregenz"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Lindau",
+        "q": [
+          "Lindau (Bodensee)",
+          "Lindau"
+        ],
+        "prefer": "place",
+        "maxKm": 12
+      },
+      {
+        "name": "Wasserburg",
+        "q": [
+          "Wasserburg (Bodensee)",
+          "Wasserburg"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Kressbronn",
+        "q": [
+          "Kressbronn am Bodensee"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      },
+      {
+        "name": "Langenargen",
+        "q": [
+          "Langenargen"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Friedrichshafen",
+        "q": [
+          "Friedrichshafen"
+        ],
+        "prefer": "place",
+        "maxKm": 12
+      },
+      {
+        "name": "Markdorf",
+        "q": [
+          "Markdorf"
+        ],
+        "prefer": "place",
+        "maxKm": 15
+      },
+      {
+        "name": "Überlingen",
+        "q": [
+          "Überlingen"
+        ],
+        "prefer": "place",
+        "maxKm": 25
+      }
+    ]
+  },
+  "tours": [
+    {
+      "id": "ofterschwanger-horn-route-1",
+      "version": 4,
+      "group": "Ofterschwanger Horn",
+      "variant": "Route 1 – über Bolsterlang, Tiefenberg, Sigishofen",
+      "name": "Ofterschwanger Horn – Route 1",
+      "activity": "ebike",
+      "color": "#d6007e",
+      "segments": [
+        "hinweg",
+        "route1"
+      ],
+      "note": "Laut Zettel: SF – Illerdamm – (Blaichach) Immenstadt – Kreisel links (Umfahrung) – Kreisel links – R. Blaichach – nach ca. 600 m rechts Straße Altmummen – Ettensberg – Ortsmitte rechts Gunzesried – nach Brotzeitstelle (rechts) – Abz. Alpe Derb – Gunzesried (Kirche) rechts – R. Blaichach/Bihlerdorf – Anhöhe rechts Abz. Allgäuer Berghof – Teerstraße bis Bergstation Sesselbahn – Teerstraße links folgen – nach Hütte – Aufstieg Ofterschwanger Horn – Rückweg Straße folgen – Abzw. rechts – Gabelung rechts – Bergstation – Allgäuer Berghof – rechts – Schotterweg Ofterschwang – Talstation Sessellift. Route 1: Ofterschwang – Bolsterlang – Abzw. R. D… (unleserlich, bei Sport Speiser) – Straße folgen – n. Abz. Tiefenberg – Straße folgen – rechts halten (*) – Bushaltestelle links – R. Sigishofen – B19 – SF."
+    },
+    {
+      "id": "ofterschwanger-horn-route-2",
+      "version": 4,
+      "group": "Ofterschwanger Horn",
+      "variant": "Route 2 (kürzer) – über Hüttenberg, Westerhofen",
+      "name": "Ofterschwanger Horn – Route 2",
+      "activity": "ebike",
+      "color": "#0a6cff",
+      "segments": [
+        "hinweg",
+        "route2"
+      ],
+      "note": "Hinweg wie Route 1. Route 2 (kürzer): Ofterschwang – R. Westerhofen links – Kabelweg(?) Hüttenberg – Käse – Bergabfahrt, Westerhofen rechts – Hauptstraße links – Bauernhof (Feldweg links) – Illersiedlung – SF."
+    },
+    {
+      "id": "ofterschwanger-horn-route-3",
+      "version": 4,
+      "group": "Ofterschwanger Horn",
+      "variant": "Route 3 – ab Route 1 (*) über Schweineberg, Sonnenalp",
+      "name": "Ofterschwanger Horn – Route 3",
+      "activity": "ebike",
+      "color": "#ff7a00",
+      "segments": [
+        "hinweg",
+        "route3"
+      ],
+      "note": "Hinweg wie Route 1, Rückweg wie Route 1 bis zum * (nach Tiefenberg). Route 3: * geradeaus – links – links (Berg) – rechts Straße nach Schweineberg – Sonnenalp – Sennerei – Einmündung zurück – geradeaus Hotel Freistil – Sigishofen (rechts B19) – SF."
+    },
+    {
+      "id": "hindelang-jochstrasse-schnitzelalm",
+      "version": 1,
+      "group": "Bad Hindelang / Jochstraße",
+      "variant": "Schnitzelalm über Reckenberg, Breiten, Vorderhindelang",
+      "name": "Sonthofen – Schnitzelalm – Sonthofen",
+      "activity": "ebike",
+      "color": "#00a86b",
+      "segments": [
+        "hindelang-joch"
+      ],
+      "note": "Aus der Google-Maps-Fahrradroute (2 h 43): Start Standort (Sonthofen) – Waltener Straße – Reckenberg – Breiten – Vorderhindelang – Zillenbachstraße – Schnitzelalm (Jochstraße 37) – Alte Jochstraße – Richard-Wagner-Straße (Sonthofen). Strassen sind als Strassenmitte eingetragen."
+    },
+    {
+      "id": "oberjoch-wertach-koenigsstraessle-immenstadt",
+      "version": 1,
+      "group": "Oberjoch / Wertach",
+      "variant": "Schnitzelalm – Oberjoch – Unterjoch – Wertach – Königssträßle – Immenstadt",
+      "name": "Sonthofen – Oberjoch – Wertach – Immenstadt",
+      "activity": "ebike",
+      "color": "#8e44ff",
+      "segments": [
+        "joch-wertach-immenstadt"
+      ],
+      "note": "Aus der Google-Maps-Fahrradroute (3 h 21): Start Standort (angenommen Sonthofen) – Bad Hindelang – Schnitzelalm (Jochstraße 37) – Oberjoch – Unterjoch – Wertach – Königssträßle (Burgberg) – Burgberg im Allgäu – Häuser – Immenstadt im Allgäu (Ziel)."
+    },
+    {
+      "id": "balderschwang-sibratsgfaell-rueck1",
+      "version": 1,
+      "group": "Balderschwang / Sibratsgfäll",
+      "variant": "Rückweg ① über Oberstdorf und Illerradweg",
+      "name": "Lochbachtal – Balderschwang – Sibratsgfäll – Rückweg ①",
+      "activity": "ebike",
+      "color": "#e4002b",
+      "segments": [
+        "balderschwang-hin",
+        "balderschwang-rueck1"
+      ],
+      "note": "Laut Zettel: SF – Fischen (Ort) – Berg (Ampel) im Ort R. Obermaiselstein (Radweg) – O'stein – R. Tiefenbach – Hirschsprung – nach Parkplatz rechts Teerstraße (Schranke) – Lochbachtal – Alpe (Name unleserlich) – Abzweigung rechts – Wald-/Wiesenweg zur Schelpenalpe – Balderschwang – R. Hittisau – Sibratsgfäll (Abzw. ca. 4 km rechts) – im Ort (Kirche) links Hirschgund, Rohrmoos (Teerstraße) – Rohrmoos – Tiefenbach. Rückweg ①: Oberstdorf (McDonald's) – Illerradweg – SF/Breitach."
+    },
+    {
+      "id": "balderschwang-sibratsgfaell-rueck2",
+      "version": 1,
+      "group": "Balderschwang / Sibratsgfäll",
+      "variant": "Rückweg ② über Obermaiselstein, Fischen, Illerdamm",
+      "name": "Lochbachtal – Balderschwang – Sibratsgfäll – Rückweg ②",
+      "activity": "ebike",
+      "color": "#00a3b5",
+      "segments": [
+        "balderschwang-hin",
+        "balderschwang-rueck2"
+      ],
+      "note": "Laut Zettel: SF – Fischen (Ort) – Berg (Ampel) im Ort R. Obermaiselstein (Radweg) – O'stein – R. Tiefenbach – Hirschsprung – nach Parkplatz rechts Teerstraße (Schranke) – Lochbachtal – Alpe (Name unleserlich) – Abzweigung rechts – Wald-/Wiesenweg zur Schelpenalpe – Balderschwang – R. Hittisau – Sibratsgfäll (Abzw. ca. 4 km rechts) – im Ort (Kirche) links Hirschgund, Rohrmoos (Teerstraße) – Rohrmoos – Tiefenbach. Rückweg ②: Tiefenbach links R. Obermaiselstein – Fischen – Illerdamm – SF."
+    },
+    {
+      "id": "2025-gebirgstour-variante-1",
+      "version": 1,
+      "date": "2025",
+      "group": "2025 · Gebirgstour Hornbahn – Straußbergalpe",
+      "variant": "Variante 1 – zurück über Beilenberg, Binswangen",
+      "name": "Gebirgstour – Variante 1",
+      "activity": "ebike",
+      "color": "#2e7d32",
+      "segments": [
+        "gebirg-hin",
+        "gebirg-v1"
+      ],
+      "note": "Laut Zettel „Gebirgstour“: SF – Fußgängerzone – geradeaus Richtung Hindelang – Binswangen (Radweg links) – Vorderhindelang – Bad Hindelang – Kreisel rechts Richtung Hinterstein – Hornbahn: Radtransport Bergfahrt (die Bergfahrt ist hier als Strecke gerechnet) – Gaststätte am Spielplatz rechts, oberer Weg in westlicher Richtung – am Ende rechts Richtung Straußbergalpe (Waldweg) – Straußbergalpe – Forstweg – Sonthofer Hof – Asphaltstraße Talfahrt – Altstädten. Variante 1: Beilenberg – (Ort unleserlich) – Binswangen – SF."
+    },
+    {
+      "id": "2025-gebirgstour-variante-2",
+      "version": 1,
+      "date": "2025",
+      "group": "2025 · Gebirgstour Hornbahn – Straußbergalpe",
+      "variant": "Variante 2 – zurück über Thalhofen, Fischen, Bolsterlang, Ofterschwang",
+      "name": "Gebirgstour – Variante 2",
+      "activity": "ebike",
+      "color": "#c2185b",
+      "segments": [
+        "gebirg-hin",
+        "gebirg-v2"
+      ],
+      "note": "Laut Zettel „Gebirgstour“: SF – Fußgängerzone – geradeaus Richtung Hindelang – Binswangen (Radweg links) – Vorderhindelang – Bad Hindelang – Kreisel rechts Richtung Hinterstein – Hornbahn: Radtransport Bergfahrt (die Bergfahrt ist hier als Strecke gerechnet) – Gaststätte am Spielplatz rechts, oberer Weg in westlicher Richtung – am Ende rechts Richtung Straußbergalpe (Waldweg) – Straußbergalpe – Forstweg – Sonthofer Hof – Asphaltstraße Talfahrt – Altstädten. Variante 2: Unterthalhofen – Oberthalhofen – Fischen – Obermaiselstein – Bolsterlang – Kierwang – Ofterschwang – SF."
+    },
+    {
+      "id": "2025-alpsee-oberstaufen-tour-1",
+      "version": 2,
+      "date": "2025",
+      "group": "2025 · Alpsee – Oberstaufen",
+      "variant": "Tour 1 (bergig) – über Gunzesried, Ettensberg, Schwanden",
+      "name": "Alpsee – Oberstaufen – Tour 1 (bergig)",
+      "activity": "ebike",
+      "color": "#6a1b9a",
+      "segments": [
+        "alpsee-bergig",
+        "alpsee-oberstaufen"
+      ],
+      "note": "Laut Zettel „Tour 1 – bergig“: SF – Minigolfplatz über Illerbrücke rechts, Weg folgen – Einmündung Asphaltstraße rechts – Bihlerdorf, durch die Ortschaft auf Radweg – Abzw. Gunzesried links, Radweg folgen (Halden, Gunzesried) – nach Sennerei Einmündung rechts, Straße folgen nach Ettensberg (evtl. Alpe Derb) – Einmündung links Richtung Schwanden – Kreisstraße links – Laut Zettel: … Immenstadt 1. Kreisel rechts (Unterführung), 2. Kreisel links in die Stadt, geradeaus bis 3. Kreisel – vor der Unterführung rechts Radweg zum Alpsee – Bühl, Marienbrücke geradeaus am Alpseeufer – rechts halten, Asphaltstraße entlang Alpsee – Trieblings, Ratholz – Oberstaufen, Erlebnisbad „Aquaria“. Rückweg: Oberstaufen – Immenstadt bis 2. Kreisel, links an die Iller – Illerradweg über Blaichach bis SF."
+    },
+    {
+      "id": "2025-alpsee-oberstaufen-tour-2",
+      "version": 2,
+      "date": "2025",
+      "group": "2025 · Alpsee – Oberstaufen",
+      "variant": "Tour 2 (flacher) – Illerdamm, Bihlerdorf, Blaichach",
+      "name": "Alpsee – Oberstaufen – Tour 2",
+      "activity": "ebike",
+      "color": "#0277bd",
+      "segments": [
+        "alpsee-flach",
+        "alpsee-oberstaufen"
+      ],
+      "note": "Laut Zettel „Tour 2“: SF – Minigolfplatz über Illerbrücke rechts – Illerdamm folgen bis Asphaltstraße rechts – Bihlerdorf – Einmündung links Radweg – Blaichach durchfahren – Immenstadt, anschließend wie Tour 1: Laut Zettel: … Immenstadt 1. Kreisel rechts (Unterführung), 2. Kreisel links in die Stadt, geradeaus bis 3. Kreisel – vor der Unterführung rechts Radweg zum Alpsee – Bühl, Marienbrücke geradeaus am Alpseeufer – rechts halten, Asphaltstraße entlang Alpsee – Trieblings, Ratholz – Oberstaufen, Erlebnisbad „Aquaria“. Rückweg: Oberstaufen – Immenstadt bis 2. Kreisel, links an die Iller – Illerradweg über Blaichach bis SF."
+    },
+    {
+      "id": "2025-strassentour-lindau",
+      "version": 2,
+      "date": "2025",
+      "viewbox": [
+        9.6,
+        47.35,
+        10.6,
+        47.75
+      ],
+      "group": "2025 · Straßentouren",
+      "variant": "Sonthofen – Missen – Scheidegg – Lindau (einfach)",
+      "name": "Straßentour Sonthofen – Lindau",
+      "activity": "ebike",
+      "color": "#ef6c00",
+      "segments": [
+        "lindau"
+      ],
+      "note": "Laut Zettel „Straßentour“ (nur Hinweg, Rückweg nicht notiert): Sonthofen – Blaichach – Immenstadt (1. Kreisel rechts Unterführung, 2. links Stadt, 3. rechts Bahnhof, 4. geradeaus) – Missen – Wiederhofen – (zwei Orte unleserlich, evtl. …ried) – Harbatshofen? – Stiefenhofen (über B308, Kreisel geradeaus) – Weiler – Ellhofen? – Böserscheidegg – Scheidegg – (…ried, unleserlich) – Hub – Kirchdorf (Hohenweiler) – Hörbranz – Bodenseeufer, Radweg Bregenz–Lindau rechts – LINDAU."
+    },
+    {
+      "id": "2025-strassentour-freibergsee",
+      "version": 2,
+      "date": "2025",
+      "group": "2025 · Straßentouren",
+      "variant": "Wonnemar – Illerdamm – Oberstdorf – Freibergsee – Kornau – Illerursprung",
+      "name": "Straßentour Oberstdorf – Freibergsee",
+      "activity": "ebike",
+      "color": "#00897b",
+      "segments": [
+        "freibergsee"
+      ],
+      "note": "Laut Zettel „Straßentour“: Sonthofen – Wonnemar – über Bahngleis gleich links, Feldweg Richtung Süden – über Bahngleis links, Straße rechts (Brücke) – Unterthalhofen, erster Feldweg rechts, vor Bahngleis links – Illerdamm links – Fischen – Dammweg folgen bis Oberstdorf – Tennisplatz, OA4 überqueren, Straße folgen – Nebelhornbahn, Brücke rechts, beim Minigolf links, nächster Feldweg rechts, Weg folgen Süden – Lorettokapellen – Straße Fellhorn oder Stillachradweg – Skiflugschanze – Asphaltstraße Schwand, vor Ort gleich rechts – Freibergsee (Badeanstalt) – zurück – Höhenweg Bergkristall – Kornau – Reute, Jauchen – Oberstdorf – Einmündung B19/Odf: Kiesweg neben Straße, Wander-/Radweg folgen, Häuser rechts – Parkplatz links McDonald's – Breitach überqueren (Fluss), linkes Ufer Richtung Norden – Illerursprung – Radweg SF (Iller) – Wonnemar.",
+      "viewbox": [
+        9.85,
+        47.33,
+        10.55,
+        47.66
+      ]
+    },
+    {
+      "id": "2025-strassentour-rottachsee",
+      "version": 2,
+      "date": "2025",
+      "group": "2025 · Straßentouren",
+      "variant": "Burgberg – Untermaiselstein – Rottachsee – Kranzegg – Rettenberg",
+      "name": "Straßentour Rottachsee",
+      "activity": "ebike",
+      "color": "#5d4037",
+      "segments": [
+        "rottachsee"
+      ],
+      "note": "Laut Zettel „Straßentour“: SF Richtung Burgberg – bei Gärtnerei (Name unleserlich) links abbiegen – Ortwang – Häuser – Untermaiselstein – Freidorf – Ottacker, rechts hoch nach Rottach – Rottachsee/-speicher – Vorderburg – Kranzegg – Rettenberg – Burgberg – SF."
+    },
+    {
+      "id": "2025-pfaender-ueberlingen-markdorf",
+      "version": 1,
+      "date": "2025",
+      "viewbox": [
+        9.1,
+        47.45,
+        9.95,
+        47.85
+      ],
+      "group": "2025 · Bodensee",
+      "variant": "Pfändergipfel – Bregenz – Bodensee-Radweg – Friedrichshafen – Markdorf – Überlingen",
+      "name": "Pfändergipfel – Markdorf – Überlingen",
+      "activity": "ebike",
+      "color": "#1565c0",
+      "segments": [
+        "pfaender-ueberlingen"
+      ],
+      "note": "Auf Zuruf eingetragen (kein Zettel): Pfändergipfel – Abfahrt nach Bregenz – Bodensee-Radweg über Lindau, Wasserburg, Kressbronn, Langenargen – Friedrichshafen – Markdorf – Überlingen. Zwischenorte am See angenommen; einfache Strecke."
+    }
+  ]
+}
