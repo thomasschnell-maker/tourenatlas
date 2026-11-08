@@ -1276,6 +1276,48 @@
         "prefer": "place",
         "maxKm": 8
       }
+    ],
+    "kappeler-alpspitz": [
+      {
+        "name": "Pfronten",
+        "q": [
+          "Pfronten"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Kappeler Alp",
+        "q": [
+          "Kappeler Alp",
+          "Kappeler Alpe",
+          "Kappeler Alm"
+        ],
+        "maxKm": 10
+      },
+      {
+        "name": "Alpspitz (Nesselwang)",
+        "q": [
+          "Alpspitzbahn Bergstation",
+          "Sportheim Böck",
+          "Alpspitze, Nesselwang"
+        ],
+        "maxKm": 6
+      },
+      {
+        "name": "Nesselwang",
+        "q": [
+          "Nesselwang"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      },
+      {
+        "name": "Pfronten",
+        "q": [
+          "Pfronten"
+        ],
+        "prefer": "place"
+      }
     ]
   },
   "tours": [
@@ -1548,6 +1590,26 @@
         "breitenberg"
       ],
       "note": "Auf Zuruf eingetragen: Auffahrt mit dem Rad von österreichischer Seite (Start Grän im Tannheimer Tal) zur Ostlerhütte auf dem Breitenberg, Abfahrt auf deutscher Seite über die Hochalpe nach Pfronten-Steinach."
+    },
+    {
+      "id": "2025-pfronten-kappeler-alp-alpspitz",
+      "version": 1,
+      "date": "2025",
+      "viewbox": [
+        10.3,
+        47.45,
+        10.85,
+        47.66
+      ],
+      "group": "2025 · Füssen",
+      "variant": "Pfronten – Kappeler Alp – Alpspitz – Nesselwang – Pfronten",
+      "name": "Pfronten – Kappeler Alp – Alpspitz",
+      "activity": "bike",
+      "color": "#6a1b9a",
+      "segments": [
+        "kappeler-alpspitz"
+      ],
+      "note": "Auf Zuruf eingetragen: Radrunde ab Pfronten hoch zur Kappeler Alp, weiter zur Alpspitz (Bergstation/Sportheim Böck), Abfahrt nach Nesselwang und zurück nach Pfronten. Rückweg über Nesselwang angenommen."
     }
   ]
 }
