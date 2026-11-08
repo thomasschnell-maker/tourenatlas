@@ -7,6 +7,10 @@
 //   3. Protomaps       – OSM als PMTiles-Datei, offline/ohne Server        → SOURCES.protomaps
 // Ergänzt um Höhenmodell (3D), Overpass (Wege-Details mit SAC-Skala) und amtliche Luftbilder.
 
+// Touren anlegen/ändern in der App gesperrt: Touren kommen vorerst nur als Vorlagen (data/touren-quelle.json).
+// Fotos, Notizen, 3D-Blick, Unterwegs, Offline und GPX-Export bleiben möglich. true = Bearbeiten wieder freigeben.
+export const TOUR_EDITING = false;
+
 export const REGION = {
   name: 'Allgäu, Tirol, Vorarlberg, Bodensee',
   bbox: [9.55, 47.22, 11.0, 47.98], // [W, S, E, N]

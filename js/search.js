@@ -2,7 +2,7 @@
 // Ortssuche über Nominatim (OpenStreetMap). Nutzungsregeln: max. 1 Anfrage/s, keine Suche je
 // Tastendruck – deshalb nur beim Absenden. Koordinaten werden lokal erkannt (keine Anfrage).
 
-import { REGION } from './config.js';
+import { REGION, TOUR_EDITING } from './config.js';
 
 export const SEARCH = {
   url: 'https://nominatim.openstreetmap.org/search',
@@ -156,7 +156,7 @@ export function initSearch({ map, toast, esc }) {
       list.innerHTML = results
         .map(
           (r, i) => `<li class="hit"><button type="button" data-i="${i}"><b>${esc(r.name)}</b><small>${esc([r.type, r.detail].filter(Boolean).join(' · '))}</small></button>
-            <button type="button" class="pin" data-pin="${i}" title="Als Station zur Tour hinzufügen">+ Station</button></li>`
+            ${TOUR_EDITING ? `<button type="button" class="pin" data-pin="${i}" title="Als Station zur Tour hinzufügen">+ Station</button>` : ''}</li>`
         )
         .join('') + `<li class="muted attr">${SEARCH.attribution}</li>`;
       list.hidden = false;

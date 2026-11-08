@@ -248,6 +248,8 @@ button.link { border: 0; background: none; color: var(--accent); padding: 0; cur
 .tour-list button { display: grid; grid-template-columns: auto 1fr; column-gap: 10px; align-items: center; }
 .tour-list small { grid-column: 2; }
 .tdot { width: 14px; height: 14px; border-radius: 50%; grid-row: span 2; box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(0,0,0,.15); }
+.tour-title { display: flex; align-items: center; gap: 8px; margin: 8px 0 2px; font-size: 1.1rem; }
+.tour-title .tdot { grid-row: auto; flex: none; }
 .colors { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
 .colors label { cursor: pointer; }
 .colors input { position: absolute; opacity: 0; pointer-events: none; }
