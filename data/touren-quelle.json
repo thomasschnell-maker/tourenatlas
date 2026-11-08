@@ -1305,6 +1305,63 @@
         ],
         "prefer": "place"
       }
+    ],
+    "pfronten-wertach-hin": [
+      {
+        "name": "Pfronten",
+        "q": [
+          "Pfronten"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Nesselwang",
+        "q": [
+          "Nesselwang"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      },
+      {
+        "name": "Grüntensee",
+        "q": [
+          "Grüntensee"
+        ],
+        "maxKm": 10
+      },
+      {
+        "name": "Wertach",
+        "q": [
+          "Wertach"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      }
+    ],
+    "pfronten-wertach-zurueck": [
+      {
+        "name": "Grüntensee",
+        "q": [
+          "Grüntensee"
+        ],
+        "maxKm": 8
+      },
+      {
+        "name": "Nesselwang",
+        "q": [
+          "Nesselwang"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      },
+      {
+        "name": "Pfronten",
+        "q": [
+          "Pfronten"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      }
     ]
   },
   "tours": [
@@ -1597,6 +1654,27 @@
         "kappeler-alpspitz"
       ],
       "note": "Auf Zuruf eingetragen: Radrunde ab Pfronten hoch zur Kappeler Alp, weiter zur Alpspitz (Bergstation/Sportheim Böck), Abfahrt nach Nesselwang und zurück nach Pfronten. Rückweg über Nesselwang angenommen."
+    },
+    {
+      "id": "2025-pfronten-gruentensee-wertach",
+      "version": 1,
+      "date": "2025",
+      "viewbox": [
+        10.3,
+        47.45,
+        10.85,
+        47.66
+      ],
+      "group": "2025 · Füssen",
+      "variant": "Straßentour Pfronten – Grüntensee – Wertach",
+      "name": "Pfronten – Grüntensee – Wertach (Straße)",
+      "activity": "ebike",
+      "color": "#c62828",
+      "segments": [
+        "pfronten-wertach-hin",
+        "pfronten-wertach-zurueck"
+      ],
+      "note": "Auf Zuruf eingetragen: Straßentour ab Pfronten über Nesselwang zum Grüntensee und nach Wertach, zurück auf demselben Weg. Coole Abfahrt. Rückweg und Fahrzeug (E-Bike) angenommen."
     }
   ]
 }
