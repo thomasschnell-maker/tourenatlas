@@ -1336,9 +1336,51 @@
         ],
         "prefer": "place",
         "maxKm": 8
+      },
+      {
+        "name": "Kranzegg",
+        "q": [
+          "Kranzegg, Rettenberg",
+          "Kranzegg"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      },
+      {
+        "name": "Rettenberg",
+        "q": [
+          "Rettenberg"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Burgberg im Allgäu",
+        "q": [
+          "Burgberg im Allgäu"
+        ],
+        "prefer": "place",
+        "maxKm": 8
       }
     ],
     "pfronten-wertach-zurueck": [
+      {
+        "name": "Königssträßle",
+        "q": [
+          "Königsträßle, Burgberg im Allgäu",
+          "Königssträßle, Burgberg im Allgäu",
+          "Königsträßle"
+        ],
+        "maxKm": 6
+      },
+      {
+        "name": "Wertach",
+        "q": [
+          "Wertach"
+        ],
+        "prefer": "place",
+        "maxKm": 12
+      },
       {
         "name": "Grüntensee",
         "q": [
@@ -1657,24 +1699,24 @@
     },
     {
       "id": "2025-pfronten-gruentensee-wertach",
-      "version": 1,
+      "version": 2,
       "date": "2025",
       "viewbox": [
-        10.3,
+        10.2,
         47.45,
         10.85,
-        47.66
+        47.68
       ],
       "group": "2025 · Füssen",
-      "variant": "Straßentour Pfronten – Grüntensee – Wertach",
-      "name": "Pfronten – Grüntensee – Wertach (Straße)",
+      "variant": "Straßentour Pfronten – Grüntensee – Wertach – Rettenberg – Burgberg, zurück übers Königssträßle",
+      "name": "Pfronten – Grüntensee – Wertach – Königssträßle (Straße)",
       "activity": "ebike",
       "color": "#c62828",
       "segments": [
         "pfronten-wertach-hin",
         "pfronten-wertach-zurueck"
       ],
-      "note": "Auf Zuruf eingetragen: Straßentour ab Pfronten über Nesselwang zum Grüntensee und nach Wertach, zurück auf demselben Weg. Coole Abfahrt. Rückweg und Fahrzeug (E-Bike) angenommen."
+      "note": "Auf Zuruf eingetragen: Straßentour ab Pfronten über Nesselwang und Grüntensee nach Wertach, Abfahrt über Kranzegg nach Rettenberg und Burgberg, zurück übers Königssträßle nach Wertach, Grüntensee, Pfronten. Hinweg ab Wertach (Kranzegg/Rettenberg) angenommen."
     }
   ]
 }
