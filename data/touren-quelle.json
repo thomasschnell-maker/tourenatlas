@@ -1192,6 +1192,13 @@
         "maxKm": 5
       },
       {
+        "name": "4-Seenblick",
+        "q": [
+          "Vierseenblick"
+        ],
+        "maxKm": 5
+      },
+      {
         "name": "Weißensee",
         "q": [
           "Weißensee, Füssen"
@@ -1206,19 +1213,6 @@
         ],
         "prefer": "place",
         "maxKm": 8
-      },
-      {
-        "name": "4-Seenblick",
-        "q": [
-          "Vierseenblick",
-          "Vier-Seen-Blick",
-          "4-Seen-Blick",
-          "4 Seenblick",
-          "Viersee-Blick",
-          "Vierseenblick, Füssen"
-        ],
-        "maxKm": 10,
-        "optional": true
       },
       {
         "name": "Forggensee (Festspielhaus)",
@@ -1504,7 +1498,7 @@
     },
     {
       "id": "2025-vier-seen-fuessen",
-      "version": 2,
+      "version": 3,
       "date": "2025",
       "viewbox": [
         10.3,
@@ -1513,14 +1507,14 @@
         47.66
       ],
       "group": "2025 · Füssen",
-      "variant": "4-Seen-Tour: Alatsee – Weißensee – Hopfensee – 4-Seenblick – Forggensee",
+      "variant": "4-Seen-Tour: Alatsee – 4-Seenblick – Weißensee – Hopfensee – Forggensee",
       "name": "4-Seen-Tour Füssen",
       "activity": "ebike",
       "color": "#00838f",
       "segments": [
         "vier-seen"
       ],
-      "note": "Auf Zuruf eingetragen: Runde ab Füssen über Bad Faulenbach zum Alatsee, weiter zum Weißensee, Hopfensee (Hopfen am See), Aussichtspunkt 4-Seenblick und am Forggensee (Festspielhaus) zurück nach Füssen."
+      "note": "Auf Zuruf eingetragen: Runde ab Füssen über Bad Faulenbach zum Alatsee, hoch zum Aussichtspunkt Vierseenblick (Gemswändweg), weiter zum Weißensee, Hopfensee (Hopfen am See) und am Forggensee (Festspielhaus) zurück nach Füssen."
     },
     {
       "id": "2025-breitenberg-ostlerhuette",
