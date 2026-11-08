@@ -1215,19 +1215,6 @@
         "maxKm": 8
       },
       {
-        "name": "4-Seenblick",
-        "q": [
-          "Vierseenblick",
-          "Vier-Seen-Blick",
-          "4-Seen-Blick",
-          "4 Seenblick",
-          "Viersee-Blick",
-          "Vierseenblick, Füssen"
-        ],
-        "maxKm": 10,
-        "optional": true
-      },
-      {
         "name": "Forggensee (Festspielhaus)",
         "q": [
           "Festspielhaus Neuschwanstein",
@@ -1553,7 +1540,7 @@
     },
     {
       "id": "2025-vier-seen-fuessen",
-      "version": 3,
+      "version": 4,
       "date": "2025",
       "viewbox": [
         10.3,
