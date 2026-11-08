@@ -7,6 +7,9 @@ import { readExif } from './exif.js';
 import { haversine } from '../geo.js';
 import { blobToDataUrl, compressImage, dataUrlToBlob, requestPersistence, store } from './tours-store.js';
 import { geocode, pickCandidate, splitPlaces } from '../search.js';
+import { TOUR_EDITING } from '../config.js';
+
+const LOCKED_MSG = 'Touren trägt vorerst Claude ein – Bearbeiten ist gesperrt. Fotos, Notizen und Unterwegs gehen weiter.';
 
 const ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="18" r="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="18" cy="6" r="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 17.5c4-1 2-6 6-7.5s2-2.5 2.5-2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="2.5 2.5"/></svg>';
 const COLOR = TOUR_COLORS[0];
@@ -433,6 +436,7 @@ function fitTour() {
 
 /** Aus der Ortssuche gepinnt: in die offene Tour, sonst neue Tour anlegen. */
 async function pinStation({ name, lngLat }) {
+  if (!TOUR_EDITING) return ctx.toast(LOCKED_MSG);
   if (!current) {
     current = { ...newTour(`Tour ${new Date().toLocaleDateString('de-DE')}`), activity: lastActivity(), color: nextColor(tours) };
     await store.putTour(current);
@@ -938,25 +942,9 @@ function setAdding(on) {
   else ctx.toast('');
 }
 
-function render() {
-  const { pane, esc } = ctx;
-  if (!current) {
-    const years = [...new Set(tours.map(tourYear).filter(Boolean))].sort().reverse();
-    const chips = years.length > 0 ? `<div class="chips">${['all', ...years].map((y) => `<button type="button" data-year="${y}" aria-pressed="${y === year}">${y === 'all' ? 'Alle' : y}</button>`).join('')}</div>` : '';
-    pane.innerHTML = `
-      ${chips}
-      <div class="row"><button type="button" class="btn primary" data-t="new">+ Neue Tour</button>
-        <label class="btn">Sicherung laden<input type="file" accept=".json,application/json" data-t="import" hidden></label></div>
-      <div class="row"><label class="btn">GPX laden<input type="file" accept=".gpx,application/gpx+xml,application/xml,text/xml" data-t="gpxfile" hidden></label></div>
-      ${renderGroups(esc)}
-      ${visibleTours().length ? '<p class="muted">Alle Touren der Auswahl sind auf der Karte; Linie antippen öffnet die Tour. Für ein Jahresplakat: Jahr wählen, dann Tab „Plakat“.</p>' : ''}
-      <p class="muted">Touren und Fotos bleiben nur auf diesem Gerät. Safari löscht sie nach 7 Tagen ohne Besuch, ausser die App liegt auf dem Home-Bildschirm. Sicherung regelmässig exportieren.</p>`;
-    return;
-  }
-  const t = current;
-  const failed = t.segments.filter((s) => s?.error).length;
-  pane.innerHTML = `
-    <button type="button" class="link" data-t="back">‹ Alle Touren</button>
+/** Felder zum Anlegen/Ändern der Tour (nur wenn TOUR_EDITING). */
+function editControls(t, esc) {
+  return `
     <div class="row"><input data-t="name" value="${esc(t.name)}" aria-label="Name der Tour"><input type="date" data-t="date" value="${esc(t.date || '')}" aria-label="Datum"></div>
     <div class="row"><input data-t="group" value="${esc(t.group || '')}" placeholder="Gruppe, z. B. Ofterschwanger Horn" aria-label="Gruppe"><input data-t="variant" value="${esc(t.variant || '')}" placeholder="Variante, z. B. Rückweg 2" aria-label="Variante"></div>
     <div class="colors" role="radiogroup" aria-label="Farbe">${TOUR_COLORS.map((c) => `<label><input type="radio" name="tcolor" value="${c}" ${colorOf(t) === c ? 'checked' : ''}><i style="background:${c}"></i></label>`).join('')}
@@ -970,6 +958,40 @@ function render() {
     </div>
     <form class="row" data-t="places-form"><input data-t="places" placeholder="Orte: Sonthofen, Burgberg, Immenstadt" aria-label="Orte als Stationen" enterkeyhint="done"><button type="submit" class="btn">Setzen</button></form>
     <button type="button" class="btn primary wide ${adding ? 'on' : ''}" data-t="add">${adding ? 'Fertig mit Bearbeiten' : '+ Stationen setzen / verschieben'}</button>
+`;
+}
+
+/** Gesperrt: Tour nur anzeigen (Name, Datum, Gruppe, Aktivität). */
+function lockedHead(t, esc) {
+  const meta = [t.date, t.group, t.variant, ACTIVITIES[t.activity || 'hike'].label].filter(Boolean).map(esc).join(' · ');
+  return `<h3 class="tour-title"><i class="tdot" style="background:${esc(colorOf(t))}"></i> ${esc(t.name)}</h3>
+    <p class="muted">${meta}</p>`;
+}
+
+function render() {
+  const { pane, esc } = ctx;
+  if (!current) {
+    const years = [...new Set(tours.map(tourYear).filter(Boolean))].sort().reverse();
+    const chips = years.length > 0 ? `<div class="chips">${['all', ...years].map((y) => `<button type="button" data-year="${y}" aria-pressed="${y === year}">${y === 'all' ? 'Alle' : y}</button>`).join('')}</div>` : '';
+    pane.innerHTML = `
+      ${chips}
+      ${
+        TOUR_EDITING
+          ? `<div class="row"><button type="button" class="btn primary" data-t="new">+ Neue Tour</button>
+        <label class="btn">Sicherung laden<input type="file" accept=".json,application/json" data-t="import" hidden></label></div>
+      <div class="row"><label class="btn">GPX laden<input type="file" accept=".gpx,application/gpx+xml,application/xml,text/xml" data-t="gpxfile" hidden></label></div>`
+          : `<p class="muted">${LOCKED_MSG}</p>`
+      }
+      ${renderGroups(esc)}
+      ${visibleTours().length ? '<p class="muted">Alle Touren der Auswahl sind auf der Karte; Linie antippen öffnet die Tour. Für ein Jahresplakat: Jahr wählen, dann Tab „Plakat“.</p>' : ''}
+      <p class="muted">Touren und Fotos bleiben nur auf diesem Gerät. Safari löscht sie nach 7 Tagen ohne Besuch, ausser die App liegt auf dem Home-Bildschirm. Sicherung regelmässig exportieren.</p>`;
+    return;
+  }
+  const t = current;
+  const failed = t.segments.filter((s) => s?.error).length;
+  pane.innerHTML = `
+    <button type="button" class="link" data-t="back">‹ Alle Touren</button>
+    ${TOUR_EDITING ? editControls(t, esc) : lockedHead(t, esc)}
     ${
       stats
         ? `<dl class="stats"><dt>Länge</dt><dd>${(stats.length / 1000).toLocaleString('de-DE', { maximumFractionDigits: 2 })} km</dd>
@@ -1004,14 +1026,14 @@ function render() {
     <ol class="stations">${t.stations
       .map(
         (s, i) => `<li data-sid="${esc(s.id)}">
-          <div class="st-head"><span class="badge">${i + 1}</span><input value="${esc(s.name)}" data-s="name" aria-label="Name der Station">
+          <div class="st-head"><span class="badge">${i + 1}</span>${TOUR_EDITING ? `<input value="${esc(s.name)}" data-s="name" aria-label="Name der Station">` : `<b>${esc(s.name)}</b>`}
             <small>${s.ele != null ? Math.round(s.ele) + ' m' : ''}</small></div>
           <div class="thumbs" data-s="thumbs"></div>
           <div class="st-actions">
             <label class="btn sm">📷 Foto<input type="file" accept="image/*" multiple data-s="photo" hidden></label>
             <button type="button" class="btn sm" data-s="view" title="Aktuellen 3D-Blick für diese Station speichern">${s.view ? 'Blick ✓' : 'Blick speichern'}</button>
             <button type="button" class="btn sm" data-s="fly">Hinfliegen</button>
-            <button type="button" class="btn sm danger" data-s="del" aria-label="Station löschen">✕</button>
+            ${TOUR_EDITING ? '<button type="button" class="btn sm danger" data-s="del" aria-label="Station löschen">✕</button>' : ''}
           </div></li>`
       )
       .join('')}</ol>
@@ -1024,7 +1046,7 @@ function render() {
     <button type="button" class="btn wide" data-t="offline" ${t.stations.length < 1 ? 'disabled' : ''}>Tour offline speichern</button>
     <div class="row"><button type="button" class="btn" data-t="gpx" ${t.stations.length < 2 ? 'disabled' : ''}>GPX</button>
       <button type="button" class="btn" data-t="backup">Sicherung</button>
-      <button type="button" class="btn danger" data-t="delete">Tour löschen</button></div>`;
+      ${TOUR_EDITING ? '<button type="button" class="btn danger" data-t="delete">Tour löschen</button>' : ''}</div>`;
   // Vorschaubilder nachladen
   for (const s of t.stations) {
     const el = pane.querySelector(`li[data-sid="${CSS.escape(s.id)}"] [data-s="thumbs"]`);
@@ -1108,6 +1130,7 @@ function wire(pane) {
     }
     if (open) return openTour(open);
     if (img) return openLightbox(station(img), img.dataset.pid);
+    if (!TOUR_EDITING && (['new', 'add', 'variantcopy', 'delete'].includes(t) || s === 'del')) return ctx.toast(LOCKED_MSG);
     if (t === 'new') {
       current = { ...newTour(`Tour ${new Date().toLocaleDateString('de-DE')}`), activity: lastActivity(), color: nextColor(tours) };
       await store.putTour(current);
