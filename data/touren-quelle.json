@@ -1668,6 +1668,48 @@
         "prefer": "place",
         "maxKm": 8
       }
+    ],
+    "pfronten-hohenfreyberg": [
+      {
+        "name": "Pfronten",
+        "q": [
+          "Pfronten"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Zell (Eisenberg)",
+        "q": [
+          "Zell, Eisenberg",
+          "Zell, Eisenberg (Allgäu)"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Burgruine Hohenfreyberg",
+        "q": [
+          "Burgruine Hohenfreyberg",
+          "Hohenfreyberg"
+        ],
+        "maxKm": 4
+      },
+      {
+        "name": "Burgruine Eisenberg",
+        "q": [
+          "Burgruine Eisenberg",
+          "Burg Eisenberg, Eisenberg"
+        ],
+        "maxKm": 3
+      },
+      {
+        "name": "Pfronten",
+        "q": [
+          "Pfronten"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      }
     ]
   },
   "tours": [
@@ -2057,6 +2099,26 @@
         "aalen-dewangen"
       ],
       "note": "Kurze Runde ab Aalen nach Dewangen, Fachsenfeld und durchs Kochertal über Wasseralfingen zurück."
+    },
+    {
+      "id": "2025-pfronten-hohenfreyberg",
+      "version": 1,
+      "date": "2025",
+      "viewbox": [
+        10.3,
+        47.45,
+        10.85,
+        47.66
+      ],
+      "group": "2025 · Füssen",
+      "variant": "Burgen-Runde: Hohenfreyberg und Eisenberg",
+      "name": "Pfronten – Burgruinen Hohenfreyberg & Eisenberg",
+      "activity": "ebike",
+      "color": "#5d4037",
+      "segments": [
+        "pfronten-hohenfreyberg"
+      ],
+      "note": "Auf Zuruf eingetragen („Freiburg bei Pfronten“ = Burgruine Hohenfreyberg angenommen): ab Pfronten nach Zell, hoch zu den Burgruinen Hohenfreyberg und Eisenberg, zurück nach Pfronten."
     }
   ]
 }
