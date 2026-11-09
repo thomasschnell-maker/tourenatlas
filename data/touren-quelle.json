@@ -1710,6 +1710,213 @@
         "prefer": "place",
         "maxKm": 10
       }
+    ],
+    "pfronten-reutte": [
+      {
+        "name": "Pfronten",
+        "q": [
+          "Pfronten"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Vils",
+        "q": [
+          "Vils, Tirol"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Musau",
+        "q": [
+          "Musau"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Reutte",
+        "q": [
+          "Reutte"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Pflach",
+        "q": [
+          "Pflach"
+        ],
+        "prefer": "place",
+        "maxKm": 5
+      },
+      {
+        "name": "Pinswang",
+        "q": [
+          "Pinswang"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Füssen",
+        "q": [
+          "Füssen"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Pfronten",
+        "q": [
+          "Pfronten"
+        ],
+        "prefer": "place",
+        "maxKm": 14
+      }
+    ],
+    "pfronten-vilsalpsee": [
+      {
+        "name": "Pfronten",
+        "q": [
+          "Pfronten"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Grän",
+        "q": [
+          "Grän"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      },
+      {
+        "name": "Tannheim",
+        "q": [
+          "Tannheim, Tirol"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Vilsalpsee",
+        "q": [
+          "Vilsalpsee",
+          "Alpengasthof Vilsalpsee"
+        ],
+        "maxKm": 6
+      },
+      {
+        "name": "Tannheim",
+        "q": [
+          "Tannheim, Tirol"
+        ],
+        "prefer": "place",
+        "maxKm": 6
+      },
+      {
+        "name": "Grän",
+        "q": [
+          "Grän"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Pfronten",
+        "q": [
+          "Pfronten"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      }
+    ],
+    "pfronten-fuessen-lechfall": [
+      {
+        "name": "Pfronten",
+        "q": [
+          "Pfronten"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Weißensee",
+        "q": [
+          "Weißensee, Füssen"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      },
+      {
+        "name": "Füssen",
+        "q": [
+          "Füssen"
+        ],
+        "prefer": "place",
+        "maxKm": 6
+      },
+      {
+        "name": "Lechfall",
+        "q": [
+          "Lechfall",
+          "Lechfall, Füssen"
+        ],
+        "maxKm": 4
+      },
+      {
+        "name": "Ulrichsbrücke",
+        "q": [
+          "Ulrichsbrücke",
+          "Ulrichsbrücke, Pinswang"
+        ],
+        "maxKm": 6,
+        "optional": true
+      },
+      {
+        "name": "Vils",
+        "q": [
+          "Vils, Tirol"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Pfronten",
+        "q": [
+          "Pfronten"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      }
+    ],
+    "pfronten-baerenalpe": [
+      {
+        "name": "Pfronten-Ried",
+        "q": [
+          "Ried, Pfronten"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Bärenalpe",
+        "q": [
+          "Bärenalpe, Pfronten",
+          "Bärenalpe",
+          "Bärenmoosalpe",
+          "Alpe Bärenmoos"
+        ],
+        "maxKm": 8
+      },
+      {
+        "name": "Pfronten",
+        "q": [
+          "Pfronten"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      }
     ]
   },
   "tours": [
@@ -2119,6 +2326,86 @@
         "pfronten-hohenfreyberg"
       ],
       "note": "Auf Zuruf eingetragen („Freiburg bei Pfronten“ = Burgruine Hohenfreyberg angenommen): ab Pfronten nach Zell, hoch zu den Burgruinen Hohenfreyberg und Eisenberg, zurück nach Pfronten."
+    },
+    {
+      "id": "2025-pfronten-reutte",
+      "version": 1,
+      "date": "2025",
+      "viewbox": [
+        10.3,
+        47.4,
+        10.85,
+        47.66
+      ],
+      "group": "2025 · Füssen",
+      "variant": "Runde über Vils nach Reutte, zurück über Pinswang und Füssen",
+      "name": "Pfronten – Reutte",
+      "activity": "ebike",
+      "color": "#ad1457",
+      "segments": [
+        "pfronten-reutte"
+      ],
+      "note": "Auf Zuruf eingetragen: Pfronten → Vils → Musau → Reutte, zurück über Pflach, Pinswang und Füssen nach Pfronten. Rückweg angenommen."
+    },
+    {
+      "id": "2025-pfronten-vilsalpsee",
+      "version": 1,
+      "date": "2025",
+      "viewbox": [
+        10.3,
+        47.4,
+        10.85,
+        47.66
+      ],
+      "group": "2025 · Füssen",
+      "variant": "Durchs Tannheimer Tal zum Vilsalpsee",
+      "name": "Pfronten – Vilsalpsee",
+      "activity": "ebike",
+      "color": "#0277bd",
+      "segments": [
+        "pfronten-vilsalpsee"
+      ],
+      "note": "Auf Zuruf eingetragen: Pfronten → Grän → Tannheim → Vilsalpsee und zurück. Start in Pfronten angenommen."
+    },
+    {
+      "id": "2025-pfronten-fuessen-lechfall",
+      "version": 1,
+      "date": "2025",
+      "viewbox": [
+        10.3,
+        47.4,
+        10.85,
+        47.66
+      ],
+      "group": "2025 · Füssen",
+      "variant": "Füssen und Lechfall, zurück über Vils",
+      "name": "Pfronten – Füssen – Lechfall",
+      "activity": "ebike",
+      "color": "#00695c",
+      "segments": [
+        "pfronten-fuessen-lechfall"
+      ],
+      "note": "Auf Zuruf eingetragen: Pfronten → Weißensee → Füssen → Lechfall → Ulrichsbrücke → Vils → Pfronten. Verlauf angenommen."
+    },
+    {
+      "id": "2025-pfronten-baerenalpe",
+      "version": 1,
+      "date": "2025",
+      "viewbox": [
+        10.3,
+        47.4,
+        10.85,
+        47.66
+      ],
+      "group": "2025 · Füssen",
+      "variant": "Bärenalpe: auf der einen Seite hoch, auf der anderen runter",
+      "name": "Pfronten – Bärenalpe",
+      "activity": "bike",
+      "color": "#4e342e",
+      "segments": [
+        "pfronten-baerenalpe"
+      ],
+      "note": "Auf Zuruf eingetragen: zur Bärenalpe bei Pfronten, auf der einen Seite hoch, auf der anderen runter. Auf- und Abstiegsseite noch offen."
     }
   ]
 }
