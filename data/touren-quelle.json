@@ -1900,22 +1900,45 @@
         "prefer": "place"
       },
       {
-        "name": "Bärenalpe",
+        "name": "Röfleuten",
         "q": [
-          "Bärenalpe, Pfronten",
-          "Bärenalpe",
+          "Röfleuten, Pfronten"
+        ],
+        "prefer": "place",
+        "maxKm": 6
+      },
+      {
+        "name": "Bärenmoosalpe",
+        "q": [
           "Bärenmoosalpe",
-          "Alpe Bärenmoos"
+          "Bärenalpe, Pfronten"
         ],
         "maxKm": 8
       },
       {
-        "name": "Pfronten",
+        "name": "Achtal",
         "q": [
-          "Pfronten"
+          "Achtal, Pfronten"
+        ],
+        "prefer": "place",
+        "maxKm": 8,
+        "optional": true
+      },
+      {
+        "name": "Pfronten-Steinach",
+        "q": [
+          "Steinach, Pfronten"
         ],
         "prefer": "place",
         "maxKm": 10
+      },
+      {
+        "name": "Pfronten-Ried",
+        "q": [
+          "Ried, Pfronten"
+        ],
+        "prefer": "place",
+        "maxKm": 6
       }
     ]
   },
@@ -2389,7 +2412,7 @@
     },
     {
       "id": "2025-pfronten-baerenalpe",
-      "version": 1,
+      "version": 2,
       "date": "2025",
       "viewbox": [
         10.3,
@@ -2398,14 +2421,14 @@
         47.66
       ],
       "group": "2025 · Füssen",
-      "variant": "Bärenalpe: auf der einen Seite hoch, auf der anderen runter",
-      "name": "Pfronten – Bärenalpe",
-      "activity": "bike",
+      "variant": "Bärenmoosalpe: über Röfleuten hoch, übers Achtal nach Steinach runter",
+      "name": "Pfronten – Bärenmoosalpe",
+      "activity": "ebike",
       "color": "#4e342e",
       "segments": [
         "pfronten-baerenalpe"
       ],
-      "note": "Auf Zuruf eingetragen: zur Bärenalpe bei Pfronten, auf der einen Seite hoch, auf der anderen runter. Auf- und Abstiegsseite noch offen."
+      "note": "Auf Zuruf eingetragen: zur Bärenmoosalpe bei Pfronten, auf der einen Seite hoch, auf der anderen runter. Aufstieg über Röfleuten, Abfahrt übers Achtal nach Pfronten-Steinach angenommen."
     }
   ]
 }

@@ -46,7 +46,9 @@ function overlaySources(data) {
     points: { type: 'geojson', data: data.points },
     selected: { type: 'geojson', data: data.selected },
     // Seen-Beschriftung (beim Veröffentlichen erzeugt, tools/build-lakes.mjs); fehlt die Datei, bleibt die Ebene leer
-    lakes: { type: 'geojson', data: new URL('data/seen.json', globalThis.location?.href ?? 'http://localhost/').href }
+    lakes: { type: 'geojson', data: new URL('data/seen.json', globalThis.location?.href ?? 'http://localhost/').href },
+    // Alpen, Almen und Hütten mit Namen (tools/build-alps.mjs) – viele fehlen in der Grundkarte ganz
+    alps: { type: 'geojson', data: new URL('data/alpen.json', globalThis.location?.href ?? 'http://localhost/').href }
   };
 }
 
@@ -258,6 +260,52 @@ function lakeLabels({ visibility, dark = false }) {
   }));
 }
 
+/**
+ * Alpen und Hütten: brauner Punkt mit Namen. Hütten und Einkehr ab Zoom 11, übrige Alpen ab 12,
+ * Namen wachsen beim Hineinzoomen (am Handy sonst unlesbar). Schalter „Gipfel & Hütten“.
+ */
+export function alpLayers({ visibility, dark = false }) {
+  const vis = { visibility: visibility.peaks === false ? 'none' : 'visible' };
+  const main = ['in', ['get', 'kind'], ['literal', ['huette', 'einkehr']]];
+  return [
+    {
+      id: 'alp-points',
+      type: 'circle',
+      source: 'alps',
+      minzoom: 11,
+      filter: ['any', main, ['>=', ['zoom'], 12]],
+      layout: vis,
+      paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 11, 3, 16, 6],
+        'circle-color': ['match', ['get', 'kind'], 'alpe', '#6d8b3a', '#8d4e1f'],
+        'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': 1.5,
+        'circle-pitch-alignment': 'viewport'
+      }
+    },
+    {
+      id: 'alp-labels',
+      type: 'symbol',
+      source: 'alps',
+      minzoom: 11,
+      filter: ['any', main, ['>=', ['zoom'], 12]],
+      layout: {
+        'text-field': ['case', ['has', 'ele'], ['format', ['get', 'name'], {}, '\n', {}, ['concat', ['to-string', ['get', 'ele']], ' m'], { 'font-scale': 0.8 }], ['get', 'name']],
+        'text-font': ['Noto Sans Regular'],
+        'text-size': ['interpolate', ['linear'], ['zoom'], 11, 11, 14, 13.5, 16, 16],
+        'text-anchor': 'top',
+        'text-offset': [0, 0.6],
+        'text-max-width': 8,
+        'symbol-sort-key': ['match', ['get', 'kind'], 'huette', 0, 'einkehr', 1, 2],
+        ...vis
+      },
+      paint: dark
+        ? { 'text-color': '#ffe0c2', 'text-halo-color': 'rgba(0,0,0,0.8)', 'text-halo-width': 1.5 }
+        : { 'text-color': '#6b3a14', 'text-halo-color': 'rgba(255,255,255,0.92)', 'text-halo-width': 1.5 }
+    }
+  ];
+}
+
 /** Fügt Overlays vor der ersten Beschriftungsebene ein. */
 function insertBeforeLabels(layers, extra) {
   const i = layers.findIndex((l) => l.type === 'symbol');
@@ -284,6 +332,7 @@ export async function openFreeMapStyle(data, opts) {
   style.layers = [
     ...insertBeforeLabels(style.layers, overlayLayers({ hillshade: true, visibility: opts.visibility })),
     ...lakeLabels(opts),
+    ...alpLayers(opts),
     ...peakLabels('openfreemap', opts)
   ];
   return finish(style, data, opts);
@@ -317,6 +366,7 @@ export async function aerialStyle(data, opts) {
       ...overlayLayers({ hillshade: false, visibility: opts.visibility }),
       ...labels,
       ...lakeLabels({ ...opts, dark: true }),
+      ...alpLayers({ ...opts, dark: true }),
       ...peakLabels('aerial', { ...opts, dark: true })
     ]
   };
@@ -337,7 +387,7 @@ export function protomapsStyle(pmtilesUrl, data, opts) {
         attribution: `${SOURCES.protomaps.attribution} · ${SOURCES.trails.attribution}`
       }
     },
-    layers: [...insertBeforeLabels(base, overlayLayers({ hillshade: true, visibility: opts.visibility })), ...lakeLabels(opts), ...peakLabels('protomaps', opts)]
+    layers: [...insertBeforeLabels(base, overlayLayers({ hillshade: true, visibility: opts.visibility })), ...lakeLabels(opts), ...alpLayers(opts), ...peakLabels('protomaps', opts)]
   };
   return finish(style, data, opts);
 }
