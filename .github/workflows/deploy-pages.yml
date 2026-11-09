@@ -48,6 +48,11 @@ jobs:
         continue-on-error: true
         run: node tools/build-lakes.mjs site-data/seen.json site-data/chunks/seen.json
 
+      # Alpen, Almen und Hütten mit Namen (Cache im Chunks-Ordner, wöchentlich aufgefrischt)
+      - name: Alpen und Hütten (Overpass)
+        continue-on-error: true
+        run: node tools/build-alps.mjs site-data/alpen.json site-data/chunks/alpen.json
+
       # Vorgegebene Touren: Ortsnamen → Koordinaten (nur Oberallgäu, Abstandsprüfung). Das Protokoll zeigt jede Station.
       - name: Vorgegebene Touren auflösen (Nominatim)
         continue-on-error: true
@@ -77,6 +82,7 @@ jobs:
             echo "::error::Keine Touren verfügbar"; exit 1
           fi
           if [ -f site-data/seen.json ]; then cp site-data/seen.json _site/data/seen.json; fi
+          if [ -f site-data/alpen.json ]; then cp site-data/alpen.json _site/data/alpen.json; fi
           if [ -f site-data/cells/index.json ]; then
             mkdir -p _site/data/cells
             cp -r site-data/cells/. _site/data/cells/

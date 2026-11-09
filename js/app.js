@@ -408,7 +408,7 @@ $('sheet-grip').addEventListener('keydown', (e) => {
 });
 
 // ---------- Interaktion auf der Karte ----------
-for (const layer of ['ways', 'lifts', 'peaks', 'huts']) {
+for (const layer of ['ways', 'lifts', 'peaks', 'huts', 'alp-points']) {
   map.on('mouseenter', layer, () => (map.getCanvas().style.cursor = 'pointer'));
   map.on('mouseleave', layer, () => (map.getCanvas().style.cursor = ''));
 }
@@ -422,13 +422,17 @@ function pointPopup(f, lngLat) {
     html = `<b>${esc(prop(p.name) ?? 'Gipfel ohne Namen')}</b><br>
       OSM: ${prop(p.ele_raw) ? esc(p.ele_raw) + ' m' : '–'} · DEM: ${prop(p.ele_dem) != null ? esc(p.ele_dem) + ' m' : '–'}<br>
       <small>${esc(prop(p.check_text) ?? 'Prüfung läuft …')}</small>`;
+  } else if (p.osm) {
+    // Alpen-Ebene (data/alpen.json)
+    const kind = { huette: 'Hütte', einkehr: 'Einkehr', alpe: 'Alpe' }[p.kind] ?? 'Alpe';
+    html = `<b>${esc(p.name)}</b><br>${kind}${prop(p.ele) != null ? ` · ${esc(p.ele)} m` : ''}`;
   } else {
     const kind = p.kind === 'alpine_hut' ? 'Berghütte (bewirtschaftet)' : 'Unbewirtschaftete Hütte';
     html = `<b>${esc(prop(p.name) ?? kind)}</b><br>${esc(kind)}${prop(p.ele_raw) ? ` · ${esc(p.ele_raw)} m` : ''}`;
   }
   new maplibregl.Popup({ maxWidth: '260px' })
     .setLngLat(lngLat)
-    .setHTML(`${html}<br><a href="https://www.openstreetmap.org/node/${esc(p.osm_id)}" target="_blank" rel="noopener">OSM-Objekt</a>`)
+    .setHTML(`${html}<br><a href="https://www.openstreetmap.org/${esc(p.osm ?? `node/${p.osm_id}`)}" target="_blank" rel="noopener">OSM-Objekt</a>`)
     .addTo(map);
 }
 
@@ -440,7 +444,7 @@ map.on('click', (e) => {
   const { x, y } = e.point;
   const box = [[x - 10, y - 10], [x + 10, y + 10]];
   const layers = (ids) => ids.filter((l) => map.getLayer(l));
-  const pt = map.queryRenderedFeatures(box, { layers: layers(['peaks', 'huts']) })[0];
+  const pt = map.queryRenderedFeatures(box, { layers: layers(['peaks', 'huts', 'alp-points']) })[0];
   if (pt) return pointPopup(pt, e.lngLat);
   const hit = map.queryRenderedFeatures(box, { layers: layers(['ways', 'lifts']) })[0];
   if (!hit) return;
@@ -556,7 +560,7 @@ $('sel-gpx').addEventListener('click', async () => {
 });
 
 // ---------- Steuerung ----------
-const LAYER_GROUPS = { hillshade: ['hillshade'], bikeroutes: ['bikeroutes', 'bikeroute-labels'], ways: ['ways-casing', 'ways', 'selected'], lifts: ['lifts'], peaks: ['peaks', 'huts', 'peak-labels', 'peak-labels-overview'] };
+const LAYER_GROUPS = { hillshade: ['hillshade'], bikeroutes: ['bikeroutes', 'bikeroute-labels'], ways: ['ways-casing', 'ways', 'selected'], lifts: ['lifts'], peaks: ['peaks', 'huts', 'peak-labels', 'peak-labels-overview', 'alp-points', 'alp-labels'] };
 
 document.querySelectorAll('input[data-layer]').forEach((cb) => {
   cb.addEventListener('change', () => {
