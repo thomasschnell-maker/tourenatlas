@@ -1404,6 +1404,270 @@
         "prefer": "place",
         "maxKm": 10
       }
+    ],
+    "aalen-rosenstein-gmuend": [
+      {
+        "name": "Aalen",
+        "q": [
+          "Aalen"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Essingen",
+        "q": [
+          "Essingen, Ostalbkreis"
+        ],
+        "prefer": "place",
+        "maxKm": 12
+      },
+      {
+        "name": "Heubach",
+        "q": [
+          "Heubach, Ostalbkreis"
+        ],
+        "prefer": "place",
+        "maxKm": 12
+      },
+      {
+        "name": "Burgruine Rosenstein",
+        "q": [
+          "Burgruine Rosenstein",
+          "Rosenstein, Heubach"
+        ],
+        "maxKm": 5
+      },
+      {
+        "name": "Schwäbisch Gmünd",
+        "q": [
+          "Schwäbisch Gmünd"
+        ],
+        "prefer": "place",
+        "maxKm": 16
+      },
+      {
+        "name": "Böbingen an der Rems",
+        "q": [
+          "Böbingen an der Rems"
+        ],
+        "prefer": "place",
+        "maxKm": 12
+      },
+      {
+        "name": "Mögglingen",
+        "q": [
+          "Mögglingen"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Essingen",
+        "q": [
+          "Essingen, Ostalbkreis"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      },
+      {
+        "name": "Aalen",
+        "q": [
+          "Aalen"
+        ],
+        "prefer": "place",
+        "maxKm": 12
+      }
+    ],
+    "aalen-kochertal-zang-bartholomae": [
+      {
+        "name": "Aalen",
+        "q": [
+          "Aalen"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Unterkochen",
+        "q": [
+          "Unterkochen, Aalen"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Oberkochen",
+        "q": [
+          "Oberkochen"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Kocherursprung",
+        "q": [
+          "Kocherursprung, Oberkochen",
+          "Schwarzer Kocher Ursprung",
+          "Kocherursprung"
+        ],
+        "maxKm": 5,
+        "optional": true
+      },
+      {
+        "name": "Zang",
+        "q": [
+          "Zang, Königsbronn"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      },
+      {
+        "name": "Bartholomä",
+        "q": [
+          "Bartholomä"
+        ],
+        "prefer": "place",
+        "maxKm": 12
+      },
+      {
+        "name": "Essingen",
+        "q": [
+          "Essingen, Ostalbkreis"
+        ],
+        "prefer": "place",
+        "maxKm": 14
+      },
+      {
+        "name": "Aalen",
+        "q": [
+          "Aalen"
+        ],
+        "prefer": "place",
+        "maxKm": 12
+      }
+    ],
+    "aalen-waldhausen-kapfenburg": [
+      {
+        "name": "Aalen",
+        "q": [
+          "Aalen"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Unterkochen",
+        "q": [
+          "Unterkochen, Aalen"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Ebnat",
+        "q": [
+          "Ebnat, Aalen"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      },
+      {
+        "name": "Waldhausen",
+        "q": [
+          "Waldhausen, Aalen"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Schloss Kapfenburg",
+        "q": [
+          "Schloss Kapfenburg",
+          "Kapfenburg, Lauchheim"
+        ],
+        "maxKm": 14
+      },
+      {
+        "name": "Rodstein",
+        "q": [
+          "Rodstein, Lauchheim",
+          "Rodstein, Ostalbkreis",
+          "Rodstein"
+        ],
+        "maxKm": 8,
+        "optional": true
+      },
+      {
+        "name": "Lauchheim",
+        "q": [
+          "Lauchheim"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Westhausen",
+        "q": [
+          "Westhausen, Ostalbkreis"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      },
+      {
+        "name": "Wasseralfingen",
+        "q": [
+          "Wasseralfingen, Aalen"
+        ],
+        "prefer": "place",
+        "maxKm": 12
+      },
+      {
+        "name": "Aalen",
+        "q": [
+          "Aalen"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      }
+    ],
+    "aalen-dewangen": [
+      {
+        "name": "Aalen",
+        "q": [
+          "Aalen"
+        ],
+        "prefer": "place"
+      },
+      {
+        "name": "Dewangen",
+        "q": [
+          "Dewangen, Aalen"
+        ],
+        "prefer": "place",
+        "maxKm": 12
+      },
+      {
+        "name": "Fachsenfeld",
+        "q": [
+          "Fachsenfeld, Aalen"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      },
+      {
+        "name": "Wasseralfingen",
+        "q": [
+          "Wasseralfingen, Aalen"
+        ],
+        "prefer": "place",
+        "maxKm": 10
+      },
+      {
+        "name": "Aalen",
+        "q": [
+          "Aalen"
+        ],
+        "prefer": "place",
+        "maxKm": 8
+      }
     ]
   },
   "tours": [
@@ -1717,6 +1981,82 @@
         "pfronten-wertach-zurueck"
       ],
       "note": "Auf Zuruf eingetragen: Straßentour ab Pfronten über Nesselwang und Grüntensee nach Wertach, Abfahrt über Kranzegg nach Rettenberg und Burgberg, zurück übers Königssträßle nach Wertach, Grüntensee, Pfronten. Hinweg ab Wertach (Kranzegg/Rettenberg) angenommen."
+    },
+    {
+      "id": "aalen-rosenstein-gmuend",
+      "version": 1,
+      "viewbox": [
+        9.7,
+        48.65,
+        10.4,
+        48.98
+      ],
+      "group": "Aalen · Ostalb",
+      "variant": "Remstal-Runde: Rosenstein und Schwäbisch Gmünd",
+      "name": "Aalen – Rosenstein – Schwäbisch Gmünd",
+      "activity": "ebike",
+      "color": "#2e7d32",
+      "segments": [
+        "aalen-rosenstein-gmuend"
+      ],
+      "note": "Runde ab Aalen über Essingen und Heubach hoch zur Burgruine Rosenstein, weiter nach Schwäbisch Gmünd und durchs Remstal (Böbingen, Mögglingen) zurück."
+    },
+    {
+      "id": "aalen-kochertal-zang-bartholomae",
+      "version": 1,
+      "viewbox": [
+        9.7,
+        48.65,
+        10.4,
+        48.98
+      ],
+      "group": "Aalen · Ostalb",
+      "variant": "Albuch-Runde: Kochertal, Zang, Bartholomä",
+      "name": "Aalen – Kochertal – Zang – Bartholomä",
+      "activity": "ebike",
+      "color": "#1565c0",
+      "segments": [
+        "aalen-kochertal-zang-bartholomae"
+      ],
+      "note": "Runde ab Aalen das Kochertal hoch (Unterkochen, Oberkochen, Kocherursprung), über den Albuch nach Zang und Bartholomä, Abfahrt über Essingen zurück nach Aalen."
+    },
+    {
+      "id": "aalen-waldhausen-kapfenburg",
+      "version": 1,
+      "viewbox": [
+        9.7,
+        48.65,
+        10.4,
+        48.98
+      ],
+      "group": "Aalen · Ostalb",
+      "variant": "Härtsfeld-Runde: Waldhausen, Kapfenburg, Rodstein",
+      "name": "Aalen – Waldhausen – Kapfenburg",
+      "activity": "ebike",
+      "color": "#ef6c00",
+      "segments": [
+        "aalen-waldhausen-kapfenburg"
+      ],
+      "note": "Runde ab Aalen über Unterkochen und Ebnat aufs Härtsfeld nach Waldhausen, zur Kapfenburg und Rodstein, über Lauchheim und Westhausen das Jagst-/Kochertal zurück über Wasseralfingen."
+    },
+    {
+      "id": "aalen-dewangen",
+      "version": 1,
+      "viewbox": [
+        9.7,
+        48.65,
+        10.4,
+        48.98
+      ],
+      "group": "Aalen · Ostalb",
+      "variant": "Kleine Runde: Dewangen und Fachsenfeld",
+      "name": "Aalen – Dewangen – Fachsenfeld",
+      "activity": "ebike",
+      "color": "#6d4c41",
+      "segments": [
+        "aalen-dewangen"
+      ],
+      "note": "Kurze Runde ab Aalen nach Dewangen, Fachsenfeld und durchs Kochertal über Wasseralfingen zurück."
     }
   ]
 }
