@@ -10,16 +10,18 @@ import { REGION, SOURCES } from '../js/config.js';
 const [out = 'site-data/alpen.json', cacheFile = 'site-data/chunks/alpen.json'] = process.argv.slice(2);
 const ENDPOINTS = process.env.OVERPASS_URL ? [process.env.OVERPASS_URL] : SOURCES.trails.endpoints;
 const MAX_AGE_MS = 7 * 86400000;
-const FORMAT = 2; // erhöhen, wenn sich Abfrage/Filter ändern: Cache wird dann sofort neu geholt
+const FORMAT = 3; // erhöhen, wenn sich Abfrage/Filter ändern: Cache wird dann sofort neu geholt
 const sleep = (ms) => new Promise((r) => setTimeout(r, process.env.PAUSE_MS ? 0 : ms));
 
-// Strassen („Alpenstraße“), Haltestellen („Alpe Eck“), Weiden und Gipfel tragen oft denselben Namen – keine Alpen
-// … ebenso Parkplätze, Spielplätze, Wasserversorgung, Pisten, Infotafeln („Trauerschnäpper/Zilpzalp“)
-const NOT =
-  '["highway"!~"."]["public_transport"!~"."]["railway"!~"."]["landuse"!~"."]["natural"!~"."]["boundary"!~"."]["waterway"!~"."]["route"!~"."]' +
-  '["leisure"!~"."]["man_made"!~"."]["piste:type"!~"."]["power"!~"."]["barrier"!~"."]["emergency"!~"."]' +
-  '["amenity"!~"^(parking|parking_entrance|bicycle_parking|toilets|shelter|bench|waste_basket|drinking_water|recycling|fountain)$"]' +
-  '["tourism"!~"^(information|artwork|viewpoint|picnic_site|camp_site|attraction)$"]["place"!~"^(region|county|municipality)$"]';
+// Filter laufen hier lokal, nicht in Overpass: viele Tag-Ausschlüsse machen die Abfrage über die ganze
+// Region so teuer, dass alle Server in den Timeout laufen.
+// Strassen („Alpenstraße“), Haltestellen („Alpe Eck“), Weiden, Gipfel, Parkplätze, Spielplätze,
+// Wasserversorgung, Pisten und Infotafeln („Trauerschnäpper/Zilpzalp“) tragen oft Alp-Namen – keine Alpen.
+const EXCLUDE_KEYS = ['highway', 'public_transport', 'railway', 'landuse', 'natural', 'boundary', 'waterway', 'route', 'leisure', 'man_made', 'piste:type', 'power', 'barrier', 'emergency'];
+const EXCLUDE_AMENITY = /^(parking|parking_entrance|bicycle_parking|toilets|shelter|bench|waste_basket|drinking_water|recycling|fountain)$/;
+const EXCLUDE_TOURISM = /^(information|artwork|viewpoint|picnic_site|camp_site|attraction)$/;
+const isSideObject = (t) =>
+  EXCLUDE_KEYS.some((k) => t[k] != null) || EXCLUDE_AMENITY.test(t.amenity || '') || EXCLUDE_TOURISM.test(t.tourism || '') || /^(region|county|municipality)$/.test(t.place || '');
 // Namen von Nebenobjekten einer Hütte („Terrasse der Hochalphütte“, „Parkplatz Vilsalm“, Haltestellen)
 const SIDE_NAME = /(straße|strasse|parkplatz|nebengebäude|terrasse|spielplatz|wasserversorgung|pumpstation|skitour|haltestelle|toilette|zufahrt|lift\b)/i;
 
@@ -28,8 +30,8 @@ export function alpQuery([w, s, e, n]) {
   return `[out:json][timeout:180][bbox:${bbox}];
 (
   nwr["tourism"~"^(alpine_hut|wilderness_hut)$"];
-  nwr["name"~"(alpe|alp|alm|hütte|huette)$",i]${NOT};
-  nwr["name"~"^(alpe|alp|alm|untere|obere|hintere|vordere) ",i]["name"~"(^| )(alpe|alp|alm)( |$)",i]${NOT};
+  nwr["name"~"(alpe|alp|alm|hütte|huette)$",i];
+  nwr["name"~"^(alpe|alp|alm) ",i];
 );
 out tags center qt;`;
 }
@@ -54,7 +56,7 @@ export function parseAlps(json) {
     const lon = el.lon ?? el.center?.lon;
     if (!name || !Number.isFinite(lat) || !Number.isFinite(lon)) continue;
     const kind = kindOf(el.tags);
-    if (kind !== 'huette' && SIDE_NAME.test(name)) continue;
+    if (kind !== 'huette' && (isSideObject(el.tags) || SIDE_NAME.test(name))) continue;
     const ele = Number.parseFloat(String(el.tags.ele ?? '').replace(',', '.'));
     const f = {
       type: 'Feature',
