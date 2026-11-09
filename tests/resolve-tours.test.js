@@ -51,3 +51,37 @@ test('resolve-tours: Abstandsprüfung, Alternativen, fehlende Stationen, keine D
     m.server.close();
   }
 });
+
+test('resolve-tours: Nominatim 503 wird wiederholt, Suchcache spart Anfragen beim nächsten Lauf', async () => {
+  let calls = 0;
+  let fail = 2; // die ersten zwei Anfragen scheitern wie beim echten Ausfall
+  const server = createServer((req, res) => {
+    calls++;
+    if (fail-- > 0) return (res.statusCode = 503), res.end('busy');
+    const q = new URL(req.url, 'http://x').searchParams.get('q');
+    res.setHeader('content-type', 'application/json');
+    res.end(JSON.stringify((PLACES[q] || []).map(([lon, lat]) => ({ lon: String(lon), lat: String(lat), display_name: q, category: 'place', type: 'town', osm_type: 'node', osm_id: 1 }))));
+  });
+  await new Promise((r) => server.listen(0, r));
+  const url = `http://127.0.0.1:${server.address().port}/search`;
+  const dir = mkdtempSync(join(tmpdir(), 'ta-tours-'));
+  writeFileSync(join(dir, 'q.json'), JSON.stringify({
+    viewbox: [10.05, 47.4, 10.45, 47.62],
+    segments: { a: [{ name: 'Sonthofen', q: ['Sonthofen'] }, { name: 'Immenstadt', q: ['Immenstadt'] }] },
+    tours: [{ id: 't1', version: 1, name: 'T', segments: ['a'] }]
+  }));
+  const run = () =>
+    new Promise((resolve, reject) =>
+      execFile('node', ['tools/resolve-tours.mjs', join(dir, 'q.json'), join(dir, 't.json'), join(dir, 'cache.json')], { env: { ...process.env, NOMINATIM_URL: url, PAUSE_MS: '0', RETRY_MS: '1' } }, (e, so, se) => (e ? reject(new Error(se)) : resolve(so)))
+    );
+  try {
+    await run();
+    assert.deepEqual(JSON.parse(readFileSync(join(dir, 't.json'), 'utf8'))[0].stations.map((s) => s.name), ['Sonthofen', 'Immenstadt']);
+    assert.equal(calls, 4); // 2 × 503, dann 2 Treffer
+    const out = await run();
+    assert.equal(calls, 4, 'zweiter Lauf komplett aus dem Cache');
+    assert.match(out, /2 aus dem Cache, 0 bei Nominatim/);
+  } finally {
+    server.close();
+  }
+});

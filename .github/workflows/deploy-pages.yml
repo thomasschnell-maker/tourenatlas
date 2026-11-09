@@ -51,13 +51,25 @@ jobs:
       # Vorgegebene Touren: Ortsnamen → Koordinaten (nur Oberallgäu, Abstandsprüfung). Das Protokoll zeigt jede Station.
       - name: Vorgegebene Touren auflösen (Nominatim)
         continue-on-error: true
-        run: node tools/resolve-tours.mjs data/touren-quelle.json site-data/touren.json
+        run: |
+          node tools/resolve-tours.mjs data/touren-quelle.json site-data/touren.json site-data/chunks/nominatim.json
+          cp site-data/touren.json site-data/chunks/touren-letzter-stand.json
 
       - name: Seite zusammenstellen
         run: |
           mkdir -p _site
           git archive HEAD | tar -x -C _site
-          if [ -f site-data/touren.json ]; then cp site-data/touren.json _site/data/touren.json; fi
+          # Touren nie ohne touren.json veröffentlichen: sonst verschwinden alle Vorlagen von der Seite
+          if [ -f site-data/touren.json ]; then cp site-data/touren.json _site/data/touren.json
+          elif [ -f site-data/chunks/touren-letzter-stand.json ]; then
+            echo "::warning::Touren nicht aufgelöst – letzter Stand aus dem Cache"
+            cp site-data/chunks/touren-letzter-stand.json _site/data/touren.json
+          elif git fetch -q --depth 1 origin gh-pages && git show FETCH_HEAD:data/touren.json > _site/data/touren.json 2>/dev/null; then
+            echo "::warning::Touren nicht aufgelöst – letzter veröffentlichter Stand"
+          else
+            rm -f _site/data/touren.json
+            echo "::error::Keine Touren verfügbar"; exit 1
+          fi
           if [ -f site-data/seen.json ]; then cp site-data/seen.json _site/data/seen.json; fi
           if [ -f site-data/cells/index.json ]; then
             mkdir -p _site/data/cells
