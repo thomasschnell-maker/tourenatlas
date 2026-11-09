@@ -139,13 +139,14 @@ async function main() {
     const n = await page.locator('.tour-list button').count();
     for (let i = 0; i < n; i++) {
       try {
-        await page.locator('.tour-list button').nth(i).click({ timeout: 10000 });
+        // Per DOM-Klick: Touren in eingeklappten Gruppen sind nicht sichtbar (Playwright-Klick wartete je 10 s)
+        await page.evaluate((k) => document.querySelectorAll('.tour-list button')[k].click(), i);
         await sleep(5000);
         await page.evaluate(() => document.getElementById('sheet').classList.add('peek'));
         await sleep(2500);
         await page.screenshot({ path: `${out}/tour-${i + 1}.png` });
         await page.evaluate(() => document.getElementById('sheet').classList.remove('peek'));
-        await page.click('[data-t="back"]', { timeout: 10000 });
+        await page.evaluate(() => document.querySelector('[data-t="back"]')?.click());
         await sleep(1000);
       } catch (e) {
         report.errors.push(`Tour ${i + 1}: ${e.message.split('\n')[0]}`);

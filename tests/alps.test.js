@@ -3,12 +3,12 @@ import assert from 'node:assert/strict';
 import { alpQuery, parseAlps } from '../tools/build-alps.mjs';
 import { alpLayers } from '../js/styles.js';
 
-test('alpQuery: Hütten und Alp-Namen, Strassen/Haltestellen/Weiden ausgeschlossen', () => {
+test('alpQuery: Hütten und Alp-Namen, leichte Abfrage', () => {
   const q = alpQuery([10, 47, 10.5, 47.5]);
   assert.match(q, /\[bbox:47\.00000,10\.00000,47\.50000,10\.50000\]/);
   assert.match(q, /alpine_hut\|wilderness_hut/);
   assert.match(q, /\(alpe\|alp\|alm\|hütte\|huette\)\$",i\]/);
-  for (const k of ['highway', 'public_transport', 'landuse', 'leisure', 'man_made']) assert.ok(q.includes(`["${k}"!~"."]`), k);
+  assert.ok(!q.includes('!~'), 'Ausschlüsse lokal – die Abfrage bleibt leicht');
   assert.match(q, /out tags center qt;/);
 });
 
@@ -27,7 +27,10 @@ test('parseAlps: Gebäude/Gaststätten mit Alp-Namen, Mittelpunkt bei Flächen, 
       { type: 'way', id: 7, tags: { name: 'Ohne Lage-Alpe' } }, // ohne Mittelpunkt
       { type: 'node', id: 8, lat: 47.52, lon: 10.55, tags: { name: 'Terrasse der Hochalphütte' } }, // Nebenobjekt
       { type: 'node', id: 9, lat: 47.53, lon: 10.56, tags: { name: 'Parkplatz Vilsalm' } },
-      { type: 'node', id: 10, lat: 47.54, lon: 10.52, tags: { name: 'Achtal Achtalstraße Bärenmoosalpe' } }
+      { type: 'node', id: 10, lat: 47.54, lon: 10.52, tags: { name: 'Achtal Achtalstraße Bärenmoosalpe' } },
+      { type: 'node', id: 11, lat: 47.55, lon: 10.53, tags: { name: 'Alpe Eck', highway: 'bus_stop' } }, // Haltestelle
+      { type: 'way', id: 12, center: { lat: 47.56, lon: 10.54 }, tags: { name: 'Hintere Alpe', landuse: 'meadow' } }, // Weide
+      { type: 'node', id: 13, lat: 47.57, lon: 10.55, tags: { name: 'Trauerschnäpper/Zilpzalp', tourism: 'information' } }
     ]
   });
   assert.equal(r.osmBase, '2026-11-09T00:00:00Z');
