@@ -85,3 +85,35 @@ test('resolve-tours: Nominatim 503 wird wiederholt, Suchcache spart Anfragen bei
     server.close();
   }
 });
+
+test('resolve-tours: gleiche Version aus dem letzten Stand, neue Version mit Lücken behält die alte', async () => {
+  const m = await mock();
+  const dir = mkdtempSync(join(tmpdir(), 'ta-tours-'));
+  const old = (id, version) => ({ id, version, name: `alt ${id}`, stations: [{ name: 'A', lngLat: [10.2, 47.5] }, { name: 'B', lngLat: [10.25, 47.5] }], missing: [] });
+  writeFileSync(join(dir, 'prev.json'), JSON.stringify([old('gleich', 2), old('kaputt', 1), old('besser', 1)]));
+  writeFileSync(join(dir, 'q.json'), JSON.stringify({
+    viewbox: [10.05, 47.4, 10.45, 47.62],
+    segments: {
+      ok: [{ name: 'Sonthofen', q: ['Sonthofen'] }, { name: 'Immenstadt', q: ['Immenstadt'] }],
+      luecke: [{ name: 'Sonthofen', q: ['Sonthofen'] }, { name: 'Weg', q: ['Gibtsnicht'] }, { name: 'Immenstadt', q: ['Immenstadt'] }]
+    },
+    tours: [
+      { id: 'gleich', version: 2, name: 'neu gleich', segments: ['luecke'] },
+      { id: 'kaputt', version: 2, name: 'neu kaputt', segments: ['luecke'] },
+      { id: 'besser', version: 2, name: 'neu besser', segments: ['ok'] },
+      { id: 'neu', version: 1, name: 'ganz neu', segments: ['luecke'] }
+    ]
+  }));
+  try {
+    await new Promise((resolve, reject) =>
+      execFile('node', ['tools/resolve-tours.mjs', join(dir, 'q.json'), join(dir, 't.json'), '', join(dir, 'prev.json')], { env: { ...process.env, NOMINATIM_URL: m.url, PAUSE_MS: '0' } }, (e, so, se) => (e ? reject(new Error(se)) : resolve(so)))
+    );
+    const out = Object.fromEntries(JSON.parse(readFileSync(join(dir, 't.json'), 'utf8')).map((t) => [t.id, t]));
+    assert.equal(out.gleich.name, 'alt gleich'); // gleiche Version: nicht neu aufgelöst
+    assert.equal(out.kaputt.version, 1); // neue Version mit Lücke: alte bleibt
+    assert.equal(out.besser.version, 2); // neue Version vollständig: wird veröffentlicht
+    assert.deepEqual(out.neu.missing.map((x) => x.split(' (')[0]), ['Weg']); // ganz neu: mit Hinweis
+  } finally {
+    m.server.close();
+  }
+});

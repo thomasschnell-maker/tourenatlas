@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 // Vorgegebene Touren: Ortsnamen → Koordinaten, einmal beim Veröffentlichen statt auf dem Handy.
-// Aufruf: node tools/resolve-tours.mjs data/touren-quelle.json <Ziel touren.json> [<Suchcache.json>]
+// Aufruf: node tools/resolve-tours.mjs data/touren-quelle.json <Ziel touren.json> [<Suchcache.json>] [<letzter Stand touren.json>]
+// Letzter Stand: Touren mit unveränderter Version werden unverändert übernommen (die App holt ohnehin nur
+// höhere Versionen). Fehlen bei einer neuen Version Pflichtstationen, bleibt die alte Version veröffentlicht –
+// nie ein schlechteres Ergebnis ausliefern, das die App dann als „aktuell“ behält.
 // Suchcache (im Actions-Cache): bekannte Suchen gehen nicht erneut an Nominatim (30 Tage gültig) –
 // weniger Last, und ein kurzer Ausfall von Nominatim trifft nur neue Stationen.
 // Prüfungen je Station: nur Treffer im Gebiet (viewbox, bounded) und höchstens maxStepKm von der vorherigen
@@ -9,7 +12,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 
-const [src = 'data/touren-quelle.json', out = 'data/touren.json', cacheFile] = process.argv.slice(2);
+const [src = 'data/touren-quelle.json', out = 'data/touren.json', cacheFile, prevFile] = process.argv.slice(2);
 const SEARCH = process.env.NOMINATIM_URL || 'https://nominatim.openstreetmap.org/search';
 const PAUSE = Number(process.env.PAUSE_MS ?? 1100); // Nutzungsregel Nominatim: max. 1 Anfrage/s
 const cfg = JSON.parse(readFileSync(src, 'utf8'));
@@ -89,7 +92,23 @@ async function resolve(st, prev, viewbox) {
 const resolved = new Map(); // gleiche Station (Segment + Index) nur einmal suchen
 const result = [];
 let failures = 0;
+let previous = [];
+try {
+  previous = prevFile && existsSync(prevFile) ? JSON.parse(readFileSync(prevFile, 'utf8')) : [];
+} catch (err) {
+  console.warn(`Letzter Stand unlesbar (${err.message}) – alles neu auflösen`);
+}
+const prevById = new Map((Array.isArray(previous) ? previous : []).filter((t) => t?.id && t.stations?.length >= 2).map((t) => [t.id, t]));
+const ver = (t) => t.version || 1;
+let kept = 0;
 for (const t of cfg.tours) {
+  const old = prevById.get(t.id);
+  if (old && ver(old) === ver(t)) {
+    result.push(old);
+    kept++;
+    continue;
+  }
+  const failuresBefore = failures;
   const stations = [];
   const missing = [];
   const landmarks = [];
@@ -117,10 +136,18 @@ for (const t of cfg.tours) {
       console.log(`  ✓ ${t.id} · ${st.name} ← „${r.query}“ ${r.type} ${r.lngLat.map((v) => v.toFixed(4)).join(', ')}${prev ? ` (${km(prev, r.lngLat).toFixed(1)} km)` : ''} · ${r.display}`);
     }
   }
+  const hard = failures - failuresBefore;
+  if (hard && old) {
+    console.log(`::warning::${t.id} v${ver(t)}: ${hard} Pflichtstation(en) nicht auflösbar – v${ver(old)} bleibt veröffentlicht`);
+    result.push(old);
+    continue;
+  }
+  if (hard) console.log(`::warning::${t.id} v${ver(t)}: ${hard} Pflichtstation(en) fehlen (neue Tour, ohne älteren Stand)`);
   const { segments, viewbox, ...meta } = t;
   result.push({ ...meta, stations, missing, landmarks });
 }
 mkdirSync(dirname(out), { recursive: true });
 writeFileSync(out, JSON.stringify(result, null, 1));
+console.log(`Unverändert übernommen: ${kept} Touren`);
 console.log(`Suchen: ${fromCache.hit} aus dem Cache, ${fromCache.net} bei Nominatim`);
 console.log(`Fertig: ${result.length} Touren, ${result.reduce((s, t) => s + t.stations.length, 0)} Stationen, ${failures} nicht auflösbar → ${out}`);

@@ -70,6 +70,11 @@ async function main() {
 
     const expected = await (await fetch(new URL('data/touren.json', url))).json().then((l) => l.length).catch(() => 0);
     report.expectedTemplates = expected;
+    if (!expected) {
+      // Seite ohne Vorlagen veröffentlicht: Live-Check rot, damit es auffällt (GitHub meldet fehlgeschlagene Läufe)
+      report.errors.push('Keine Vorlagen: data/touren.json fehlt oder ist leer');
+      process.exitCode = 1;
+    }
 
     for (const visit of ['erster Besuch', 'zweiter Besuch']) {
       reqs = [];
