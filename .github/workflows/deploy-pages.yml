@@ -52,7 +52,13 @@ jobs:
       - name: Vorgegebene Touren auflösen (Nominatim)
         continue-on-error: true
         run: |
-          node tools/resolve-tours.mjs data/touren-quelle.json site-data/touren.json site-data/chunks/nominatim.json
+          # Letzter guter Stand: Touren gleicher Version unverändert, neue Versionen mit Lücken fallen darauf zurück
+          PREV=site-data/chunks/touren-letzter-stand.json
+          if [ ! -s "$PREV" ]; then
+            PREV="$RUNNER_TEMP/touren-veroeffentlicht.json"
+            git fetch -q --depth 1 origin gh-pages && git show FETCH_HEAD:data/touren.json > "$PREV" 2>/dev/null || PREV=""
+          fi
+          node tools/resolve-tours.mjs data/touren-quelle.json site-data/touren.json site-data/chunks/nominatim.json "$PREV"
           cp site-data/touren.json site-data/chunks/touren-letzter-stand.json
 
       - name: Seite zusammenstellen
