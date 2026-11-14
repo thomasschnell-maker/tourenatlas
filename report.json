@@ -1,0 +1,2049 @@
+{
+ "url": "https://thomasschnell-maker.github.io/tourenatlas/",
+ "started": "2026-11-14T10:38:31.998Z",
+ "runs": [
+  {
+   "visit": "erster Besuch",
+   "ms": {
+    "domcontentloaded": 691,
+    "mapCanvas": 2247,
+    "toursDone": 250642
+   },
+   "requests": 862,
+   "byHost": {
+    "thomasschnell-maker.github.io": {
+     "n": 627,
+     "kb": 446,
+     "failed": 0,
+     "ausSW": 598
+    },
+    "": {
+     "n": 2,
+     "kb": 0,
+     "failed": 0,
+     "ausSW": 0
+    },
+    "tiles.openfreemap.org": {
+     "n": 14,
+     "kb": 6,
+     "failed": 0,
+     "ausSW": 13
+    },
+    "s3.amazonaws.com": {
+     "n": 191,
+     "kb": 0,
+     "failed": 0,
+     "ausSW": 191
+    },
+    "brouter.de": {
+     "n": 28,
+     "kb": 795,
+     "failed": 0,
+     "ausSW": 0
+    }
+   },
+   "slowest": [
+    "8611 ms https://thomasschnell-maker.github.io/tourenatlas/data/cells/0529b77f2778/242_1585.json",
+    "8444 ms https://thomasschnell-maker.github.io/tourenatlas/data/cells/0529b77f2778/257_1590.json",
+    "8434 ms https://thomasschnell-maker.github.io/tourenatlas/data/cells/0529b77f2778/257_1591.json",
+    "6771 ms https://thomasschnell-maker.github.io/tourenatlas/data/cells/0529b77f2778/243_1580.json",
+    "6608 ms https://thomasschnell-maker.github.io/tourenatlas/data/cells/0529b77f2778/251_1585.json",
+    "6584 ms https://thomasschnell-maker.github.io/tourenatlas/data/cells/0529b77f2778/247_1586.json",
+    "6502 ms https://thomasschnell-maker.github.io/tourenatlas/data/cells/0529b77f2778/241_1581.json",
+    "6484 ms https://thomasschnell-maker.github.io/tourenatlas/data/cells/0529b77f2778/243_1584.json",
+    "6476 ms https://thomasschnell-maker.github.io/tourenatlas/data/cells/0529b77f2778/259_1575.json",
+    "6465 ms https://thomasschnell-maker.github.io/tourenatlas/data/cells/0529b77f2778/255_1585.json",
+    "6444 ms https://thomasschnell-maker.github.io/tourenatlas/data/cells/0529b77f2778/247_1590.json",
+    "6426 ms https://thomasschnell-maker.github.io/tourenatlas/data/cells/0529b77f2778/247_1591.json"
+   ],
+   "failed": [],
+   "tours": [
+    {
+     "name": "Gebirgstour – Variante 1",
+     "templateId": "2025-gebirgstour-variante-1",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Binswangen [10.2994,47.5091]",
+      "Vorderhindelang [10.3500,47.5055]",
+      "Bad Hindelang [10.3699,47.5063]",
+      "Hornbahn Talstation [10.3660,47.5004]",
+      "Hornbahn Bergstation [10.3638,47.4888]",
+      "Straußbergalpe [10.3518,47.4809]",
+      "Sonthofer Hof [10.3276,47.4846]",
+      "Altstädten [10.2846,47.4862]",
+      "Beilenberg [10.2894,47.4941]",
+      "Binswangen [10.2994,47.5091]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "71 Pkt",
+      "97 Pkt",
+      "73 Pkt",
+      "39 Pkt",
+      "212 Pkt",
+      "121 Pkt",
+      "72 Pkt",
+      "166 Pkt",
+      "51 Pkt",
+      "97 Pkt",
+      "63 Pkt"
+     ],
+     "summary": {
+      "length": 27949.452563057206,
+      "up": 862.9972040707153,
+      "timeH": 2.3563584104536552
+     }
+    },
+    {
+     "name": "Pfronten – Grüntensee – Wertach – Königssträßle (Straße)",
+     "templateId": "2025-pfronten-gruentensee-wertach",
+     "templateVersion": 2,
+     "stations": [
+      "Pfronten [10.5580,47.5814]",
+      "Nesselwang [10.5003,47.6219]",
+      "Grüntensee [10.4483,47.6177]",
+      "Wertach [10.4125,47.6031]",
+      "Kranzegg [10.3227,47.5846]",
+      "Rettenberg [10.2914,47.5755]",
+      "Burgberg im Allgäu [10.3036,47.5434]",
+      "Königssträßle [10.3311,47.5406]",
+      "Wertach [10.4125,47.6031]",
+      "Grüntensee [10.4483,47.6177]",
+      "Nesselwang [10.5003,47.6219]",
+      "Pfronten [10.5580,47.5814]"
+     ],
+     "segments": [
+      "259 Pkt",
+      "157 Pkt",
+      "164 Pkt",
+      "246 Pkt",
+      "89 Pkt",
+      "379 Pkt",
+      "221 Pkt",
+      "345 Pkt",
+      "164 Pkt",
+      "242 Pkt",
+      "285 Pkt"
+     ],
+     "summary": {
+      "length": 66087.90107176796,
+      "up": 1273.599611414556,
+      "timeH": 4.719505732937905
+     }
+    },
+    {
+     "name": "Sonthofen – Oberjoch – Wertach – Immenstadt",
+     "templateId": "oberjoch-wertach-koenigsstraessle-immenstadt",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Bad Hindelang [10.3699,47.5063]",
+      "Schnitzelalm [10.3817,47.5075]",
+      "Oberjoch [10.4064,47.5164]",
+      "Unterjoch [10.4253,47.5445]",
+      "Wertach [10.4125,47.6031]",
+      "Königssträßle [10.3171,47.5388]",
+      "Burgberg im Allgäu [10.3036,47.5434]",
+      "Häuser [10.2688,47.5468]",
+      "Immenstadt [10.2190,47.5598]"
+     ],
+     "segments": [
+      "230 Pkt",
+      "42 Pkt",
+      "141 Pkt",
+      "197 Pkt",
+      "407 Pkt",
+      "396 Pkt",
+      "169 Pkt",
+      "241 Pkt",
+      "199 Pkt"
+     ],
+     "summary": {
+      "length": 49382.8852437379,
+      "up": 1093.414875777276,
+      "timeH": 3.684049679717202
+     }
+    },
+    {
+     "name": "Alpsee – Oberstaufen – Tour 2",
+     "templateId": "2025-alpsee-oberstaufen-tour-2",
+     "templateVersion": 2,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Bihlerdorf [10.2567,47.5284]",
+      "Blaichach [10.2573,47.5439]",
+      "Immenstadt [10.2190,47.5598]",
+      "Bühl am Alpsee [10.1905,47.5678]",
+      "Trieblings [10.1585,47.5745]",
+      "Ratholz [10.1349,47.5622]",
+      "Oberstaufen – Aquaria [10.0207,47.5524]",
+      "Immenstadt [10.2190,47.5598]",
+      "Blaichach [10.2573,47.5439]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "136 Pkt",
+      "89 Pkt",
+      "153 Pkt",
+      "124 Pkt",
+      "133 Pkt",
+      "80 Pkt",
+      "328 Pkt",
+      "553 Pkt",
+      "155 Pkt",
+      "171 Pkt"
+     ],
+     "summary": {
+      "length": 56916.53727467674,
+      "up": 432.9361147606785,
+      "timeH": 3.3268669912457023
+     }
+    },
+    {
+     "name": "Ofterschwanger Horn – Route 2",
+     "templateId": "ofterschwanger-horn-route-2",
+     "templateVersion": 4,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Immenstadt [10.2190,47.5598]",
+      "Altmummen [10.2399,47.5495]",
+      "Ettensberg [10.2476,47.5438]",
+      "Gunzesried [10.2285,47.5229]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Bergstation Sesselbahn [10.2141,47.4987]",
+      "Ofterschwanger Horn [10.2126,47.4937]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Ofterschwang (Talstation Sessellift) [10.2348,47.4979]",
+      "Hüttenberg (Käse) [10.2463,47.5132]",
+      "Westerhofen [10.2543,47.5110]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "346 Pkt",
+      "100 Pkt",
+      "59 Pkt",
+      "142 Pkt",
+      "215 Pkt",
+      "67 Pkt",
+      "63 Pkt",
+      "125 Pkt",
+      "168 Pkt",
+      "130 Pkt",
+      "51 Pkt",
+      "112 Pkt"
+     ],
+     "summary": {
+      "length": 33963.41852304694,
+      "up": 818.0710459798718,
+      "timeH": 2.6071387550188714
+     }
+    },
+    {
+     "name": "Ofterschwanger Horn – Route 1",
+     "templateId": "ofterschwanger-horn-route-1",
+     "templateVersion": 4,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Immenstadt [10.2190,47.5598]",
+      "Altmummen [10.2399,47.5495]",
+      "Ettensberg [10.2476,47.5438]",
+      "Gunzesried [10.2285,47.5229]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Bergstation Sesselbahn [10.2141,47.4987]",
+      "Ofterschwanger Horn [10.2126,47.4937]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Ofterschwang (Talstation Sessellift) [10.2348,47.4979]",
+      "Bolsterlang [10.2339,47.4602]",
+      "Tiefenberg [10.2644,47.4882]",
+      "Sigishofen [10.2664,47.5038]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "346 Pkt",
+      "100 Pkt",
+      "59 Pkt",
+      "142 Pkt",
+      "215 Pkt",
+      "67 Pkt",
+      "63 Pkt",
+      "125 Pkt",
+      "168 Pkt",
+      "144 Pkt",
+      "148 Pkt",
+      "62 Pkt",
+      "90 Pkt"
+     ],
+     "summary": {
+      "length": 40457.370998244995,
+      "up": 910.197077281822,
+      "timeH": 3.0341986357809407
+     }
+    },
+    {
+     "name": "Aalen – Dewangen – Fachsenfeld",
+     "templateId": "aalen-dewangen",
+     "templateVersion": 1,
+     "stations": [
+      "Aalen [10.0930,48.8376]",
+      "Dewangen [10.0239,48.8721]",
+      "Fachsenfeld [10.0482,48.8841]",
+      "Wasseralfingen [10.1048,48.8653]",
+      "Aalen [10.0930,48.8376]"
+     ],
+     "segments": [
+      "279 Pkt",
+      "99 Pkt",
+      "252 Pkt",
+      "155 Pkt"
+     ],
+     "summary": {
+      "length": 21586.37532572119,
+      "up": 213.0170616390593,
+      "timeH": 1.3160043903294587
+     }
+    },
+    {
+     "name": "Straßentour Rottachsee",
+     "templateId": "2025-strassentour-rottachsee",
+     "templateVersion": 2,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Ortwang [10.2702,47.5367]",
+      "Häuser [10.2688,47.5468]",
+      "Untermaiselstein [10.2605,47.5793]",
+      "Freidorf [10.2728,47.5832]",
+      "Ottacker [10.3328,47.6404]",
+      "Rottachsee [10.3871,47.6462]",
+      "Vorderburg [10.3342,47.6100]",
+      "Kranzegg [10.3227,47.5846]",
+      "Rettenberg [10.2914,47.5755]",
+      "Burgberg im Allgäu [10.3036,47.5434]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "105 Pkt",
+      "50 Pkt",
+      "186 Pkt",
+      "42 Pkt",
+      "215 Pkt",
+      "292 Pkt",
+      "258 Pkt",
+      "141 Pkt",
+      "89 Pkt",
+      "379 Pkt",
+      "293 Pkt"
+     ],
+     "summary": {
+      "length": 54655.10748778267,
+      "up": 938.9535438701145,
+      "timeH": 3.776037089800372
+     }
+    },
+    {
+     "name": "Gebirgstour – Variante 2",
+     "templateId": "2025-gebirgstour-variante-2",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Binswangen [10.2994,47.5091]",
+      "Vorderhindelang [10.3500,47.5055]",
+      "Bad Hindelang [10.3699,47.5063]",
+      "Hornbahn Talstation [10.3660,47.5004]",
+      "Hornbahn Bergstation [10.3638,47.4888]",
+      "Straußbergalpe [10.3518,47.4809]",
+      "Sonthofer Hof [10.3276,47.4846]",
+      "Altstädten [10.2846,47.4862]",
+      "Unterthalhofen [10.2813,47.4709]",
+      "Oberthalhofen [10.2851,47.4659]",
+      "Fischen [10.2722,47.4600]",
+      "Obermaiselstein [10.2375,47.4479]",
+      "Bolsterlang [10.2339,47.4602]",
+      "Kierwang [10.2309,47.4738]",
+      "Ofterschwang [10.2379,47.4966]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "71 Pkt",
+      "97 Pkt",
+      "73 Pkt",
+      "39 Pkt",
+      "212 Pkt",
+      "121 Pkt",
+      "72 Pkt",
+      "166 Pkt",
+      "54 Pkt",
+      "33 Pkt",
+      "63 Pkt",
+      "110 Pkt",
+      "76 Pkt",
+      "64 Pkt",
+      "65 Pkt",
+      "184 Pkt"
+     ],
+     "summary": {
+      "length": 41854.0027090878,
+      "up": 1019.4956626671546,
+      "timeH": 3.225473093973451
+     }
+    },
+    {
+     "name": "Ofterschwanger Horn – Route 3",
+     "templateId": "ofterschwanger-horn-route-3",
+     "templateVersion": 4,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Immenstadt [10.2190,47.5598]",
+      "Altmummen [10.2399,47.5495]",
+      "Ettensberg [10.2476,47.5438]",
+      "Gunzesried [10.2285,47.5229]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Bergstation Sesselbahn [10.2141,47.4987]",
+      "Ofterschwanger Horn [10.2126,47.4937]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Ofterschwang (Talstation Sessellift) [10.2348,47.4979]",
+      "Bolsterlang [10.2339,47.4602]",
+      "Tiefenberg [10.2644,47.4882]",
+      "Schweineberg [10.2573,47.4953]",
+      "Sonnenalp [10.2568,47.4901]",
+      "Sigishofen [10.2664,47.5038]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "346 Pkt",
+      "100 Pkt",
+      "59 Pkt",
+      "142 Pkt",
+      "215 Pkt",
+      "67 Pkt",
+      "63 Pkt",
+      "125 Pkt",
+      "168 Pkt",
+      "144 Pkt",
+      "148 Pkt",
+      "57 Pkt",
+      "27 Pkt",
+      "106 Pkt",
+      "90 Pkt"
+     ],
+     "summary": {
+      "length": 43564.86937003679,
+      "up": 980.6934683571479,
+      "timeH": 3.2679028777875594
+     }
+    },
+    {
+     "name": "Straßentour Oberstdorf – Freibergsee",
+     "templateId": "2025-strassentour-freibergsee",
+     "templateVersion": 2,
+     "stations": [
+      "Wonnemar Sonthofen [10.2794,47.5023]",
+      "Unterthalhofen [10.2813,47.4709]",
+      "Fischen [10.2722,47.4600]",
+      "Oberstdorf [10.2781,47.4077]",
+      "Nebelhornbahn [10.2858,47.4048]",
+      "Lorettokapellen [10.2808,47.3963]",
+      "Skiflugschanze [10.2694,47.3755]",
+      "Schwand [10.2601,47.3702]",
+      "Freibergsee [10.2685,47.3806]",
+      "Kornau [10.2413,47.4049]",
+      "Reute [10.2547,47.4107]",
+      "Jauchen [10.2586,47.4145]",
+      "Oberstdorf [10.2781,47.4077]",
+      "Illerursprung [10.2742,47.4278]",
+      "Wonnemar Sonthofen [10.2794,47.5023]"
+     ],
+     "segments": [
+      "114 Pkt",
+      "63 Pkt",
+      "229 Pkt",
+      "35 Pkt",
+      "65 Pkt",
+      "181 Pkt",
+      "57 Pkt",
+      "95 Pkt",
+      "228 Pkt",
+      "52 Pkt",
+      "23 Pkt",
+      "118 Pkt",
+      "168 Pkt",
+      "288 Pkt"
+     ],
+     "summary": {
+      "length": 45713.61659900489,
+      "up": 618.6093005984553,
+      "timeH": 2.9730244972818616
+     }
+    },
+    {
+     "name": "Breitenberg – Ostlerhütte (AT hoch, DE runter)",
+     "templateId": "2025-breitenberg-ostlerhuette",
+     "templateVersion": 2,
+     "stations": [
+      "Grän (Tannheimer Tal) [10.5535,47.5010]",
+      "Ostlerhütte (Breitenberg) [10.5514,47.5487]",
+      "Hochalpe [10.5701,47.5487]",
+      "Pfronten-Steinach [10.5641,47.5694]"
+     ],
+     "segments": [
+      "424 Pkt",
+      "103 Pkt",
+      "454 Pkt"
+     ],
+     "summary": {
+      "length": 21760.737713120303,
+      "up": 925.7576100022134,
+      "timeH": 3.4172852404082708
+     }
+    },
+    {
+     "name": "Lochbachtal – Balderschwang – Sibratsgfäll – Rückweg ①",
+     "templateId": "balderschwang-sibratsgfaell-rueck1",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Fischen [10.2722,47.4600]",
+      "Obermaiselstein [10.2375,47.4479]",
+      "Hirschsprung [10.2429,47.4350]",
+      "Lochbachtal [10.2179,47.4253]",
+      "Schelpenalpe [10.1039,47.4363]",
+      "Balderschwang [10.1043,47.4657]",
+      "Sibratsgfäll [10.0380,47.4268]",
+      "Hirschgund [10.0849,47.4027]",
+      "Rohrmoos [10.1673,47.4075]",
+      "Tiefenbach [10.2414,47.4200]",
+      "Oberstdorf [10.2774,47.4104]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "300 Pkt",
+      "110 Pkt",
+      "97 Pkt",
+      "242 Pkt",
+      "552 Pkt",
+      "261 Pkt",
+      "335 Pkt",
+      "275 Pkt",
+      "198 Pkt",
+      "227 Pkt",
+      "273 Pkt",
+      "478 Pkt"
+     ],
+     "summary": {
+      "length": 86798.56238925783,
+      "up": 1874.2482513996113,
+      "timeH": 6.422426176573571
+     }
+    },
+    {
+     "name": "Pfronten – Kappeler Alp – Alpspitz",
+     "templateId": "2025-pfronten-kappeler-alp-alpspitz",
+     "templateVersion": 1,
+     "stations": [
+      "Pfronten [10.5580,47.5814]",
+      "Kappeler Alp [10.5129,47.6011]",
+      "Alpspitz (Nesselwang) [10.5017,47.5987]",
+      "Nesselwang [10.5003,47.6219]",
+      "Pfronten [10.5580,47.5814]"
+     ],
+     "segments": [
+      "307 Pkt",
+      "48 Pkt",
+      "251 Pkt",
+      "285 Pkt"
+     ],
+     "summary": {
+      "length": 22095.858555705712,
+      "up": 723.851097402591,
+      "timeH": 2.9895491539595866
+     }
+    },
+    {
+     "name": "Pfronten – Vilsalpsee",
+     "templateId": "2025-pfronten-vilsalpsee",
+     "templateVersion": 1,
+     "stations": [
+      "Pfronten [10.5580,47.5814]",
+      "Grän [10.5535,47.5010]",
+      "Tannheim [10.5161,47.4994]",
+      "Vilsalpsee [10.5043,47.4640]",
+      "Tannheim [10.5161,47.4994]",
+      "Grän [10.5535,47.5010]",
+      "Pfronten [10.5580,47.5814]"
+     ],
+     "segments": [
+      "393 Pkt",
+      "94 Pkt",
+      "163 Pkt",
+      "163 Pkt",
+      "94 Pkt",
+      "387 Pkt"
+     ],
+     "summary": {
+      "length": 42532.96514357398,
+      "up": 526.2619570170833,
+      "timeH": 2.711383764975458
+     }
+    },
+    {
+     "name": "Pfronten – Bärenmoosalpe",
+     "templateId": "2025-pfronten-baerenalpe",
+     "templateVersion": 2,
+     "stations": [
+      "Pfronten-Ried [10.5588,47.5823]",
+      "Röfleuten [10.5419,47.5863]",
+      "Bärenmoosalpe [10.4969,47.5574]",
+      "Achtal [10.5291,47.5593]",
+      "Pfronten-Steinach [10.5641,47.5694]",
+      "Pfronten-Ried [10.5588,47.5823]"
+     ],
+     "segments": [
+      "82 Pkt",
+      "319 Pkt",
+      "151 Pkt",
+      "100 Pkt",
+      "81 Pkt"
+     ],
+     "summary": {
+      "length": 19616.93279641208,
+      "up": 489.809285453632,
+      "timeH": 1.5250791792135283
+     }
+    },
+    {
+     "name": "4-Seen-Tour Füssen",
+     "templateId": "2025-vier-seen-fuessen",
+     "templateVersion": 4,
+     "stations": [
+      "Füssen [10.6993,47.5676]",
+      "Bad Faulenbach [10.6967,47.5707]",
+      "Alatsee [10.6399,47.5613]",
+      "4-Seenblick [10.6247,47.5650]",
+      "Weißensee [10.6379,47.5739]",
+      "Hopfensee [10.6774,47.6083]",
+      "Forggensee (Festspielhaus) [10.7088,47.5863]",
+      "Füssen [10.6993,47.5676]"
+     ],
+     "segments": [
+      "51 Pkt",
+      "176 Pkt",
+      "60 Pkt",
+      "173 Pkt",
+      "318 Pkt",
+      "157 Pkt",
+      "103 Pkt"
+     ],
+     "summary": {
+      "length": 27899.391748520018,
+      "up": 576.0056566758528,
+      "timeH": 2.034975872621393
+     }
+    },
+    {
+     "name": "Sonthofen – Schnitzelalm – Sonthofen",
+     "templateId": "hindelang-jochstrasse-schnitzelalm",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Waltener Straße [10.3030,47.5139]",
+      "Reckenberg [10.3344,47.5057]",
+      "Breiten [10.3279,47.5159]",
+      "Vorderhindelang [10.3500,47.5055]",
+      "Zillenbachstraße [10.3595,47.5061]",
+      "Schnitzelalm [10.3817,47.5075]",
+      "Alte Jochstraße [10.3878,47.5085]",
+      "Richard-Wagner-Straße [10.2837,47.5146]"
+     ],
+     "segments": [
+      "62 Pkt",
+      "100 Pkt",
+      "131 Pkt",
+      "196 Pkt",
+      "41 Pkt",
+      "71 Pkt",
+      "47 Pkt",
+      "272 Pkt"
+     ],
+     "summary": {
+      "length": 24424.02060283449,
+      "up": 568.4781994662513,
+      "timeH": 1.852843473993115
+     }
+    },
+    {
+     "name": "Aalen – Rosenstein – Schwäbisch Gmünd",
+     "templateId": "aalen-rosenstein-gmuend",
+     "templateVersion": 1,
+     "stations": [
+      "Aalen [10.0930,48.8376]",
+      "Essingen [10.0277,48.8081]",
+      "Heubach [9.9346,48.7889]",
+      "Burgruine Rosenstein [9.9447,48.7890]",
+      "Schwäbisch Gmünd [9.7978,48.7999]",
+      "Böbingen an der Rems [9.9225,48.8184]",
+      "Mögglingen [9.9621,48.8233]",
+      "Essingen [10.0277,48.8081]",
+      "Aalen [10.0930,48.8376]"
+     ],
+     "segments": [
+      "252 Pkt",
+      "273 Pkt",
+      "64 Pkt",
+      "514 Pkt",
+      "355 Pkt",
+      "149 Pkt",
+      "220 Pkt",
+      "248 Pkt"
+     ],
+     "summary": {
+      "length": 61632.81941120427,
+      "up": 714.2539613014728,
+      "timeH": 3.875256483117405
+     }
+    },
+    {
+     "name": "Straßentour Sonthofen – Lindau",
+     "templateId": "2025-strassentour-lindau",
+     "templateVersion": 2,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Blaichach [10.2573,47.5439]",
+      "Immenstadt [10.2190,47.5598]",
+      "Missen [10.1256,47.5971]",
+      "Wiederhofen [10.1003,47.5933]",
+      "Harbatshofen [10.0068,47.6066]",
+      "Stiefenhofen [10.0041,47.5926]",
+      "Weiler im Allgäu [9.9140,47.5832]",
+      "Böserscheidegg [9.8755,47.5814]",
+      "Scheidegg [9.8500,47.5833]",
+      "Hohenweiler [9.7813,47.5875]",
+      "Hörbranz [9.7514,47.5548]",
+      "Lindau [9.6927,47.5508]"
+     ],
+     "segments": [
+      "219 Pkt",
+      "153 Pkt",
+      "357 Pkt",
+      "135 Pkt",
+      "479 Pkt",
+      "81 Pkt",
+      "290 Pkt",
+      "106 Pkt",
+      "101 Pkt",
+      "361 Pkt",
+      "251 Pkt",
+      "289 Pkt"
+     ],
+     "summary": {
+      "length": 71649.02721732529,
+      "up": 1068.512527504693,
+      "timeH": 4.7696875025381456
+     }
+    },
+    {
+     "name": "Pfronten – Füssen – Lechfall",
+     "templateId": "2025-pfronten-fuessen-lechfall",
+     "templateVersion": 1,
+     "stations": [
+      "Pfronten [10.5580,47.5814]",
+      "Weißensee [10.6379,47.5739]",
+      "Füssen [10.6993,47.5676]",
+      "Lechfall [10.6949,47.5618]",
+      "Ulrichsbrücke [10.6627,47.5461]",
+      "Vils [10.6305,47.5493]",
+      "Pfronten [10.5580,47.5814]"
+     ],
+     "segments": [
+      "262 Pkt",
+      "181 Pkt",
+      "67 Pkt",
+      "128 Pkt",
+      "101 Pkt",
+      "203 Pkt"
+     ],
+     "summary": {
+      "length": 28197.429197086694,
+      "up": 213.9848575477031,
+      "timeH": 1.6476324126851158
+     }
+    },
+    {
+     "name": "Lochbachtal – Balderschwang – Sibratsgfäll – Rückweg ②",
+     "templateId": "balderschwang-sibratsgfaell-rueck2",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Fischen [10.2722,47.4600]",
+      "Obermaiselstein [10.2375,47.4479]",
+      "Hirschsprung [10.2429,47.4350]",
+      "Lochbachtal [10.2179,47.4253]",
+      "Schelpenalpe [10.1039,47.4363]",
+      "Balderschwang [10.1043,47.4657]",
+      "Sibratsgfäll [10.0380,47.4268]",
+      "Hirschgund [10.0849,47.4027]",
+      "Rohrmoos [10.1673,47.4075]",
+      "Tiefenbach [10.2414,47.4200]",
+      "Obermaiselstein [10.2375,47.4479]",
+      "Fischen [10.2722,47.4600]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "300 Pkt",
+      "110 Pkt",
+      "97 Pkt",
+      "242 Pkt",
+      "552 Pkt",
+      "261 Pkt",
+      "335 Pkt",
+      "275 Pkt",
+      "198 Pkt",
+      "227 Pkt",
+      "160 Pkt",
+      "110 Pkt",
+      "290 Pkt"
+     ],
+     "summary": {
+      "length": 82741.06083239494,
+      "up": 1924.4194381941218,
+      "timeH": 6.275296861835438
+     }
+    },
+    {
+     "name": "Aalen – Kochertal – Zang – Bartholomä",
+     "templateId": "aalen-kochertal-zang-bartholomae",
+     "templateVersion": 1,
+     "stations": [
+      "Aalen [10.0930,48.8376]",
+      "Unterkochen [10.1253,48.8169]",
+      "Oberkochen [10.1060,48.7840]",
+      "Kocherursprung [10.0953,48.7721]",
+      "Zang [10.0741,48.7295]",
+      "Bartholomä [9.9893,48.7543]",
+      "Essingen [10.0277,48.8081]",
+      "Aalen [10.0930,48.8376]"
+     ],
+     "segments": [
+      "159 Pkt",
+      "160 Pkt",
+      "82 Pkt",
+      "284 Pkt",
+      "179 Pkt",
+      "199 Pkt",
+      "248 Pkt"
+     ],
+     "summary": {
+      "length": 44928.92342354274,
+      "up": 484.32355979085554,
+      "timeH": 2.784583459833643
+     }
+    },
+    {
+     "name": "Pfronten – Burgruinen Hohenfreyberg & Eisenberg",
+     "templateId": "2025-pfronten-hohenfreyberg",
+     "templateVersion": 1,
+     "stations": [
+      "Pfronten [10.5580,47.5814]",
+      "Zell (Eisenberg) [10.5868,47.6046]",
+      "Burgruine Hohenfreyberg [10.5877,47.6139]",
+      "Burgruine Eisenberg [10.5902,47.6127]",
+      "Pfronten [10.5580,47.5814]"
+     ],
+     "segments": [
+      "172 Pkt",
+      "109 Pkt",
+      "40 Pkt",
+      "290 Pkt"
+     ],
+     "summary": {
+      "length": 13737.53230405076,
+      "up": 269.0347634425458,
+      "timeH": 0.9858041301386999
+     }
+    },
+    {
+     "name": "Aalen – Waldhausen – Kapfenburg",
+     "templateId": "aalen-waldhausen-kapfenburg",
+     "templateVersion": 1,
+     "stations": [
+      "Aalen [10.0930,48.8376]",
+      "Unterkochen [10.1253,48.8169]",
+      "Ebnat [10.1849,48.8002]",
+      "Waldhausen [10.2022,48.8237]",
+      "Schloss Kapfenburg [10.2235,48.8676]",
+      "Lauchheim [10.2455,48.8716]",
+      "Westhausen [10.1878,48.8845]",
+      "Wasseralfingen [10.1048,48.8653]",
+      "Aalen [10.0930,48.8376]"
+     ],
+     "segments": [
+      "159 Pkt",
+      "166 Pkt",
+      "97 Pkt",
+      "175 Pkt",
+      "83 Pkt",
+      "160 Pkt",
+      "235 Pkt",
+      "155 Pkt"
+     ],
+     "summary": {
+      "length": 40158.59283904188,
+      "up": 391.02027860115805,
+      "timeH": 2.4423966181756027
+     }
+    },
+    {
+     "name": "Pfronten – Reutte",
+     "templateId": "2025-pfronten-reutte",
+     "templateVersion": 1,
+     "stations": [
+      "Pfronten [10.5580,47.5814]",
+      "Vils [10.6305,47.5493]",
+      "Musau [10.6707,47.5348]",
+      "Reutte [10.7188,47.4891]",
+      "Pflach [10.7189,47.5103]",
+      "Pinswang [10.6904,47.5417]",
+      "Füssen [10.6993,47.5676]",
+      "Pfronten [10.5580,47.5814]"
+     ],
+     "segments": [
+      "203 Pkt",
+      "168 Pkt",
+      "247 Pkt",
+      "120 Pkt",
+      "167 Pkt",
+      "255 Pkt",
+      "444 Pkt"
+     ],
+     "summary": {
+      "length": 47199.92593616941,
+      "up": 329.58066448287946,
+      "timeH": 2.7261970351227816
+     }
+    },
+    {
+     "name": "Alpsee – Oberstaufen – Tour 1 (bergig)",
+     "templateId": "2025-alpsee-oberstaufen-tour-1",
+     "templateVersion": 2,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Bihlerdorf [10.2567,47.5284]",
+      "Gunzesried [10.2285,47.5229]",
+      "Ettensberg [10.2476,47.5438]",
+      "Schwanden [10.2370,47.5452]",
+      "Immenstadt [10.2190,47.5598]",
+      "Bühl am Alpsee [10.1905,47.5678]",
+      "Trieblings [10.1585,47.5745]",
+      "Ratholz [10.1349,47.5622]",
+      "Oberstaufen – Aquaria [10.0207,47.5524]",
+      "Immenstadt [10.2190,47.5598]",
+      "Blaichach [10.2573,47.5439]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "136 Pkt",
+      "192 Pkt",
+      "142 Pkt",
+      "41 Pkt",
+      "145 Pkt",
+      "124 Pkt",
+      "133 Pkt",
+      "80 Pkt",
+      "328 Pkt",
+      "553 Pkt",
+      "155 Pkt",
+      "171 Pkt"
+     ],
+     "summary": {
+      "length": 62279.496555816666,
+      "up": 671.60121140611,
+      "timeH": 3.860198396019844
+     }
+    },
+    {
+     "name": "Pfändergipfel – Markdorf – Überlingen",
+     "templateId": "2025-pfaender-ueberlingen-markdorf",
+     "templateVersion": 1,
+     "stations": [
+      "Pfänder (Gipfel) [9.7802,47.5074]",
+      "Bregenz [9.7473,47.5026]",
+      "Lindau [9.6927,47.5508]",
+      "Wasserburg [9.6383,47.5697]",
+      "Kressbronn [9.6003,47.5966]",
+      "Langenargen [9.5381,47.5994]",
+      "Friedrichshafen [9.4801,47.6500]",
+      "Markdorf [9.3917,47.7206]",
+      "Überlingen [9.1605,47.7664]"
+     ],
+     "segments": [
+      "532 Pkt",
+      "256 Pkt",
+      "276 Pkt",
+      "159 Pkt",
+      "214 Pkt",
+      "313 Pkt",
+      "522 Pkt",
+      "729 Pkt"
+     ],
+     "summary": {
+      "length": 76886.00859210902,
+      "up": 254.01779928395166,
+      "timeH": 4.126542428809842
+     }
+    }
+   ]
+  },
+  {
+   "visit": "zweiter Besuch",
+   "ms": {
+    "domcontentloaded": 285,
+    "mapCanvas": 2514,
+    "toursDone": 31472
+   },
+   "requests": 90,
+   "byHost": {
+    "thomasschnell-maker.github.io": {
+     "n": 41,
+     "kb": 0,
+     "failed": 2,
+     "ausSW": 39
+    },
+    "": {
+     "n": 2,
+     "kb": 0,
+     "failed": 0,
+     "ausSW": 0
+    },
+    "tiles.openfreemap.org": {
+     "n": 13,
+     "kb": 0,
+     "failed": 0,
+     "ausSW": 13
+    },
+    "s3.amazonaws.com": {
+     "n": 34,
+     "kb": 0,
+     "failed": 0,
+     "ausSW": 34
+    }
+   },
+   "slowest": [
+    "984 ms https://thomasschnell-maker.github.io/tourenatlas/data/touren.json",
+    "67 ms https://thomasschnell-maker.github.io/tourenatlas/",
+    "63 ms https://thomasschnell-maker.github.io/tourenatlas/data/cells/index.json",
+    "56 ms https://thomasschnell-maker.github.io/tourenatlas/vendor/maplibre-gl/maplibre-gl.css",
+    "56 ms https://thomasschnell-maker.github.io/tourenatlas/js/app.js",
+    "54 ms https://thomasschnell-maker.github.io/tourenatlas/css/app.css",
+    "54 ms https://thomasschnell-maker.github.io/tourenatlas/js/validate.js",
+    "53 ms https://thomasschnell-maker.github.io/tourenatlas/js/search.js",
+    "53 ms https://thomasschnell-maker.github.io/tourenatlas/js/styles.js",
+    "53 ms https://thomasschnell-maker.github.io/tourenatlas/js/textscale.js",
+    "49 ms https://thomasschnell-maker.github.io/tourenatlas/js/packages/weather.js",
+    "48 ms https://thomasschnell-maker.github.io/tourenatlas/js/packages/weather-core.js"
+   ],
+   "failed": [
+    {
+     "url": "https://thomasschnell-maker.github.io/tourenatlas/data/cells/0529b77f2778/260_1575.json",
+     "failed": "net::ERR_ABORTED"
+    },
+    {
+     "url": "https://thomasschnell-maker.github.io/tourenatlas/data/cells/0529b77f2778/260_1576.json",
+     "failed": "net::ERR_ABORTED"
+    }
+   ],
+   "tours": [
+    {
+     "name": "Gebirgstour – Variante 1",
+     "templateId": "2025-gebirgstour-variante-1",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Binswangen [10.2994,47.5091]",
+      "Vorderhindelang [10.3500,47.5055]",
+      "Bad Hindelang [10.3699,47.5063]",
+      "Hornbahn Talstation [10.3660,47.5004]",
+      "Hornbahn Bergstation [10.3638,47.4888]",
+      "Straußbergalpe [10.3518,47.4809]",
+      "Sonthofer Hof [10.3276,47.4846]",
+      "Altstädten [10.2846,47.4862]",
+      "Beilenberg [10.2894,47.4941]",
+      "Binswangen [10.2994,47.5091]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "71 Pkt",
+      "97 Pkt",
+      "73 Pkt",
+      "39 Pkt",
+      "212 Pkt",
+      "121 Pkt",
+      "72 Pkt",
+      "166 Pkt",
+      "51 Pkt",
+      "97 Pkt",
+      "63 Pkt"
+     ],
+     "summary": {
+      "length": 27949.452563057206,
+      "up": 862.9972040707153,
+      "timeH": 2.3563584104536552
+     }
+    },
+    {
+     "name": "Pfronten – Grüntensee – Wertach – Königssträßle (Straße)",
+     "templateId": "2025-pfronten-gruentensee-wertach",
+     "templateVersion": 2,
+     "stations": [
+      "Pfronten [10.5580,47.5814]",
+      "Nesselwang [10.5003,47.6219]",
+      "Grüntensee [10.4483,47.6177]",
+      "Wertach [10.4125,47.6031]",
+      "Kranzegg [10.3227,47.5846]",
+      "Rettenberg [10.2914,47.5755]",
+      "Burgberg im Allgäu [10.3036,47.5434]",
+      "Königssträßle [10.3311,47.5406]",
+      "Wertach [10.4125,47.6031]",
+      "Grüntensee [10.4483,47.6177]",
+      "Nesselwang [10.5003,47.6219]",
+      "Pfronten [10.5580,47.5814]"
+     ],
+     "segments": [
+      "259 Pkt",
+      "157 Pkt",
+      "164 Pkt",
+      "246 Pkt",
+      "89 Pkt",
+      "379 Pkt",
+      "221 Pkt",
+      "345 Pkt",
+      "164 Pkt",
+      "242 Pkt",
+      "285 Pkt"
+     ],
+     "summary": {
+      "length": 66087.90107176796,
+      "up": 1273.599611414556,
+      "timeH": 4.719505732937905
+     }
+    },
+    {
+     "name": "Sonthofen – Oberjoch – Wertach – Immenstadt",
+     "templateId": "oberjoch-wertach-koenigsstraessle-immenstadt",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Bad Hindelang [10.3699,47.5063]",
+      "Schnitzelalm [10.3817,47.5075]",
+      "Oberjoch [10.4064,47.5164]",
+      "Unterjoch [10.4253,47.5445]",
+      "Wertach [10.4125,47.6031]",
+      "Königssträßle [10.3171,47.5388]",
+      "Burgberg im Allgäu [10.3036,47.5434]",
+      "Häuser [10.2688,47.5468]",
+      "Immenstadt [10.2190,47.5598]"
+     ],
+     "segments": [
+      "230 Pkt",
+      "42 Pkt",
+      "141 Pkt",
+      "197 Pkt",
+      "407 Pkt",
+      "396 Pkt",
+      "169 Pkt",
+      "241 Pkt",
+      "199 Pkt"
+     ],
+     "summary": {
+      "length": 49382.8852437379,
+      "up": 1093.414875777276,
+      "timeH": 3.684049679717202
+     }
+    },
+    {
+     "name": "Alpsee – Oberstaufen – Tour 2",
+     "templateId": "2025-alpsee-oberstaufen-tour-2",
+     "templateVersion": 2,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Bihlerdorf [10.2567,47.5284]",
+      "Blaichach [10.2573,47.5439]",
+      "Immenstadt [10.2190,47.5598]",
+      "Bühl am Alpsee [10.1905,47.5678]",
+      "Trieblings [10.1585,47.5745]",
+      "Ratholz [10.1349,47.5622]",
+      "Oberstaufen – Aquaria [10.0207,47.5524]",
+      "Immenstadt [10.2190,47.5598]",
+      "Blaichach [10.2573,47.5439]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "136 Pkt",
+      "89 Pkt",
+      "153 Pkt",
+      "124 Pkt",
+      "133 Pkt",
+      "80 Pkt",
+      "328 Pkt",
+      "553 Pkt",
+      "155 Pkt",
+      "171 Pkt"
+     ],
+     "summary": {
+      "length": 56916.53727467674,
+      "up": 432.9361147606785,
+      "timeH": 3.3268669912457023
+     }
+    },
+    {
+     "name": "Ofterschwanger Horn – Route 2",
+     "templateId": "ofterschwanger-horn-route-2",
+     "templateVersion": 4,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Immenstadt [10.2190,47.5598]",
+      "Altmummen [10.2399,47.5495]",
+      "Ettensberg [10.2476,47.5438]",
+      "Gunzesried [10.2285,47.5229]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Bergstation Sesselbahn [10.2141,47.4987]",
+      "Ofterschwanger Horn [10.2126,47.4937]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Ofterschwang (Talstation Sessellift) [10.2348,47.4979]",
+      "Hüttenberg (Käse) [10.2463,47.5132]",
+      "Westerhofen [10.2543,47.5110]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "346 Pkt",
+      "100 Pkt",
+      "59 Pkt",
+      "142 Pkt",
+      "215 Pkt",
+      "67 Pkt",
+      "63 Pkt",
+      "125 Pkt",
+      "168 Pkt",
+      "130 Pkt",
+      "51 Pkt",
+      "112 Pkt"
+     ],
+     "summary": {
+      "length": 33963.41852304694,
+      "up": 818.0710459798718,
+      "timeH": 2.6071387550188714
+     }
+    },
+    {
+     "name": "Ofterschwanger Horn – Route 1",
+     "templateId": "ofterschwanger-horn-route-1",
+     "templateVersion": 4,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Immenstadt [10.2190,47.5598]",
+      "Altmummen [10.2399,47.5495]",
+      "Ettensberg [10.2476,47.5438]",
+      "Gunzesried [10.2285,47.5229]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Bergstation Sesselbahn [10.2141,47.4987]",
+      "Ofterschwanger Horn [10.2126,47.4937]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Ofterschwang (Talstation Sessellift) [10.2348,47.4979]",
+      "Bolsterlang [10.2339,47.4602]",
+      "Tiefenberg [10.2644,47.4882]",
+      "Sigishofen [10.2664,47.5038]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "346 Pkt",
+      "100 Pkt",
+      "59 Pkt",
+      "142 Pkt",
+      "215 Pkt",
+      "67 Pkt",
+      "63 Pkt",
+      "125 Pkt",
+      "168 Pkt",
+      "144 Pkt",
+      "148 Pkt",
+      "62 Pkt",
+      "90 Pkt"
+     ],
+     "summary": {
+      "length": 40457.370998244995,
+      "up": 910.197077281822,
+      "timeH": 3.0341986357809407
+     }
+    },
+    {
+     "name": "Aalen – Dewangen – Fachsenfeld",
+     "templateId": "aalen-dewangen",
+     "templateVersion": 1,
+     "stations": [
+      "Aalen [10.0930,48.8376]",
+      "Dewangen [10.0239,48.8721]",
+      "Fachsenfeld [10.0482,48.8841]",
+      "Wasseralfingen [10.1048,48.8653]",
+      "Aalen [10.0930,48.8376]"
+     ],
+     "segments": [
+      "279 Pkt",
+      "99 Pkt",
+      "252 Pkt",
+      "155 Pkt"
+     ],
+     "summary": {
+      "length": 21586.37532572119,
+      "up": 213.0170616390593,
+      "timeH": 1.3160043903294587
+     }
+    },
+    {
+     "name": "Straßentour Rottachsee",
+     "templateId": "2025-strassentour-rottachsee",
+     "templateVersion": 2,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Ortwang [10.2702,47.5367]",
+      "Häuser [10.2688,47.5468]",
+      "Untermaiselstein [10.2605,47.5793]",
+      "Freidorf [10.2728,47.5832]",
+      "Ottacker [10.3328,47.6404]",
+      "Rottachsee [10.3871,47.6462]",
+      "Vorderburg [10.3342,47.6100]",
+      "Kranzegg [10.3227,47.5846]",
+      "Rettenberg [10.2914,47.5755]",
+      "Burgberg im Allgäu [10.3036,47.5434]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "105 Pkt",
+      "50 Pkt",
+      "186 Pkt",
+      "42 Pkt",
+      "215 Pkt",
+      "292 Pkt",
+      "258 Pkt",
+      "141 Pkt",
+      "89 Pkt",
+      "379 Pkt",
+      "293 Pkt"
+     ],
+     "summary": {
+      "length": 54655.10748778267,
+      "up": 938.9535438701145,
+      "timeH": 3.776037089800372
+     }
+    },
+    {
+     "name": "Gebirgstour – Variante 2",
+     "templateId": "2025-gebirgstour-variante-2",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Binswangen [10.2994,47.5091]",
+      "Vorderhindelang [10.3500,47.5055]",
+      "Bad Hindelang [10.3699,47.5063]",
+      "Hornbahn Talstation [10.3660,47.5004]",
+      "Hornbahn Bergstation [10.3638,47.4888]",
+      "Straußbergalpe [10.3518,47.4809]",
+      "Sonthofer Hof [10.3276,47.4846]",
+      "Altstädten [10.2846,47.4862]",
+      "Unterthalhofen [10.2813,47.4709]",
+      "Oberthalhofen [10.2851,47.4659]",
+      "Fischen [10.2722,47.4600]",
+      "Obermaiselstein [10.2375,47.4479]",
+      "Bolsterlang [10.2339,47.4602]",
+      "Kierwang [10.2309,47.4738]",
+      "Ofterschwang [10.2379,47.4966]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "71 Pkt",
+      "97 Pkt",
+      "73 Pkt",
+      "39 Pkt",
+      "212 Pkt",
+      "121 Pkt",
+      "72 Pkt",
+      "166 Pkt",
+      "54 Pkt",
+      "33 Pkt",
+      "63 Pkt",
+      "110 Pkt",
+      "76 Pkt",
+      "64 Pkt",
+      "65 Pkt",
+      "184 Pkt"
+     ],
+     "summary": {
+      "length": 41854.0027090878,
+      "up": 1019.4956626671546,
+      "timeH": 3.225473093973451
+     }
+    },
+    {
+     "name": "Ofterschwanger Horn – Route 3",
+     "templateId": "ofterschwanger-horn-route-3",
+     "templateVersion": 4,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Immenstadt [10.2190,47.5598]",
+      "Altmummen [10.2399,47.5495]",
+      "Ettensberg [10.2476,47.5438]",
+      "Gunzesried [10.2285,47.5229]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Bergstation Sesselbahn [10.2141,47.4987]",
+      "Ofterschwanger Horn [10.2126,47.4937]",
+      "Allgäuer Berghof [10.2215,47.5074]",
+      "Ofterschwang (Talstation Sessellift) [10.2348,47.4979]",
+      "Bolsterlang [10.2339,47.4602]",
+      "Tiefenberg [10.2644,47.4882]",
+      "Schweineberg [10.2573,47.4953]",
+      "Sonnenalp [10.2568,47.4901]",
+      "Sigishofen [10.2664,47.5038]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "346 Pkt",
+      "100 Pkt",
+      "59 Pkt",
+      "142 Pkt",
+      "215 Pkt",
+      "67 Pkt",
+      "63 Pkt",
+      "125 Pkt",
+      "168 Pkt",
+      "144 Pkt",
+      "148 Pkt",
+      "57 Pkt",
+      "27 Pkt",
+      "106 Pkt",
+      "90 Pkt"
+     ],
+     "summary": {
+      "length": 43564.86937003679,
+      "up": 980.6934683571479,
+      "timeH": 3.2679028777875594
+     }
+    },
+    {
+     "name": "Straßentour Oberstdorf – Freibergsee",
+     "templateId": "2025-strassentour-freibergsee",
+     "templateVersion": 2,
+     "stations": [
+      "Wonnemar Sonthofen [10.2794,47.5023]",
+      "Unterthalhofen [10.2813,47.4709]",
+      "Fischen [10.2722,47.4600]",
+      "Oberstdorf [10.2781,47.4077]",
+      "Nebelhornbahn [10.2858,47.4048]",
+      "Lorettokapellen [10.2808,47.3963]",
+      "Skiflugschanze [10.2694,47.3755]",
+      "Schwand [10.2601,47.3702]",
+      "Freibergsee [10.2685,47.3806]",
+      "Kornau [10.2413,47.4049]",
+      "Reute [10.2547,47.4107]",
+      "Jauchen [10.2586,47.4145]",
+      "Oberstdorf [10.2781,47.4077]",
+      "Illerursprung [10.2742,47.4278]",
+      "Wonnemar Sonthofen [10.2794,47.5023]"
+     ],
+     "segments": [
+      "114 Pkt",
+      "63 Pkt",
+      "229 Pkt",
+      "35 Pkt",
+      "65 Pkt",
+      "181 Pkt",
+      "57 Pkt",
+      "95 Pkt",
+      "228 Pkt",
+      "52 Pkt",
+      "23 Pkt",
+      "118 Pkt",
+      "168 Pkt",
+      "288 Pkt"
+     ],
+     "summary": {
+      "length": 45713.61659900489,
+      "up": 618.6093005984553,
+      "timeH": 2.9730244972818616
+     }
+    },
+    {
+     "name": "Breitenberg – Ostlerhütte (AT hoch, DE runter)",
+     "templateId": "2025-breitenberg-ostlerhuette",
+     "templateVersion": 2,
+     "stations": [
+      "Grän (Tannheimer Tal) [10.5535,47.5010]",
+      "Ostlerhütte (Breitenberg) [10.5514,47.5487]",
+      "Hochalpe [10.5701,47.5487]",
+      "Pfronten-Steinach [10.5641,47.5694]"
+     ],
+     "segments": [
+      "424 Pkt",
+      "103 Pkt",
+      "454 Pkt"
+     ],
+     "summary": {
+      "length": 21760.737713120303,
+      "up": 925.7576100022134,
+      "timeH": 3.4172852404082708
+     }
+    },
+    {
+     "name": "Lochbachtal – Balderschwang – Sibratsgfäll – Rückweg ①",
+     "templateId": "balderschwang-sibratsgfaell-rueck1",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Fischen [10.2722,47.4600]",
+      "Obermaiselstein [10.2375,47.4479]",
+      "Hirschsprung [10.2429,47.4350]",
+      "Lochbachtal [10.2179,47.4253]",
+      "Schelpenalpe [10.1039,47.4363]",
+      "Balderschwang [10.1043,47.4657]",
+      "Sibratsgfäll [10.0380,47.4268]",
+      "Hirschgund [10.0849,47.4027]",
+      "Rohrmoos [10.1673,47.4075]",
+      "Tiefenbach [10.2414,47.4200]",
+      "Oberstdorf [10.2774,47.4104]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "300 Pkt",
+      "110 Pkt",
+      "97 Pkt",
+      "242 Pkt",
+      "552 Pkt",
+      "261 Pkt",
+      "335 Pkt",
+      "275 Pkt",
+      "198 Pkt",
+      "227 Pkt",
+      "273 Pkt",
+      "478 Pkt"
+     ],
+     "summary": {
+      "length": 86798.56238925783,
+      "up": 1874.2482513996113,
+      "timeH": 6.422426176573571
+     }
+    },
+    {
+     "name": "Pfronten – Kappeler Alp – Alpspitz",
+     "templateId": "2025-pfronten-kappeler-alp-alpspitz",
+     "templateVersion": 1,
+     "stations": [
+      "Pfronten [10.5580,47.5814]",
+      "Kappeler Alp [10.5129,47.6011]",
+      "Alpspitz (Nesselwang) [10.5017,47.5987]",
+      "Nesselwang [10.5003,47.6219]",
+      "Pfronten [10.5580,47.5814]"
+     ],
+     "segments": [
+      "307 Pkt",
+      "48 Pkt",
+      "251 Pkt",
+      "285 Pkt"
+     ],
+     "summary": {
+      "length": 22095.858555705712,
+      "up": 723.851097402591,
+      "timeH": 2.9895491539595866
+     }
+    },
+    {
+     "name": "Pfronten – Vilsalpsee",
+     "templateId": "2025-pfronten-vilsalpsee",
+     "templateVersion": 1,
+     "stations": [
+      "Pfronten [10.5580,47.5814]",
+      "Grän [10.5535,47.5010]",
+      "Tannheim [10.5161,47.4994]",
+      "Vilsalpsee [10.5043,47.4640]",
+      "Tannheim [10.5161,47.4994]",
+      "Grän [10.5535,47.5010]",
+      "Pfronten [10.5580,47.5814]"
+     ],
+     "segments": [
+      "393 Pkt",
+      "94 Pkt",
+      "163 Pkt",
+      "163 Pkt",
+      "94 Pkt",
+      "387 Pkt"
+     ],
+     "summary": {
+      "length": 42532.96514357398,
+      "up": 526.2619570170833,
+      "timeH": 2.711383764975458
+     }
+    },
+    {
+     "name": "Pfronten – Bärenmoosalpe",
+     "templateId": "2025-pfronten-baerenalpe",
+     "templateVersion": 2,
+     "stations": [
+      "Pfronten-Ried [10.5588,47.5823]",
+      "Röfleuten [10.5419,47.5863]",
+      "Bärenmoosalpe [10.4969,47.5574]",
+      "Achtal [10.5291,47.5593]",
+      "Pfronten-Steinach [10.5641,47.5694]",
+      "Pfronten-Ried [10.5588,47.5823]"
+     ],
+     "segments": [
+      "82 Pkt",
+      "319 Pkt",
+      "151 Pkt",
+      "100 Pkt",
+      "81 Pkt"
+     ],
+     "summary": {
+      "length": 19616.93279641208,
+      "up": 489.809285453632,
+      "timeH": 1.5250791792135283
+     }
+    },
+    {
+     "name": "4-Seen-Tour Füssen",
+     "templateId": "2025-vier-seen-fuessen",
+     "templateVersion": 4,
+     "stations": [
+      "Füssen [10.6993,47.5676]",
+      "Bad Faulenbach [10.6967,47.5707]",
+      "Alatsee [10.6399,47.5613]",
+      "4-Seenblick [10.6247,47.5650]",
+      "Weißensee [10.6379,47.5739]",
+      "Hopfensee [10.6774,47.6083]",
+      "Forggensee (Festspielhaus) [10.7088,47.5863]",
+      "Füssen [10.6993,47.5676]"
+     ],
+     "segments": [
+      "51 Pkt",
+      "176 Pkt",
+      "60 Pkt",
+      "173 Pkt",
+      "318 Pkt",
+      "157 Pkt",
+      "103 Pkt"
+     ],
+     "summary": {
+      "length": 27899.391748520018,
+      "up": 576.0056566758528,
+      "timeH": 2.034975872621393
+     }
+    },
+    {
+     "name": "Sonthofen – Schnitzelalm – Sonthofen",
+     "templateId": "hindelang-jochstrasse-schnitzelalm",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Waltener Straße [10.3030,47.5139]",
+      "Reckenberg [10.3344,47.5057]",
+      "Breiten [10.3279,47.5159]",
+      "Vorderhindelang [10.3500,47.5055]",
+      "Zillenbachstraße [10.3595,47.5061]",
+      "Schnitzelalm [10.3817,47.5075]",
+      "Alte Jochstraße [10.3878,47.5085]",
+      "Richard-Wagner-Straße [10.2837,47.5146]"
+     ],
+     "segments": [
+      "62 Pkt",
+      "100 Pkt",
+      "131 Pkt",
+      "196 Pkt",
+      "41 Pkt",
+      "71 Pkt",
+      "47 Pkt",
+      "272 Pkt"
+     ],
+     "summary": {
+      "length": 24424.02060283449,
+      "up": 568.4781994662513,
+      "timeH": 1.852843473993115
+     }
+    },
+    {
+     "name": "Aalen – Rosenstein – Schwäbisch Gmünd",
+     "templateId": "aalen-rosenstein-gmuend",
+     "templateVersion": 1,
+     "stations": [
+      "Aalen [10.0930,48.8376]",
+      "Essingen [10.0277,48.8081]",
+      "Heubach [9.9346,48.7889]",
+      "Burgruine Rosenstein [9.9447,48.7890]",
+      "Schwäbisch Gmünd [9.7978,48.7999]",
+      "Böbingen an der Rems [9.9225,48.8184]",
+      "Mögglingen [9.9621,48.8233]",
+      "Essingen [10.0277,48.8081]",
+      "Aalen [10.0930,48.8376]"
+     ],
+     "segments": [
+      "252 Pkt",
+      "273 Pkt",
+      "64 Pkt",
+      "514 Pkt",
+      "355 Pkt",
+      "149 Pkt",
+      "220 Pkt",
+      "248 Pkt"
+     ],
+     "summary": {
+      "length": 61632.81941120427,
+      "up": 714.2539613014728,
+      "timeH": 3.875256483117405
+     }
+    },
+    {
+     "name": "Straßentour Sonthofen – Lindau",
+     "templateId": "2025-strassentour-lindau",
+     "templateVersion": 2,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Blaichach [10.2573,47.5439]",
+      "Immenstadt [10.2190,47.5598]",
+      "Missen [10.1256,47.5971]",
+      "Wiederhofen [10.1003,47.5933]",
+      "Harbatshofen [10.0068,47.6066]",
+      "Stiefenhofen [10.0041,47.5926]",
+      "Weiler im Allgäu [9.9140,47.5832]",
+      "Böserscheidegg [9.8755,47.5814]",
+      "Scheidegg [9.8500,47.5833]",
+      "Hohenweiler [9.7813,47.5875]",
+      "Hörbranz [9.7514,47.5548]",
+      "Lindau [9.6927,47.5508]"
+     ],
+     "segments": [
+      "219 Pkt",
+      "153 Pkt",
+      "357 Pkt",
+      "135 Pkt",
+      "479 Pkt",
+      "81 Pkt",
+      "290 Pkt",
+      "106 Pkt",
+      "101 Pkt",
+      "361 Pkt",
+      "251 Pkt",
+      "289 Pkt"
+     ],
+     "summary": {
+      "length": 71649.02721732529,
+      "up": 1068.512527504693,
+      "timeH": 4.7696875025381456
+     }
+    },
+    {
+     "name": "Pfronten – Füssen – Lechfall",
+     "templateId": "2025-pfronten-fuessen-lechfall",
+     "templateVersion": 1,
+     "stations": [
+      "Pfronten [10.5580,47.5814]",
+      "Weißensee [10.6379,47.5739]",
+      "Füssen [10.6993,47.5676]",
+      "Lechfall [10.6949,47.5618]",
+      "Ulrichsbrücke [10.6627,47.5461]",
+      "Vils [10.6305,47.5493]",
+      "Pfronten [10.5580,47.5814]"
+     ],
+     "segments": [
+      "262 Pkt",
+      "181 Pkt",
+      "67 Pkt",
+      "128 Pkt",
+      "101 Pkt",
+      "203 Pkt"
+     ],
+     "summary": {
+      "length": 28197.429197086694,
+      "up": 213.9848575477031,
+      "timeH": 1.6476324126851158
+     }
+    },
+    {
+     "name": "Lochbachtal – Balderschwang – Sibratsgfäll – Rückweg ②",
+     "templateId": "balderschwang-sibratsgfaell-rueck2",
+     "templateVersion": 1,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Fischen [10.2722,47.4600]",
+      "Obermaiselstein [10.2375,47.4479]",
+      "Hirschsprung [10.2429,47.4350]",
+      "Lochbachtal [10.2179,47.4253]",
+      "Schelpenalpe [10.1039,47.4363]",
+      "Balderschwang [10.1043,47.4657]",
+      "Sibratsgfäll [10.0380,47.4268]",
+      "Hirschgund [10.0849,47.4027]",
+      "Rohrmoos [10.1673,47.4075]",
+      "Tiefenbach [10.2414,47.4200]",
+      "Obermaiselstein [10.2375,47.4479]",
+      "Fischen [10.2722,47.4600]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "300 Pkt",
+      "110 Pkt",
+      "97 Pkt",
+      "242 Pkt",
+      "552 Pkt",
+      "261 Pkt",
+      "335 Pkt",
+      "275 Pkt",
+      "198 Pkt",
+      "227 Pkt",
+      "160 Pkt",
+      "110 Pkt",
+      "290 Pkt"
+     ],
+     "summary": {
+      "length": 82741.06083239494,
+      "up": 1924.4194381941218,
+      "timeH": 6.275296861835438
+     }
+    },
+    {
+     "name": "Aalen – Kochertal – Zang – Bartholomä",
+     "templateId": "aalen-kochertal-zang-bartholomae",
+     "templateVersion": 1,
+     "stations": [
+      "Aalen [10.0930,48.8376]",
+      "Unterkochen [10.1253,48.8169]",
+      "Oberkochen [10.1060,48.7840]",
+      "Kocherursprung [10.0953,48.7721]",
+      "Zang [10.0741,48.7295]",
+      "Bartholomä [9.9893,48.7543]",
+      "Essingen [10.0277,48.8081]",
+      "Aalen [10.0930,48.8376]"
+     ],
+     "segments": [
+      "159 Pkt",
+      "160 Pkt",
+      "82 Pkt",
+      "284 Pkt",
+      "179 Pkt",
+      "199 Pkt",
+      "248 Pkt"
+     ],
+     "summary": {
+      "length": 44928.92342354274,
+      "up": 484.32355979085554,
+      "timeH": 2.784583459833643
+     }
+    },
+    {
+     "name": "Pfronten – Burgruinen Hohenfreyberg & Eisenberg",
+     "templateId": "2025-pfronten-hohenfreyberg",
+     "templateVersion": 1,
+     "stations": [
+      "Pfronten [10.5580,47.5814]",
+      "Zell (Eisenberg) [10.5868,47.6046]",
+      "Burgruine Hohenfreyberg [10.5877,47.6139]",
+      "Burgruine Eisenberg [10.5902,47.6127]",
+      "Pfronten [10.5580,47.5814]"
+     ],
+     "segments": [
+      "172 Pkt",
+      "109 Pkt",
+      "40 Pkt",
+      "290 Pkt"
+     ],
+     "summary": {
+      "length": 13737.53230405076,
+      "up": 269.0347634425458,
+      "timeH": 0.9858041301386999
+     }
+    },
+    {
+     "name": "Aalen – Waldhausen – Kapfenburg",
+     "templateId": "aalen-waldhausen-kapfenburg",
+     "templateVersion": 1,
+     "stations": [
+      "Aalen [10.0930,48.8376]",
+      "Unterkochen [10.1253,48.8169]",
+      "Ebnat [10.1849,48.8002]",
+      "Waldhausen [10.2022,48.8237]",
+      "Schloss Kapfenburg [10.2235,48.8676]",
+      "Lauchheim [10.2455,48.8716]",
+      "Westhausen [10.1878,48.8845]",
+      "Wasseralfingen [10.1048,48.8653]",
+      "Aalen [10.0930,48.8376]"
+     ],
+     "segments": [
+      "159 Pkt",
+      "166 Pkt",
+      "97 Pkt",
+      "175 Pkt",
+      "83 Pkt",
+      "160 Pkt",
+      "235 Pkt",
+      "155 Pkt"
+     ],
+     "summary": {
+      "length": 40158.59283904188,
+      "up": 391.02027860115805,
+      "timeH": 2.4423966181756027
+     }
+    },
+    {
+     "name": "Pfronten – Reutte",
+     "templateId": "2025-pfronten-reutte",
+     "templateVersion": 1,
+     "stations": [
+      "Pfronten [10.5580,47.5814]",
+      "Vils [10.6305,47.5493]",
+      "Musau [10.6707,47.5348]",
+      "Reutte [10.7188,47.4891]",
+      "Pflach [10.7189,47.5103]",
+      "Pinswang [10.6904,47.5417]",
+      "Füssen [10.6993,47.5676]",
+      "Pfronten [10.5580,47.5814]"
+     ],
+     "segments": [
+      "203 Pkt",
+      "168 Pkt",
+      "247 Pkt",
+      "120 Pkt",
+      "167 Pkt",
+      "255 Pkt",
+      "444 Pkt"
+     ],
+     "summary": {
+      "length": 47199.92593616941,
+      "up": 329.58066448287946,
+      "timeH": 2.7261970351227816
+     }
+    },
+    {
+     "name": "Alpsee – Oberstaufen – Tour 1 (bergig)",
+     "templateId": "2025-alpsee-oberstaufen-tour-1",
+     "templateVersion": 2,
+     "stations": [
+      "Sonthofen [10.2819,47.5135]",
+      "Bihlerdorf [10.2567,47.5284]",
+      "Gunzesried [10.2285,47.5229]",
+      "Ettensberg [10.2476,47.5438]",
+      "Schwanden [10.2370,47.5452]",
+      "Immenstadt [10.2190,47.5598]",
+      "Bühl am Alpsee [10.1905,47.5678]",
+      "Trieblings [10.1585,47.5745]",
+      "Ratholz [10.1349,47.5622]",
+      "Oberstaufen – Aquaria [10.0207,47.5524]",
+      "Immenstadt [10.2190,47.5598]",
+      "Blaichach [10.2573,47.5439]",
+      "Sonthofen [10.2819,47.5135]"
+     ],
+     "segments": [
+      "136 Pkt",
+      "192 Pkt",
+      "142 Pkt",
+      "41 Pkt",
+      "145 Pkt",
+      "124 Pkt",
+      "133 Pkt",
+      "80 Pkt",
+      "328 Pkt",
+      "553 Pkt",
+      "155 Pkt",
+      "171 Pkt"
+     ],
+     "summary": {
+      "length": 62279.496555816666,
+      "up": 671.60121140611,
+      "timeH": 3.860198396019844
+     }
+    },
+    {
+     "name": "Pfändergipfel – Markdorf – Überlingen",
+     "templateId": "2025-pfaender-ueberlingen-markdorf",
+     "templateVersion": 1,
+     "stations": [
+      "Pfänder (Gipfel) [9.7802,47.5074]",
+      "Bregenz [9.7473,47.5026]",
+      "Lindau [9.6927,47.5508]",
+      "Wasserburg [9.6383,47.5697]",
+      "Kressbronn [9.6003,47.5966]",
+      "Langenargen [9.5381,47.5994]",
+      "Friedrichshafen [9.4801,47.6500]",
+      "Markdorf [9.3917,47.7206]",
+      "Überlingen [9.1605,47.7664]"
+     ],
+     "segments": [
+      "532 Pkt",
+      "256 Pkt",
+      "276 Pkt",
+      "159 Pkt",
+      "214 Pkt",
+      "313 Pkt",
+      "522 Pkt",
+      "729 Pkt"
+     ],
+     "summary": {
+      "length": 76886.00859210902,
+      "up": 254.01779928395166,
+      "timeH": 4.126542428809842
+     }
+    }
+   ]
+  }
+ ],
+ "toasts": [
+  "erster Besuch 3s: Trage „Ofterschwanger Horn – Route 1“ ein (1/28) …",
+  "erster Besuch 8s: Trage „Ofterschwanger Horn – Route 1“ ein (1/28) …",
+  "erster Besuch 15s: Trage „Ofterschwanger Horn – Route 2“ ein (2/28) …",
+  "erster Besuch 45s: Trage „Ofterschwanger Horn – Route 3“ ein (3/28) …",
+  "erster Besuch 56s: Trage „Sonthofen – Oberjoch – Wertach – Immenstadt“ ein (5/28) …",
+  "erster Besuch 61s: Trage „Lochbachtal – Balderschwang – Sibratsgfäll – Rückweg ①“ ein (6/28) …",
+  "erster Besuch 72s: Region wird im Hintergrund für unterwegs gespeichert",
+  "erster Besuch 85s: Trage „Alpsee – Oberstaufen – Tour 1 (bergig)“ ein (10/28) …",
+  "erster Besuch 94s: Trage „Alpsee – Oberstaufen – Tour 1 (bergig)“ ein (10/28) …",
+  "erster Besuch 105s: Trage „Straßentour Sonthofen – Lindau“ ein (12/28) …",
+  "erster Besuch 110s: Trage „Straßentour Sonthofen – Lindau“ ein (12/28) …",
+  "erster Besuch 117s: Trage „Straßentour Oberstdorf – Freibergsee“ ein (13/28) …",
+  "erster Besuch 126s: Trage „Straßentour Rottachsee“ ein (14/28) …",
+  "erster Besuch 133s: Trage „Pfändergipfel – Markdorf – Überlingen“ ein (15/28) …",
+  "erster Besuch 143s: Trage „4-Seen-Tour Füssen“ ein (16/28) …",
+  "erster Besuch 152s: Trage „Breitenberg – Ostlerhütte (AT hoch, DE runter)“ ein (17/28) …",
+  "erster Besuch 161s: Trage „Pfronten – Kappeler Alp – Alpspitz“ ein (18/28) …",
+  "erster Besuch 169s: Trage „Pfronten – Grüntensee – Wertach – Königssträßle (Straße)“ ein (19/28) …",
+  "erster Besuch 182s: Trage „Aalen – Rosenstein – Schwäbisch Gmünd“ ein (20/28) …",
+  "erster Besuch 189s: Trage „Aalen – Kochertal – Zang – Bartholomä“ ein (21/28) …",
+  "erster Besuch 196s: Trage „Aalen – Waldhausen – Kapfenburg“ ein (22/28) …",
+  "erster Besuch 204s: Trage „Aalen – Dewangen – Fachsenfeld“ ein (23/28) …",
+  "erster Besuch 211s: Trage „Pfronten – Burgruinen Hohenfreyberg & Eisenberg“ ein (24/28) …",
+  "erster Besuch 218s: Trage „Pfronten – Reutte“ ein (25/28) …",
+  "erster Besuch 226s: Trage „Pfronten – Vilsalpsee“ ein (26/28) …",
+  "erster Besuch 238s: Trage „Pfronten – Bärenmoosalpe“ ein (28/28) …",
+  "erster Besuch 251s: 28 Tour(en) eingetragen",
+  "zweiter Besuch 3s: ",
+  "zweiter Besuch 8s: ",
+  "zweiter Besuch 15s: ",
+  "zweiter Besuch 31s: "
+ ],
+ "console": [],
+ "errors": [
+  "Tour 3: page.evaluate: TypeError: Cannot read properties of undefined (reading 'click')",
+  "Tour 4: page.evaluate: TypeError: Cannot read properties of undefined (reading 'click')",
+  "Tour 6: page.evaluate: TypeError: Cannot read properties of undefined (reading 'click')",
+  "Tour 7: page.evaluate: TypeError: Cannot read properties of undefined (reading 'click')",
+  "Tour 8: page.evaluate: TypeError: Cannot read properties of undefined (reading 'click')",
+  "Tour 10: page.evaluate: TypeError: Cannot read properties of undefined (reading 'click')",
+  "Tour 11: page.evaluate: TypeError: Cannot read properties of undefined (reading 'click')",
+  "Tour 16: page.evaluate: TypeError: Cannot read properties of undefined (reading 'click')",
+  "Tour 19: page.evaluate: TypeError: Cannot read properties of undefined (reading 'click')",
+  "Tour 21: page.evaluate: TypeError: Cannot read properties of undefined (reading 'click')",
+  "Tour 23: page.evaluate: TypeError: Cannot read properties of undefined (reading 'click')",
+  "Tour 24: page.evaluate: TypeError: Cannot read properties of undefined (reading 'click')",
+  "Tour 26: page.evaluate: TypeError: Cannot read properties of undefined (reading 'click')",
+  "Tour 27: page.evaluate: TypeError: Cannot read properties of undefined (reading 'click')",
+  "Tour 28: page.evaluate: TypeError: Cannot read properties of undefined (reading 'click')"
+ ],
+ "expectedTemplates": 28,
+ "regionIndex": {
+  "gen": "0529b77f2778",
+  "cells": 1022,
+  "holes": 0,
+  "osmBase": "2026-11-07T20:38:36Z",
+  "osmLatest": "2026-11-09T11:44:18Z",
+  "sample": 200
+ }
+}
