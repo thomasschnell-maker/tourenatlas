@@ -1,0 +1,9 @@
+# Statische Seite ohne Build-Schritt. Netlify-Site "allgaeu-tourenatlas" mit diesem Repo verknüpfen.
+[build]
+  publish = "."
+  command = "npm test"
+
+[[headers]]
+  for = "/vendor/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
