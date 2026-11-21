@@ -136,11 +136,14 @@ async function main() {
     await page.click('#tabbar button[data-tab="tours"]').catch(() => {});
     await sleep(1500);
     await page.screenshot({ path: `${out}/touren-liste.png` });
-    const n = await page.locator('.tour-list button').count();
-    for (let i = 0; i < n; i++) {
+    // Je Tour über ihre ID öffnen und warten, bis die Liste wieder steht (nicht über Positionen)
+    const ids = await page.$$eval('[data-open]', (els) => els.map((e) => e.dataset.open));
+    for (const [i, id] of ids.entries()) {
       try {
-        // Per DOM-Klick: Touren in eingeklappten Gruppen sind nicht sichtbar (Playwright-Klick wartete je 10 s)
-        await page.evaluate((k) => document.querySelectorAll('.tour-list button')[k].click(), i);
+        await page.evaluate(() => document.querySelector('[data-t="back"]')?.click());
+        await page.waitForFunction((k) => !!document.querySelector(`[data-open="${CSS.escape(k)}"]`), id, { timeout: 15000 });
+        await page.evaluate((k) => document.querySelector(`[data-open="${CSS.escape(k)}"]`).click(), id);
+        await page.waitForSelector('[data-t="back"]', { timeout: 15000 });
         await sleep(5000);
         await page.evaluate(() => document.getElementById('sheet').classList.add('peek'));
         await sleep(2500);
@@ -149,7 +152,8 @@ async function main() {
         await page.evaluate(() => document.querySelector('[data-t="back"]')?.click());
         await sleep(1000);
       } catch (e) {
-        report.errors.push(`Tour ${i + 1}: ${e.message.split('\n')[0]}`);
+        const state = await page.evaluate(() => `Bereich ${document.querySelector('.pane.active')?.id ?? '?'}, ${document.querySelectorAll('[data-open]').length} Touren in der Liste`).catch(() => '');
+        report.errors.push(`Tour ${i + 1} (${id}): ${e.message.split('\n')[0]} – ${state}`);
       }
     }
   } catch (e) {
