@@ -28,6 +28,11 @@ jobs:
         run: |
           sleep 60 # GitHub Pages braucht nach dem Veröffentlichen etwas
           node tools/live-check.cjs https://thomasschnell-maker.github.io/tourenatlas/ live-check
+      # Jede Tour wie in der App routen und gegen die OSM-Wege prüfen (Rad auf Bergwegen, alpine Steige, Sperrungen)
+      - name: Wegeprüfung
+        if: always()
+        continue-on-error: true
+        run: node tools/audit-tours.mjs https://thomasschnell-maker.github.io/tourenatlas/ live-check
       - name: Ergebnis auf Branch live-check
         if: always()
         run: |

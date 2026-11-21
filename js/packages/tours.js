@@ -1070,7 +1070,11 @@ async function openTour(id) {
   render();
   if (current?.stations.length) {
     fitTour();
-    stats = await tourStats(tourLine(current.stations, current.segments), ctx.sampler, 25, current.activity || 'hike');
+    const t = current;
+    const s = await tourStats(tourLine(t.stations, t.segments), ctx.sampler, 25, t.activity || 'hike');
+    // Inzwischen andere Tour geöffnet oder zurück zur Liste: Werte gehören nicht mehr zur Anzeige
+    if (current !== t) return;
+    stats = s;
     render();
   }
 }
