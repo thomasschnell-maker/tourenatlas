@@ -205,7 +205,10 @@ async function main() {
     if (e.error) md.push(`- ❌ ${e.error}`);
     else md.push(`- ${e.km} km · ${e.pathShare} % auf Pfaden/Wegen · ${e.regionShare} % in der Region`);
     for (const m of e.missing) md.push(`- ❌ Station fehlt: ${m}`);
-    for (const f of e.findings || []) md.push(`- ${f.level === 'warn' ? '⚠️' : 'ℹ️'} ${f.text}: ${f.m} m${f.names.length ? ` (${f.names.join(', ')})` : ''} bei ${f.at[1]}, ${f.at[0]} – ${f.osm}`);
+    // Fusswege ohne ausdrückliche Radfreigabe sind in Orten häufig (oft „Radfahrer frei“ nicht erfasst): zusammengefasst
+    const foot = (e.findings || []).filter((f) => f.key === 'fussweg');
+    if (foot.length) md.push(`- ℹ️ Fusswege ohne erfasste Radfreigabe: ${foot.reduce((a, f) => a + f.m, 0)} m in ${foot.length} Stücken (vor Ort Beschilderung beachten)`);
+    for (const f of (e.findings || []).filter((x) => x.key !== 'fussweg')) md.push(`- ${f.level === 'warn' ? '⚠️' : 'ℹ️'} ${f.text}: ${f.m} m${f.names.length ? ` (${f.names.join(', ')})` : ''} bei ${f.at[1]}, ${f.at[0]} – ${f.osm}`);
     md.push('');
   }
   writeFileSync(`${outDir}/wegepruefung.md`, md.join('\n'));
