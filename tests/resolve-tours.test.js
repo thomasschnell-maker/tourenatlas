@@ -32,7 +32,7 @@ test('resolve-tours: Abstandsprüfung, Alternativen, fehlende Stationen, keine D
     maxStepKm: 10,
     segments: {
       a: [{ name: 'Sonthofen', q: ['Sonthofen'], prefer: 'place' }, { name: 'Immenstadt', q: ['Immenstadt'] }, { name: 'Weit weg', q: ['Memmingen'] }, { name: 'Altmummen', q: ['Alt Mummen', 'Mummen'] }],
-      b: [{ name: 'Unbekannt', q: ['Gibtsnicht'], optional: true }, { name: 'Abzw. X', q: ['Mummen'], landmark: true }, { name: 'Gunzesried', q: ['Gunzesried'] }, { name: 'Gunzesried', q: ['Gunzesried'] }]
+      b: [{ name: 'Fest', lngLat: [10.25, 47.53], note: 'Weg mit Radfreigabe' }, { name: 'Unbekannt', q: ['Gibtsnicht'], optional: true }, { name: 'Abzw. X', q: ['Mummen'], landmark: true }, { name: 'Gunzesried', q: ['Gunzesried'] }, { name: 'Gunzesried', q: ['Gunzesried'] }]
     },
     tours: [{ id: 't1', version: 1, name: 'T', segments: ['a', 'b'] }]
   }));
@@ -41,7 +41,9 @@ test('resolve-tours: Abstandsprüfung, Alternativen, fehlende Stationen, keine D
       execFile('node', ['tools/resolve-tours.mjs', join(dir, 'q.json'), join(dir, 'out', 't.json')], { env: { ...process.env, NOMINATIM_URL: m.url, PAUSE_MS: '0' } }, (e, so, se) => (e ? reject(new Error(se)) : resolve(so)))
     );
     const [t] = JSON.parse(readFileSync(join(dir, 'out', 't.json'), 'utf8'));
-    assert.deepEqual(t.stations.map((s) => s.name), ['Sonthofen', 'Immenstadt', 'Altmummen', 'Gunzesried']);
+    assert.deepEqual(t.stations.map((s) => s.name), ['Sonthofen', 'Immenstadt', 'Altmummen', 'Fest', 'Gunzesried']);
+    assert.deepEqual(t.stations[3].lngLat, [10.25, 47.53]); // feste Koordinate ohne Suche
+    assert.equal(t.stations[3].source.type, 'fixed/coordinate');
     assert.equal(t.stations[2].source.query, 'Mummen');
     assert.deepEqual(t.missing.map((x) => x.split(' (')[0]), ['Weit weg', 'Unbekannt']);
     assert.ok(!t.segments);

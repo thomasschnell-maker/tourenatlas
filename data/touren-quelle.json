@@ -933,12 +933,11 @@
       },
       {
         "name": "Freibergsee",
-        "q": [
-          "Berggasthof Freibergsee",
-          "Gasthof Freibergsee",
-          "Freibergsee"
+        "lngLat": [
+          10.26856,
+          47.38297
         ],
-        "maxKm": 4
+        "note": "Freibergsee, Fahrweg am Nordufer beim Gasthof (Rad erlaubt)"
       },
       {
         "name": "Kornau",
@@ -1804,12 +1803,11 @@
       },
       {
         "name": "Vilsalpsee",
-        "q": [
-          "Alpengasthof Vilsalpsee",
-          "Gasthof Vilsalpsee",
-          "Vilsalpsee"
+        "lngLat": [
+          10.50711,
+          47.47108
         ],
-        "maxKm": 6
+        "note": "Vilsalpsee, Ende der Zufahrt beim Alpengasthof (Rad erlaubt)"
       },
       {
         "name": "Tannheim",
@@ -2124,7 +2122,7 @@
     },
     {
       "id": "2025-strassentour-freibergsee",
-      "version": 3,
+      "version": 4,
       "date": "2025",
       "group": "2025 · Straßentouren",
       "variant": "Wonnemar – Illerdamm – Oberstdorf – Freibergsee – Kornau – Illerursprung",
@@ -2375,7 +2373,7 @@
     },
     {
       "id": "2025-pfronten-vilsalpsee",
-      "version": 2,
+      "version": 3,
       "date": "2025",
       "viewbox": [
         10.3,

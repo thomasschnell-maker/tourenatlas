@@ -76,8 +76,12 @@ async function search(q, viewbox = cfg.viewbox) {
 
 /** Station auflösen: Suchbegriffe der Reihe nach, erster Treffer nah genug an der vorherigen Station. */
 async function resolve(st, prev, viewbox) {
+  // Feste Koordinate (z. B. Punkt auf dem für Räder freigegebenen Weg statt Seemitte): keine Suche
+  if (Array.isArray(st.lngLat) && st.lngLat.length === 2 && st.lngLat.every(Number.isFinite)) {
+    return { lngLat: st.lngLat, display: st.note || st.name, type: 'fixed/coordinate', osm: null, query: 'Koordinate' };
+  }
   const tried = [];
-  for (const q of st.q) {
+  for (const q of st.q || []) {
     // Bevorzugte Kategorie zuerst (z. B. place: Ortsmitte statt Mittelpunkt der Gemeindefläche)
     const hits = (await search(q, viewbox)).slice().sort((a, b) => (st.prefer ? !a.type.startsWith(st.prefer) - !b.type.startsWith(st.prefer) : 0));
     // maxKm je Station: engere Grenze für Ortsnamen, die es mehrfach gibt (z. B. Ettensberg)
