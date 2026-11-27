@@ -1,0 +1,2306 @@
+{
+ "checked": "2026-11-27T12:58:01.778Z",
+ "osmBase": "2026-11-22T11:35:01Z",
+ "tours": [
+  {
+   "id": "ofterschwanger-horn-route-1",
+   "name": "Ofterschwanger Horn – Route 1",
+   "group": "Ofterschwanger Horn",
+   "activity": "ebike",
+   "stations": 14,
+   "missing": [],
+   "km": 40.4,
+   "pathShare": 40,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 100,
+     "at": [
+      10.22093,
+      47.55896
+     ],
+     "osm": "way/23004326",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      10.22031,
+      47.55935
+     ],
+     "osm": "way/1214780182",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 120,
+     "at": [
+      10.22217,
+      47.5079
+     ],
+     "osm": "way/684817512",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "bergweg",
+     "text": "Bergweg T2 – mit Rad meist schieben",
+     "m": 140,
+     "at": [
+      10.21468,
+      47.49342
+     ],
+     "osm": "way/97270757",
+     "names": []
+    },
+    {
+     "level": "warn",
+     "key": "radverbot",
+     "text": "Radfahren verboten (bicycle=no)",
+     "m": 200,
+     "at": [
+      10.21294,
+      47.49293
+     ],
+     "osm": "way/835419723",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "bergweg",
+     "text": "Bergweg T2 – mit Rad meist schieben",
+     "m": 120,
+     "at": [
+      10.21313,
+      47.49289
+     ],
+     "osm": "way/835419722",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 120,
+     "at": [
+      10.2219,
+      47.50693
+     ],
+     "osm": "way/684817512",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "ofterschwanger-horn-route-2",
+   "name": "Ofterschwanger Horn – Route 2",
+   "group": "Ofterschwanger Horn",
+   "activity": "ebike",
+   "stations": 13,
+   "missing": [],
+   "km": 34,
+   "pathShare": 48,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 100,
+     "at": [
+      10.22093,
+      47.55896
+     ],
+     "osm": "way/23004326",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      10.22031,
+      47.55935
+     ],
+     "osm": "way/1214780182",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 120,
+     "at": [
+      10.22217,
+      47.5079
+     ],
+     "osm": "way/684817512",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "bergweg",
+     "text": "Bergweg T2 – mit Rad meist schieben",
+     "m": 140,
+     "at": [
+      10.21468,
+      47.49342
+     ],
+     "osm": "way/97270757",
+     "names": []
+    },
+    {
+     "level": "warn",
+     "key": "radverbot",
+     "text": "Radfahren verboten (bicycle=no)",
+     "m": 200,
+     "at": [
+      10.21294,
+      47.49293
+     ],
+     "osm": "way/835419723",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "bergweg",
+     "text": "Bergweg T2 – mit Rad meist schieben",
+     "m": 120,
+     "at": [
+      10.21313,
+      47.49289
+     ],
+     "osm": "way/835419722",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 120,
+     "at": [
+      10.2219,
+      47.50693
+     ],
+     "osm": "way/684817512",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "ofterschwanger-horn-route-3",
+   "name": "Ofterschwanger Horn – Route 3",
+   "group": "Ofterschwanger Horn",
+   "activity": "ebike",
+   "stations": 16,
+   "missing": [],
+   "km": 43.6,
+   "pathShare": 38,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 100,
+     "at": [
+      10.22093,
+      47.55896
+     ],
+     "osm": "way/23004326",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      10.22031,
+      47.55935
+     ],
+     "osm": "way/1214780182",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 120,
+     "at": [
+      10.22217,
+      47.5079
+     ],
+     "osm": "way/684817512",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "bergweg",
+     "text": "Bergweg T2 – mit Rad meist schieben",
+     "m": 140,
+     "at": [
+      10.21468,
+      47.49342
+     ],
+     "osm": "way/97270757",
+     "names": []
+    },
+    {
+     "level": "warn",
+     "key": "radverbot",
+     "text": "Radfahren verboten (bicycle=no)",
+     "m": 200,
+     "at": [
+      10.21294,
+      47.49293
+     ],
+     "osm": "way/835419723",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "bergweg",
+     "text": "Bergweg T2 – mit Rad meist schieben",
+     "m": 120,
+     "at": [
+      10.21313,
+      47.49289
+     ],
+     "osm": "way/835419722",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 120,
+     "at": [
+      10.2219,
+      47.50693
+     ],
+     "osm": "way/684817512",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 280,
+     "at": [
+      10.2607,
+      47.48782
+     ],
+     "osm": "way/361623044",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 280,
+     "at": [
+      10.25816,
+      47.48915
+     ],
+     "osm": "way/361623049",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "hindelang-jochstrasse-schnitzelalm",
+   "name": "Sonthofen – Schnitzelalm – Sonthofen",
+   "group": "Bad Hindelang / Jochstraße",
+   "activity": "ebike",
+   "stations": 9,
+   "missing": [],
+   "km": 24.4,
+   "pathShare": 37,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.37921,
+      47.5068
+     ],
+     "osm": "way/36974468",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 140,
+     "at": [
+      10.38046,
+      47.50709
+     ],
+     "osm": "way/36974467",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 140,
+     "at": [
+      10.38233,
+      47.50761
+     ],
+     "osm": "way/8051146",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.38011,
+      47.50701
+     ],
+     "osm": "way/36974468",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 120,
+     "at": [
+      10.36232,
+      47.50444
+     ],
+     "osm": "way/375060145",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 480,
+     "at": [
+      10.35928,
+      47.50421
+     ],
+     "osm": "way/330035512",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "oberjoch-wertach-koenigsstraessle-immenstadt",
+   "name": "Sonthofen – Oberjoch – Wertach – Immenstadt",
+   "group": "Oberjoch / Wertach",
+   "activity": "ebike",
+   "stations": 10,
+   "missing": [],
+   "km": 49.4,
+   "pathShare": 61,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 100,
+     "at": [
+      10.29505,
+      47.50958
+     ],
+     "osm": "way/947883334",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 480,
+     "at": [
+      10.35314,
+      47.50425
+     ],
+     "osm": "way/326261912",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 120,
+     "at": [
+      10.36069,
+      47.50419
+     ],
+     "osm": "way/375060145",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.37037,
+      47.50616
+     ],
+     "osm": "way/25804556",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.37924,
+      47.50679
+     ],
+     "osm": "way/36974468",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 140,
+     "at": [
+      10.38048,
+      47.5071
+     ],
+     "osm": "way/36974467",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 440,
+     "at": [
+      10.40042,
+      47.51426
+     ],
+     "osm": "way/172484417",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.40125,
+      47.59872
+     ],
+     "osm": "way/705519140",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "mtb",
+     "text": "MTB-Skala S2 – grobes Gelände",
+     "m": 160,
+     "at": [
+      10.30205,
+      47.54233
+     ],
+     "osm": "way/298419918",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "mtb",
+     "text": "MTB-Skala S2 – grobes Gelände",
+     "m": 100,
+     "at": [
+      10.30353,
+      47.54343
+     ],
+     "osm": "way/109989239",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 100,
+     "at": [
+      10.2804,
+      47.54015
+     ],
+     "osm": "way/1569812760",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "balderschwang-sibratsgfaell-rueck1",
+   "name": "Lochbachtal – Balderschwang – Sibratsgfäll – Rückweg ①",
+   "group": "Balderschwang / Sibratsgfäll",
+   "activity": "ebike",
+   "stations": 13,
+   "missing": [],
+   "km": 86.8,
+   "pathShare": 61,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 160,
+     "at": [
+      10.26247,
+      47.45933
+     ],
+     "osm": "way/1474233911",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 160,
+     "at": [
+      10.24126,
+      47.44559
+     ],
+     "osm": "way/1386671807",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      10.09135,
+      47.4637
+     ],
+     "osm": "way/1531020727",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.03755,
+      47.42695
+     ],
+     "osm": "way/584394182",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 340,
+     "at": [
+      10.24146,
+      47.41943
+     ],
+     "osm": "way/1176895201",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 440,
+     "at": [
+      10.24244,
+      47.41645
+     ],
+     "osm": "way/1176896741",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 300,
+     "at": [
+      10.27553,
+      47.41227
+     ],
+     "osm": "way/1123675681",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 300,
+     "at": [
+      10.277,
+      47.41069
+     ],
+     "osm": "way/1132563464",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "balderschwang-sibratsgfaell-rueck2",
+   "name": "Lochbachtal – Balderschwang – Sibratsgfäll – Rückweg ②",
+   "group": "Balderschwang / Sibratsgfäll",
+   "activity": "ebike",
+   "stations": 14,
+   "missing": [],
+   "km": 82.7,
+   "pathShare": 56,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 160,
+     "at": [
+      10.26247,
+      47.45933
+     ],
+     "osm": "way/1474233911",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 160,
+     "at": [
+      10.24126,
+      47.44559
+     ],
+     "osm": "way/1386671807",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      10.09135,
+      47.4637
+     ],
+     "osm": "way/1531020727",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.03755,
+      47.42695
+     ],
+     "osm": "way/584394182",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.24469,
+      47.44366
+     ],
+     "osm": "way/239240315",
+     "names": [
+      "Am Goldbach"
+     ]
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 220,
+     "at": [
+      10.24352,
+      47.44439
+     ],
+     "osm": "way/1386671807",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 160,
+     "at": [
+      10.26049,
+      47.45887
+     ],
+     "osm": "way/1474233911",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "2025-gebirgstour-variante-1",
+   "name": "Gebirgstour – Variante 1",
+   "group": "2025 · Gebirgstour Hornbahn – Straußbergalpe",
+   "activity": "ebike",
+   "stations": 12,
+   "missing": [],
+   "km": 27.9,
+   "pathShare": 56,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 100,
+     "at": [
+      10.29505,
+      47.50958
+     ],
+     "osm": "way/947883334",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      10.3703,
+      47.50615
+     ],
+     "osm": "way/25804556",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 300,
+     "at": [
+      10.37075,
+      47.49963
+     ],
+     "osm": "way/454338838",
+     "names": []
+    },
+    {
+     "level": "warn",
+     "key": "radverbot",
+     "text": "Radfahren verboten (bicycle=no)",
+     "m": 600,
+     "at": [
+      10.35642,
+      47.48835
+     ],
+     "osm": "way/8050907",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "2025-gebirgstour-variante-2",
+   "name": "Gebirgstour – Variante 2",
+   "group": "2025 · Gebirgstour Hornbahn – Straußbergalpe",
+   "activity": "ebike",
+   "stations": 17,
+   "missing": [],
+   "km": 41.8,
+   "pathShare": 51,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 100,
+     "at": [
+      10.29505,
+      47.50958
+     ],
+     "osm": "way/947883334",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      10.3703,
+      47.50615
+     ],
+     "osm": "way/25804556",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 300,
+     "at": [
+      10.37075,
+      47.49963
+     ],
+     "osm": "way/454338838",
+     "names": []
+    },
+    {
+     "level": "warn",
+     "key": "radverbot",
+     "text": "Radfahren verboten (bicycle=no)",
+     "m": 600,
+     "at": [
+      10.35642,
+      47.48835
+     ],
+     "osm": "way/8050907",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 160,
+     "at": [
+      10.26248,
+      47.45933
+     ],
+     "osm": "way/1474233911",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.23431,
+      47.44913
+     ],
+     "osm": "way/1545843837",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "2025-alpsee-oberstaufen-tour-1",
+   "name": "Alpsee – Oberstaufen – Tour 1 (bergig)",
+   "group": "2025 · Alpsee – Oberstaufen",
+   "activity": "ebike",
+   "stations": 13,
+   "missing": [],
+   "km": 62.3,
+   "pathShare": 38,
+   "findings": [
+    {
+     "level": "warn",
+     "key": "radverbot",
+     "text": "Radfahren verboten (bicycle=no)",
+     "m": 100,
+     "at": [
+      10.19209,
+      47.56912
+     ],
+     "osm": "way/230576586",
+     "names": [
+      "Kirchsteige"
+     ]
+    },
+    {
+     "level": "warn",
+     "key": "radverbot",
+     "text": "Radfahren verboten (bicycle=no)",
+     "m": 100,
+     "at": [
+      10.19106,
+      47.56853
+     ],
+     "osm": "way/35572966",
+     "names": [
+      "Kirchsteige"
+     ]
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.03421,
+      47.55859
+     ],
+     "osm": "way/182184913",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 320,
+     "at": [
+      10.03301,
+      47.55827
+     ],
+     "osm": "way/182184913",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.02077,
+      47.55419
+     ],
+     "osm": "way/40294646",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 320,
+     "at": [
+      10.02901,
+      47.55725
+     ],
+     "osm": "way/182184913",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      10.03347,
+      47.5583
+     ],
+     "osm": "way/182184913",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      10.22021,
+      47.55936
+     ],
+     "osm": "way/1217288037",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "2025-alpsee-oberstaufen-tour-2",
+   "name": "Alpsee – Oberstaufen – Tour 2",
+   "group": "2025 · Alpsee – Oberstaufen",
+   "activity": "ebike",
+   "stations": 11,
+   "missing": [],
+   "km": 56.9,
+   "pathShare": 43,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 100,
+     "at": [
+      10.22098,
+      47.55893
+     ],
+     "osm": "way/23004326",
+     "names": []
+    },
+    {
+     "level": "warn",
+     "key": "radverbot",
+     "text": "Radfahren verboten (bicycle=no)",
+     "m": 100,
+     "at": [
+      10.19206,
+      47.5691
+     ],
+     "osm": "way/230576586",
+     "names": [
+      "Kirchsteige"
+     ]
+    },
+    {
+     "level": "warn",
+     "key": "radverbot",
+     "text": "Radfahren verboten (bicycle=no)",
+     "m": 100,
+     "at": [
+      10.19108,
+      47.56855
+     ],
+     "osm": "way/35572966",
+     "names": [
+      "Kirchsteige"
+     ]
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.03418,
+      47.55857
+     ],
+     "osm": "way/182184913",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 320,
+     "at": [
+      10.03297,
+      47.55827
+     ],
+     "osm": "way/182184913",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 320,
+     "at": [
+      10.02904,
+      47.55727
+     ],
+     "osm": "way/182184913",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.03351,
+      47.5583
+     ],
+     "osm": "way/182184913",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      10.22025,
+      47.55935
+     ],
+     "osm": "way/204470549",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "2025-strassentour-lindau",
+   "name": "Straßentour Sonthofen – Lindau",
+   "group": "2025 · Straßentouren",
+   "activity": "ebike",
+   "stations": 13,
+   "missing": [],
+   "km": 71.6,
+   "pathShare": 50,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 100,
+     "at": [
+      10.22095,
+      47.55895
+     ],
+     "osm": "way/23004326",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 240,
+     "at": [
+      10.19092,
+      47.58881
+     ],
+     "osm": "way/712111595",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 180,
+     "at": [
+      10.17823,
+      47.59144
+     ],
+     "osm": "way/27428828",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 100,
+     "at": [
+      10.12937,
+      47.59451
+     ],
+     "osm": "way/234455295",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 200,
+     "at": [
+      9.85958,
+      47.57972
+     ],
+     "osm": "way/145017129",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 160,
+     "at": [
+      9.84981,
+      47.58271
+     ],
+     "osm": "way/385719542",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      9.84593,
+      47.58051
+     ],
+     "osm": "way/24625296",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 700,
+     "at": [
+      9.80521,
+      47.57385
+     ],
+     "osm": "way/176448352",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 120,
+     "at": [
+      9.78172,
+      47.58808
+     ],
+     "osm": "way/1549257475",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 120,
+     "at": [
+      9.78088,
+      47.58742
+     ],
+     "osm": "way/827556842",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 140,
+     "at": [
+      9.75235,
+      47.55629
+     ],
+     "osm": "way/1545711365",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      9.75157,
+      47.55526
+     ],
+     "osm": "way/86251642",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 360,
+     "at": [
+      9.7515,
+      47.55548
+     ],
+     "osm": "way/1545711358",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 1520,
+     "at": [
+      9.73862,
+      47.55052
+     ],
+     "osm": "way/1545664032",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 340,
+     "at": [
+      9.71969,
+      47.55655
+     ],
+     "osm": "way/1544055476",
+     "names": []
+    },
+    {
+     "level": "warn",
+     "key": "radverbot",
+     "text": "Radfahren verboten (bicycle=no)",
+     "m": 340,
+     "at": [
+      9.71363,
+      47.55086
+     ],
+     "osm": "way/254698508",
+     "names": []
+    },
+    {
+     "level": "warn",
+     "key": "radverbot",
+     "text": "Radfahren verboten (bicycle=no)",
+     "m": 260,
+     "at": [
+      9.7081,
+      47.55096
+     ],
+     "osm": "way/254698508",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      9.70226,
+      47.55131
+     ],
+     "osm": "way/25503976",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 320,
+     "at": [
+      9.70076,
+      47.55167
+     ],
+     "osm": "way/369445480",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "2025-strassentour-freibergsee",
+   "name": "Straßentour Oberstdorf – Freibergsee",
+   "group": "2025 · Straßentouren",
+   "activity": "ebike",
+   "stations": 15,
+   "missing": [],
+   "km": 45.6,
+   "pathShare": 75,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 240,
+     "at": [
+      10.27538,
+      47.41215
+     ],
+     "osm": "way/1190452862",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 140,
+     "at": [
+      10.2849,
+      47.40466
+     ],
+     "osm": "way/1198044240",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.28064,
+      47.39685
+     ],
+     "osm": "way/434719895",
+     "names": []
+    },
+    {
+     "level": "warn",
+     "key": "radverbot",
+     "text": "Radfahren verboten (bicycle=no)",
+     "m": 1440,
+     "at": [
+      10.26401,
+      47.38308
+     ],
+     "osm": "way/27128558",
+     "names": [
+      "Edmund-Probst-Weg"
+     ]
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 480,
+     "at": [
+      10.25344,
+      47.39048
+     ],
+     "osm": "way/1316939745",
+     "names": [
+      "Höllwiesenweg"
+     ]
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 240,
+     "at": [
+      10.24561,
+      47.39948
+     ],
+     "osm": "way/1124207130",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 140,
+     "at": [
+      10.2692,
+      47.41131
+     ],
+     "osm": "way/1190460562",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 300,
+     "at": [
+      10.27538,
+      47.41023
+     ],
+     "osm": "way/30423613",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "2025-strassentour-rottachsee",
+   "name": "Straßentour Rottachsee",
+   "group": "2025 · Straßentouren",
+   "activity": "ebike",
+   "stations": 12,
+   "missing": [],
+   "km": 54.6,
+   "pathShare": 32,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 140,
+     "at": [
+      10.36121,
+      47.63365
+     ],
+     "osm": "way/33914503",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "mtb",
+     "text": "MTB-Skala S2 – grobes Gelände",
+     "m": 140,
+     "at": [
+      10.30209,
+      47.54246
+     ],
+     "osm": "way/298419918",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "mtb",
+     "text": "MTB-Skala S2 – grobes Gelände",
+     "m": 100,
+     "at": [
+      10.30352,
+      47.54342
+     ],
+     "osm": "way/109989239",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "2025-pfaender-ueberlingen-markdorf",
+   "name": "Pfändergipfel – Markdorf – Überlingen",
+   "group": "2025 · Bodensee",
+   "activity": "ebike",
+   "stations": 9,
+   "missing": [],
+   "km": 76.9,
+   "pathShare": 27,
+   "findings": [
+    {
+     "level": "warn",
+     "key": "radverbot",
+     "text": "Radfahren verboten (bicycle=no)",
+     "m": 160,
+     "at": [
+      9.78013,
+      47.50737
+     ],
+     "osm": "way/480029609",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 400,
+     "at": [
+      9.7513,
+      47.52614
+     ],
+     "osm": "way/1481282875",
+     "names": []
+    },
+    {
+     "level": "warn",
+     "key": "radverbot",
+     "text": "Radfahren verboten (bicycle=no)",
+     "m": 180,
+     "at": [
+      9.72915,
+      47.54063
+     ],
+     "osm": "way/1515589573",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 100,
+     "at": [
+      9.72783,
+      47.54215
+     ],
+     "osm": "way/1308607430",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 300,
+     "at": [
+      9.72258,
+      47.54546
+     ],
+     "osm": "way/434845668",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 120,
+     "at": [
+      9.71881,
+      47.54847
+     ],
+     "osm": "way/1011545339",
+     "names": []
+    },
+    {
+     "level": "warn",
+     "key": "radverbot",
+     "text": "Radfahren verboten (bicycle=no)",
+     "m": 320,
+     "at": [
+      9.71352,
+      47.55085
+     ],
+     "osm": "way/254698508",
+     "names": []
+    },
+    {
+     "level": "warn",
+     "key": "radverbot",
+     "text": "Radfahren verboten (bicycle=no)",
+     "m": 280,
+     "at": [
+      9.70825,
+      47.55095
+     ],
+     "osm": "way/254698508",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      9.70216,
+      47.55133
+     ],
+     "osm": "way/25503976",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 300,
+     "at": [
+      9.70065,
+      47.55169
+     ],
+     "osm": "way/609560578",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      9.69355,
+      47.55059
+     ],
+     "osm": "way/117119303",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 180,
+     "at": [
+      9.69098,
+      47.55406
+     ],
+     "osm": "way/1479321321",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 460,
+     "at": [
+      9.68979,
+      47.55596
+     ],
+     "osm": "way/1479321307",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 100,
+     "at": [
+      9.66332,
+      47.56028
+     ],
+     "osm": "way/588178809",
+     "names": [
+      "Ebnet"
+     ]
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      9.64172,
+      47.5669
+     ],
+     "osm": "way/711939251",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 120,
+     "at": [
+      9.59913,
+      47.59617
+     ],
+     "osm": "way/659099489",
+     "names": []
+    }
+   ],
+   "regionShare": 46
+  },
+  {
+   "id": "2025-vier-seen-fuessen",
+   "name": "4-Seen-Tour Füssen",
+   "group": "2025 · Füssen",
+   "activity": "ebike",
+   "stations": 8,
+   "missing": [],
+   "km": 27.9,
+   "pathShare": 67,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.69494,
+      47.56762
+     ],
+     "osm": "way/186937208",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "bergweg",
+     "text": "Bergweg T2 – mit Rad meist schieben",
+     "m": 540,
+     "at": [
+      10.62698,
+      47.56316
+     ],
+     "osm": "way/26164472",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.66839,
+      47.60865
+     ],
+     "osm": "way/1432373024",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 120,
+     "at": [
+      10.66969,
+      47.60886
+     ],
+     "osm": "way/1432373024",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.6725,
+      47.60849
+     ],
+     "osm": "way/1432373024",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 140,
+     "at": [
+      10.67831,
+      47.60774
+     ],
+     "osm": "way/1432373023",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.68039,
+      47.60717
+     ],
+     "osm": "way/1432373023",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 140,
+     "at": [
+      10.68209,
+      47.60609
+     ],
+     "osm": "way/1432373023",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 300,
+     "at": [
+      10.70754,
+      47.58562
+     ],
+     "osm": "way/825532857",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "2025-breitenberg-ostlerhuette",
+   "name": "Breitenberg – Ostlerhütte (AT hoch, DE runter)",
+   "group": "2025 · Füssen",
+   "activity": "bike",
+   "stations": 4,
+   "missing": [],
+   "km": 21.8,
+   "pathShare": 80,
+   "findings": [
+    {
+     "level": "info",
+     "key": "mtb",
+     "text": "MTB-Skala S2 – grobes Gelände",
+     "m": 500,
+     "at": [
+      10.55715,
+      47.54706
+     ],
+     "osm": "way/68109405",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "mtb",
+     "text": "MTB-Skala S2 – grobes Gelände",
+     "m": 520,
+     "at": [
+      10.55163,
+      47.54863
+     ],
+     "osm": "way/68109405",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "2025-pfronten-kappeler-alp-alpspitz",
+   "name": "Pfronten – Kappeler Alp – Alpspitz",
+   "group": "2025 · Füssen",
+   "activity": "bike",
+   "stations": 5,
+   "missing": [],
+   "km": 22.1,
+   "pathShare": 79,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 180,
+     "at": [
+      10.50532,
+      47.62059
+     ],
+     "osm": "way/1418598519",
+     "names": []
+    },
+    {
+     "level": "warn",
+     "key": "radverbot",
+     "text": "Radfahren verboten (bicycle=no)",
+     "m": 120,
+     "at": [
+      10.54532,
+      47.58999
+     ],
+     "osm": "way/196559184",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 100,
+     "at": [
+      10.55617,
+      47.58131
+     ],
+     "osm": "way/938750123",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "2025-pfronten-gruentensee-wertach",
+   "name": "Pfronten – Grüntensee – Wertach – Königssträßle (Straße)",
+   "group": "2025 · Füssen",
+   "activity": "ebike",
+   "stations": 12,
+   "missing": [],
+   "km": 66.1,
+   "pathShare": 63,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 180,
+     "at": [
+      10.50751,
+      47.61976
+     ],
+     "osm": "way/1418598519",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "mtb",
+     "text": "MTB-Skala S2 – grobes Gelände",
+     "m": 280,
+     "at": [
+      10.30207,
+      47.54239
+     ],
+     "osm": "way/298419918",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 180,
+     "at": [
+      10.50542,
+      47.62056
+     ],
+     "osm": "way/1418598519",
+     "names": []
+    },
+    {
+     "level": "warn",
+     "key": "radverbot",
+     "text": "Radfahren verboten (bicycle=no)",
+     "m": 60,
+     "at": [
+      10.54536,
+      47.59009
+     ],
+     "osm": "way/196559184",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      10.55627,
+      47.58133
+     ],
+     "osm": "way/938750123",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "aalen-rosenstein-gmuend",
+   "name": "Aalen – Rosenstein – Schwäbisch Gmünd",
+   "group": "Aalen · Ostalb",
+   "activity": "ebike",
+   "stations": 9,
+   "missing": [],
+   "km": 61.6,
+   "pathShare": 0,
+   "findings": [],
+   "regionShare": 0
+  },
+  {
+   "id": "aalen-kochertal-zang-bartholomae",
+   "name": "Aalen – Kochertal – Zang – Bartholomä",
+   "group": "Aalen · Ostalb",
+   "activity": "ebike",
+   "stations": 8,
+   "missing": [],
+   "km": 44.9,
+   "pathShare": 0,
+   "findings": [],
+   "regionShare": 0
+  },
+  {
+   "id": "aalen-waldhausen-kapfenburg",
+   "name": "Aalen – Waldhausen – Kapfenburg",
+   "group": "Aalen · Ostalb",
+   "activity": "ebike",
+   "stations": 9,
+   "missing": [
+    "Rodstein (Rodstein, Lauchheim: kein Treffer; Rodstein, Ostalbkreis: 3 Treffer, alle > 8 km; Rodstein: 3 Treffer, alle > 8 km)"
+   ],
+   "km": 40.1,
+   "pathShare": 0,
+   "findings": [],
+   "regionShare": 0
+  },
+  {
+   "id": "aalen-dewangen",
+   "name": "Aalen – Dewangen – Fachsenfeld",
+   "group": "Aalen · Ostalb",
+   "activity": "ebike",
+   "stations": 5,
+   "missing": [],
+   "km": 21.6,
+   "pathShare": 0,
+   "findings": [],
+   "regionShare": 0
+  },
+  {
+   "id": "2025-pfronten-hohenfreyberg",
+   "name": "Pfronten – Burgruinen Hohenfreyberg & Eisenberg",
+   "group": "2025 · Füssen",
+   "activity": "ebike",
+   "stations": 5,
+   "missing": [],
+   "km": 13.7,
+   "pathShare": 54,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.58715,
+      47.60406
+     ],
+     "osm": "way/850286894",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.5869,
+      47.60455
+     ],
+     "osm": "way/974479220",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "2025-pfronten-reutte",
+   "name": "Pfronten – Reutte",
+   "group": "2025 · Füssen",
+   "activity": "ebike",
+   "stations": 8,
+   "missing": [],
+   "km": 47.2,
+   "pathShare": 61,
+   "findings": [
+    {
+     "level": "warn",
+     "key": "spur",
+     "text": "Pfad kaum sichtbar",
+     "m": 120,
+     "at": [
+      10.59079,
+      47.56025
+     ],
+     "osm": "way/1554445581",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 100,
+     "at": [
+      10.71783,
+      47.49185
+     ],
+     "osm": "way/80342452",
+     "names": []
+    },
+    {
+     "level": "warn",
+     "key": "radverbot",
+     "text": "Radfahren verboten (bicycle=no)",
+     "m": 200,
+     "at": [
+      10.71068,
+      47.52477
+     ],
+     "osm": "way/627339058",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 240,
+     "at": [
+      10.62143,
+      47.57635
+     ],
+     "osm": "way/235106556",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "2025-pfronten-vilsalpsee",
+   "name": "Pfronten – Vilsalpsee",
+   "group": "2025 · Füssen",
+   "activity": "ebike",
+   "stations": 7,
+   "missing": [],
+   "km": 40.8,
+   "pathShare": 50,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      10.55764,
+      47.58038
+     ],
+     "osm": "way/956287028",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      10.55761,
+      47.57954
+     ],
+     "osm": "way/956287028",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "2025-pfronten-fuessen-lechfall",
+   "name": "Pfronten – Füssen – Lechfall",
+   "group": "2025 · Füssen",
+   "activity": "ebike",
+   "stations": 7,
+   "missing": [],
+   "km": 28.2,
+   "pathShare": 78,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 240,
+     "at": [
+      10.61855,
+      47.57706
+     ],
+     "osm": "way/235106556",
+     "names": []
+    },
+    {
+     "level": "warn",
+     "key": "spur",
+     "text": "Pfad kaum sichtbar",
+     "m": 120,
+     "at": [
+      10.59216,
+      47.55974
+     ],
+     "osm": "way/1554445581",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  },
+  {
+   "id": "2025-pfronten-baerenalpe",
+   "name": "Pfronten – Bärenmoosalpe",
+   "group": "2025 · Füssen",
+   "activity": "ebike",
+   "stations": 6,
+   "missing": [],
+   "km": 19.6,
+   "pathShare": 58,
+   "findings": [
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 80,
+     "at": [
+      10.55743,
+      47.58152
+     ],
+     "osm": "way/943174089",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "bergweg",
+     "text": "Bergweg T2 – mit Rad meist schieben",
+     "m": 760,
+     "at": [
+      10.50152,
+      47.55823
+     ],
+     "osm": "way/729350709",
+     "names": [
+      "Kessaweg"
+     ]
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 60,
+     "at": [
+      10.55928,
+      47.57384
+     ],
+     "osm": "way/502081112",
+     "names": []
+    },
+    {
+     "level": "info",
+     "key": "fussweg",
+     "text": "Fussweg – Radfahren nicht ausdrücklich erlaubt",
+     "m": 100,
+     "at": [
+      10.55764,
+      47.57949
+     ],
+     "osm": "way/956287028",
+     "names": []
+    }
+   ],
+   "regionShare": 100
+  }
+ ]
+}
